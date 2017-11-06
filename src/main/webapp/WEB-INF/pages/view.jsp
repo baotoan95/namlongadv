@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,25 +80,35 @@ table tr td {
 						<li class="dropdown user user-menu"><a href="#"
 							class="dropdown-toggle" data-toggle="dropdown"> <img
 								src="<c:url value='/resources/dist/img/user2-160x160.jpg'/>"
-								class="user-image" alt="User Image"> <span
-								class="hidden-xs">NamLong</span>
+								class="user-image" alt="User Image"> 
+								<span class="hidden-xs">
+									<security:authorize access="isAuthenticated()">
+										Authenticated as <security:authentication property="principal.name" /> 
+									</security:authorize>
+								</span>
 						</a>
 							<ul class="dropdown-menu">
 								<!-- User image -->
-								<li class="user-header"><img
-									src="<c:url value='/resources/dist/img/user2-160x160.jpg'/>"
+								<li class="user-header">
+									<img src="<c:url value='/resources/dist/img/user2-160x160.jpg'/>"
 									class="img-circle" alt="User Image">
 
 									<p>
-										NamLong - Admin <small>Nov. 2017</small>
-									</p></li>
+										<security:authorize access="isAuthenticated()">
+										    Authenticated as <security:authentication property="principal.name" /> 
+										</security:authorize>
+										<small>Nov. 2017</small>
+									</p>
+									</li>
 								<!-- Menu Footer-->
 								<li class="user-footer">
 									<div class="pull-left">
 										<a href="#" class="btn btn-default btn-flat">Profile</a>
 									</div>
 									<div class="pull-right">
-										<a href="${pageContext.request.contextPath }/login" class="btn btn-default btn-flat">Sign out</a>
+										<form:form action="${pageContext.request.contextPath}/logout" method="POST">
+											<input type="submit" class="btn btn-default btn-flat" value="Sign out"/>
+										</form:form>
 									</div>
 								</li>
 							</ul></li>
