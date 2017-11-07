@@ -1,33 +1,48 @@
 package net.namlongadv.controller;
 
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
+@Slf4j
 public class HomeController {
-    @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-    public String login() {
-        return "login";
-    }
+	@Value("${namlongadv.session.name.page-index}")
+	private String pageIndex;
+	
+	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+	public String login() {
+		return "login";
+	}
 
-    @RequestMapping(value = { "/", "/view" }, method = RequestMethod.GET)
-    public String view() {
-        return "view";
-    }
+	@RequestMapping(value = { "/", "/advs" }, method = RequestMethod.GET)
+	public String advs(HttpSession session) {
+		log.info("Getting advs page");
+		log.info(pageIndex);
+		session.setAttribute(pageIndex, "advs");
+		return "advs";
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create() {
-        return "create";
-    }
+	@RequestMapping(value = "/adv", method = RequestMethod.GET)
+	public String adv(HttpSession session) {
+		session.setAttribute(pageIndex, "adv");
+		return "adv";
+	}
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String users() {
-        return "users";
-    }
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	public String users(HttpSession session) {
+		session.setAttribute(pageIndex, "users");
+		return "users";
+	}
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String user() {
-        return "user";
-    }
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public String user(HttpSession session) {
+		session.setAttribute(pageIndex, "user");
+		return "user";
+	}
 }

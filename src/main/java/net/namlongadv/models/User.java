@@ -1,9 +1,14 @@
 package net.namlongadv.models;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -26,4 +31,9 @@ public class User implements Serializable {
     private String department;
     private String phone;
     private boolean accountNonLocked;
+    @ManyToMany(targetEntity = UserRole.class, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role", joinColumns = {
+            @JoinColumn(name = "username", nullable = false, updatable = false) }, inverseJoinColumns = {
+                    @JoinColumn(name = "role", nullable = false, updatable = false) })
+    private List<UserRole> roles;
 }
