@@ -41,7 +41,7 @@
 				</span>
 			</a>
 				<ul class="treeview-menu menu-open">
-					<li class="${sessionScope.PAGE_INDEX == 'users' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/users"><i
+					<li class="${sessionScope.PAGE_INDEX == 'users' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/user/view/10/1"><i
 							class="fa fa-circle-o"></i> Users</a></li>
 					<li class="${sessionScope.PAGE_INDEX == 'user' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/user"><i
 							class="fa fa-circle-o"></i> Create new</a></li>

@@ -34,15 +34,4 @@ public class HomeController {
 		return "adv";
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public String users(HttpSession session) {
-		session.setAttribute(pageIndex, "users");
-		return "users";
-	}
-
-	@RequestMapping(value = "/user", method = RequestMethod.GET)
-	public String user(HttpSession session) {
-		session.setAttribute(pageIndex, "user");
-		return "user";
-	}
 }

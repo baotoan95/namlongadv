@@ -23,61 +23,21 @@
 								<th>Email</th>
 								<th>Action</th>
 							</tr>
+							<c:forEach items="${users }" var="user">
 							<tr>
-								<td>abc1234</td>
-								<td>Nguyen Van A</td>
-								<td>23/3</td>
-								<td>01649001142</td>
-								<td>vana@gmail.com</td>
-								<td class="action"><a href="#"><i
-										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
-									href="${pageContext.request.contextPath }/user"><i
-										class="fa fa-fw fa-edit"></i>Xem</a></td>
+								<td>${user.username }</td>
+								<td>${user.name }</td>
+								<td>${user.department }</td>
+								<td>${user.phone }</td>
+								<td>${user.email }</td>
+								<td class="action">
+									<a href="${pageContext.request.contextPath }/user/delete/${user.username }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
+									<br /> 
+									<a href="${pageContext.request.contextPath }/user/${user.username }">
+									<i class="fa fa-fw fa-edit"></i>Xem</a>
+								</td>
 							</tr>
-							<tr>
-								<td>abc1234</td>
-								<td>Nguyen Van A</td>
-								<td>23/3</td>
-								<td>01649001142</td>
-								<td>vana@gmail.com</td>
-								<td class="action"><a href="#"><i
-										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
-									href="${pageContext.request.contextPath }/user"><i
-										class="fa fa-fw fa-edit"></i>Xem</a></td>
-							</tr>
-							<tr>
-								<td>abc1234</td>
-								<td>Nguyen Van A</td>
-								<td>23/3</td>
-								<td>01649001142</td>
-								<td>vana@gmail.com</td>
-								<td class="action"><a href="#"><i
-										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
-									href="${pageContext.request.contextPath }/user"><i
-										class="fa fa-fw fa-edit"></i>Xem</a></td>
-							</tr>
-							<tr>
-								<td>abc1234</td>
-								<td>Nguyen Van A</td>
-								<td>23/3</td>
-								<td>01649001142</td>
-								<td>vana@gmail.com</td>
-								<td class="action"><a href="#"><i
-										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
-									href="${pageContext.request.contextPath }/user"><i
-										class="fa fa-fw fa-edit"></i>Xem</a></td>
-							</tr>
-							<tr>
-								<td>abc1234</td>
-								<td>Nguyen Van A</td>
-								<td>23/3</td>
-								<td>01649001142</td>
-								<td>vana@gmail.com</td>
-								<td class="action"><a href="#"><i
-										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
-									href="${pageContext.request.contextPath }/user"><i
-										class="fa fa-fw fa-edit"></i>Xem</a></td>
-							</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 

@@ -9,62 +9,75 @@
 		<div class="col-xs-9">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">Tạo Mới Thành Viên</h3>
+					<h3 class="box-title">${user.username != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
-				<form class="form-horizontal">
+				<form:form modelAttribute="user" action="${pageContext.request.contextPath }/user" method="${user.username != null ? 'put' : 'post' }" class="form-horizontal">
 					<div class="box-body">
 						<div class="form-group">
-							<label for="username" class="col-sm-2 control-label">Username</label>
+							<label for="username" class="col-sm-2 control-label">Tên đăng nhập</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="username"
-									placeholder="Username">
+								<form:input path="username" class="form-control" id="username" placeholder="Username"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="password" class="col-sm-2 control-label">Password</label>
+							<label for="password" class="col-sm-2 control-label">Mật khẩu</label>
 							<div class="col-sm-10">
-								<input type="password" class="form-control" id="password"
-									placeholder="Password">
+								<form:password path="password" class="form-control" id="password"
+									placeholder="Password"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="name" class="col-sm-2 control-label">Tên</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="name"
-									placeholder="Tên">
+								<form:input path="name" class="form-control" id="name"
+									placeholder="Tên"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="room" class="col-sm-2 control-label">Room</label>
+							<label for="department" class="col-sm-2 control-label">Phòng ban</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="room"
-									placeholder="Phòng">
+								<form:input path="department" class="form-control" id="department"
+									placeholder="Phòng"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="phone" class="col-sm-2 control-label">SĐT</label>
+							<label for="phone" class="col-sm-2 control-label">Số điện thoại</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="room"
-									placeholder="Số điện thoại">
+								<form:input path="phone" class="form-control" id="phone"
+									placeholder="Số điện thoại"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="email" class="col-sm-2 control-label">Email</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="email"
-									placeholder="Email">
+								<form:input path="email" type="email" class="form-control" id="email"
+									placeholder="Email"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="accountNonLocked" class="col-sm-2 control-label"></label>
+							<div class="checkbox col-sm-5">
+			                  <label>
+			                    <form:checkbox path="accountNonLocked"/> Check me out
+			                  </label>
+			                </div>
+						</div>
+						<div class="form-group">
+							<label for="roles" class="col-sm-2 control-label">Quyền</label>
+							<div class="col-sm-10">
+								<form:select multiple="true" cssClass="form-control" path="roles" items="${roles}" itemLabel="name" itemValue="id" />
 							</div>
 						</div>
 					</div>
 					<!-- /.box-body -->
 					<div class="box-footer">
-						<button type="submit" class="btn btn-default">Huỷ</button>
-						<button type="submit" class="btn btn-info pull-right">Lưu</button>
+						<a href="${pageContext.request.contextPath }/user/view/10/1" class="btn btn-default">Huỷ</a>
+						<button type="submit" class="btn btn-info pull-right">${user.username == null ? 'Thêm' : 'Cập Nhật' }</button>
 					</div>
 					<!-- /.box-footer -->
-				</form>
+				</form:form>
 			</div>
 		</div>
 	</div>
