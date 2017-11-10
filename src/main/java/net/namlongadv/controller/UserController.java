@@ -1,10 +1,14 @@
 package net.namlongadv.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,11 +40,38 @@ public class UserController {
 		return "user";
 	}
 
-	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
-	public String user(@ModelAttribute User user, ModelMap model) {
-		log.debug("Adding a user");
+	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })
+	public String user(@ModelAttribute("user") @Validated User user, BindingResult bindingResult, ModelMap model) {
+		model.addAttribute("roles", roleRepository.findAll());
+		
+		// If id not null == add action
+		if (user.getId() == null) {
+			log.debug("Check user exist");
+			if (userRepository.findByUsername(user.getUsername()) != null) {
+				log.debug("User existed " + user);
+				user.setUsername(null);
+				model.addAttribute("user", user);
+				model.addAttribute("errorMsg", "Tên tài khoản đã tồn tại");
+				return "user";
+			}
+			log.debug("User is not existed. Then add new this one.");
+		}
+
+		log.debug("Validation form");
+		if (user.getName().trim().length() == 0) {
+			bindingResult.rejectValue("name", "error.name", "Vui lòng nhập tên");
+		}
+		if (bindingResult.hasErrors()) {
+			log.debug("Form has errors " + bindingResult.getAllErrors());
+			return "user";
+		}
+
+		log.debug("Preparing to save a user");
 		log.debug("Encode password");
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		log.debug("Check locked user");
+		user.setAccountNonLocked(!user.isAccountNonLocked());
+
 		User userAdded = userRepository.save(user);
 		if (userAdded == null) {
 			log.error("Fail to add the user");
@@ -48,15 +79,14 @@ public class UserController {
 			model.addAttribute("errorMsg", "Fail to add the user");
 			return "user";
 		}
-		log.debug("User added");
-		model.addAttribute("users", userRepository.findAll());
-		return "users";
+		log.debug("User saved");
+		return "redirect:/user/view/".concat(String.valueOf(numOfPage)).concat("/1");
 	}
 
-	@RequestMapping(value = "/{username}", method = RequestMethod.GET)
-	public String user(@PathVariable("username") String username, ModelMap model) {
-		log.debug("Getting " + username + "'s info");
-		User user = userRepository.findOne(username);
+	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+	public String user(@PathVariable("userId") UUID userId, ModelMap model) {
+		log.debug("Getting " + userId + "'s info");
+		User user = userRepository.findOne(userId);
 		if (user == null) {
 			return "redirect:/user/view/".concat(String.valueOf(numOfPage)).concat("/1");
 		}
@@ -64,10 +94,10 @@ public class UserController {
 		model.addAttribute("user", user);
 		return "user";
 	}
-	
-	@RequestMapping(value = "/delete/{username}", method = RequestMethod.GET)
-	public String user(@PathVariable("username") String username) {
-		userRepository.delete(username);
+
+	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
+	public String user(@PathVariable("userId") UUID userId) {
+		userRepository.delete(userId);
 		return "redirect:/user/view/".concat(String.valueOf(numOfPage)).concat("/1");
 	}
 

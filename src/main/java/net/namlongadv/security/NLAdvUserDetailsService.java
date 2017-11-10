@@ -20,7 +20,7 @@ public class NLAdvUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Check username: {}", username);
-        User user = userRepository.findOne(username);
+        User user = userRepository.findByUsername(username);
         if(user == null) {
             log.debug("User {} not found", username);
             throw new UsernameNotFoundException(username);

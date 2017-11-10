@@ -9,30 +9,33 @@
 		<div class="col-xs-9">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">${user.username != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>
+					<h3 class="box-title">${user.id != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
-				<form:form modelAttribute="user" action="${pageContext.request.contextPath }/user" method="${user.username != null ? 'put' : 'post' }" class="form-horizontal">
+				<form:form modelAttribute="user" action="${pageContext.request.contextPath }/user" method="${user.id != null ? 'put' : 'post' }" class="form-horizontal">
+					<form:hidden path="id"/>
 					<div class="box-body">
 						<div class="form-group">
 							<label for="username" class="col-sm-2 control-label">Tên đăng nhập</label>
 							<div class="col-sm-10">
 								<form:input path="username" class="form-control" id="username" placeholder="Username"/>
+								<form:errors path="username" cssClass="error"></form:errors>
+								<span class="error">${errorMsg }</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="password" class="col-sm-2 control-label">Mật khẩu</label>
 							<div class="col-sm-10">
-								<form:password path="password" class="form-control" id="password"
-									placeholder="Password"/>
+								<form:password path="password" class="form-control" id="password" placeholder="Password"/>
+								<form:errors path="password" cssClass="error"></form:errors>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="name" class="col-sm-2 control-label">Tên</label>
 							<div class="col-sm-10">
-								<form:input path="name" class="form-control" id="name"
-									placeholder="Tên"/>
+								<form:input path="name" class="form-control" id="name" placeholder="Tên"/>
+								<form:errors path="name" cssClass="error"></form:errors>
 							</div>
 						</div>
 						<div class="form-group">
@@ -60,7 +63,7 @@
 							<label for="accountNonLocked" class="col-sm-2 control-label"></label>
 							<div class="checkbox col-sm-5">
 			                  <label>
-			                    <form:checkbox path="accountNonLocked"/> Check me out
+			                    <form:checkbox path="accountNonLocked"/> Khoá
 			                  </label>
 			                </div>
 						</div>
@@ -74,7 +77,7 @@
 					<!-- /.box-body -->
 					<div class="box-footer">
 						<a href="${pageContext.request.contextPath }/user/view/10/1" class="btn btn-default">Huỷ</a>
-						<button type="submit" class="btn btn-info pull-right">${user.username == null ? 'Thêm' : 'Cập Nhật' }</button>
+						<button type="submit" class="btn btn-info pull-right">${user.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 					</div>
 					<!-- /.box-footer -->
 				</form:form>

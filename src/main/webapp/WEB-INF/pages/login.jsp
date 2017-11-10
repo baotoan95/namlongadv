@@ -42,7 +42,9 @@
 		<!-- /.login-logo -->
 		<div class="login-box-body">
 			<p class="login-box-msg">Sign in to start your session</p>
-
+			<c:if test="${errorMsg != null }">
+			<center class="error"><i>${errorMsg }</i></center><br/>
+			</c:if>
 			<form action="perform_login" method="post">
 				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				<div class="form-group has-feedback">

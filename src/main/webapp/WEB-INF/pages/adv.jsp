@@ -71,11 +71,18 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="map" class="col-sm-2 control-label">Google
-								map</label>
+							<label for="map" class="col-sm-2 control-label">Google map</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" id="map"
 									placeholder="Link goole map">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="note" class="col-sm-2 control-label">Ghi chú</label>
+							<div class="col-sm-10">
+								<textarea type="text" class="form-control" id="note"
+									placeholder="Ghi chú"></textarea>
 							</div>
 						</div>
 

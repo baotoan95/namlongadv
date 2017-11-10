@@ -4,8 +4,10 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +18,10 @@ public class HomeController {
 	private String pageIndex;
 	
 	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-	public String login() {
+	public String login(@RequestParam(value = "error", required = false) String error, ModelMap model) {
+		if(error != null) {
+			model.addAttribute("errorMsg", "Sai tên đăng nhập hoặc mật khẩu");
+		}
 		return "login";
 	}
 

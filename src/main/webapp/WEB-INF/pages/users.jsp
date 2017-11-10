@@ -31,9 +31,9 @@
 								<td>${user.phone }</td>
 								<td>${user.email }</td>
 								<td class="action">
-									<a href="${pageContext.request.contextPath }/user/delete/${user.username }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
+									<a href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
 									<br /> 
-									<a href="${pageContext.request.contextPath }/user/${user.username }">
+									<a href="${pageContext.request.contextPath }/user/${user.id }">
 									<i class="fa fa-fw fa-edit"></i>Xem</a>
 								</td>
 							</tr>

@@ -65,7 +65,8 @@
 							<tr>
 								<th>EX</th>
 								<th>STT</th>
-								<th>Tên</th>
+								<th>Vị Trí</th>
+								<th>Tên Đường</th>
 								<th>Số Nhà</th>
 								<th>Xã</th>
 								<th>Quận</th>
@@ -73,10 +74,11 @@
 								<th>Kích thước</th>
 								<th>Đơn giá</th>
 								<th></th>
+								<th>Tên</th>
 								<th>SĐT</th>
+								<th>Người liên hệ</th>
 								<th>Email</th>
 								<th>Giá thuê</th>
-								<th>Người liên hệ</th>
 								<th>Hình ảnh</th>
 								<th>Action</th>
 							</tr>
@@ -95,6 +97,7 @@
 								<td>baotoan.95@gmail.com</td>
 								<td>342.342.000</td>
 								<td>Nguyen Thi B</td>
+								<td></td>
 								<td></td>
 								<td rowspan="2" class="action"><a href="#"><i
 										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
@@ -126,6 +129,7 @@
 								<td>342.342.000</td>
 								<td>Nguyen Thi B</td>
 								<td></td>
+								<td></td>
 								<td rowspan="2" class="action"><a href="#"><i
 										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
 									href="${pageContext.request.contextPath }/create"><i
@@ -137,6 +141,7 @@
 								<td>baotoan.95@gmail.com</td>
 								<td>342.342.000</td>
 								<td>Nguyen Thi B</td>
+								<td></td>
 								<td></td>
 							</tr>
 
@@ -156,6 +161,7 @@
 								<td>342.342.000</td>
 								<td>Nguyen Thi B</td>
 								<td></td>
+								<td></td>
 								<td rowspan="2" class="action"><a href="#"><i
 										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
 									href="${pageContext.request.contextPath }/create"><i
@@ -185,6 +191,7 @@
 								<td>baotoan.95@gmail.com</td>
 								<td>342.342.000</td>
 								<td>Nguyen Thi B</td>
+								<td></td>
 								<td></td>
 								<td rowspan="2" class="action"><a href="#"><i
 										class="fa fa-fw fa-trash"></i>Xoá</a> <br /> <a
@@ -206,12 +213,11 @@
 				<!-- /.box-body -->
 
 				<div class="box-footer clearfix">
-					<security:authorize access="hasRole('ROLE_USER')">
+					<security:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
 						<button type="submit" class="btn btn-info">Xuất Excel</button>
 					</security:authorize>
-					<security:authorize access="hasRole('ROLE_ADMIN')">
-						<button type="submit" class="btn btn-info">Xuất
-							Powerpoint</button>
+					<security:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_BUSINESS')">
+						<button type="submit" class="btn btn-info">Xuất Powerpoint</button>
 					</security:authorize>
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<li><a href="#">«</a></li>
