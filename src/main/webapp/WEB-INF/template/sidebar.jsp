@@ -26,25 +26,25 @@
 			<li class="header">MAIN NAVIGATION ${sessionScope.PAGE_INDEX }</li>
 			
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'advs' ? 'active' : '' }"><a
-				href="${pageContext.request.contextPath }/"><i
-					class="fa fa-table"></i> <span>View Data</span>
+				href="${pageContext.request.contextPath }/adv/view?page=0&size=10"><i
+					class="fa fa-table"></i> <span>Danh sách quảng cáo</span>
 			</a></li>
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'adv' ? 'active' : '' }"><a
 				href="${pageContext.request.contextPath }/adv"> <i
-					class="fa fa-edit"></i> <span>Create New</span>
+					class="fa fa-edit"></i> <span>Tạo mới quảng cáo</span>
 			</a></li>
 			
 			<security:authorize access="hasRole('ROLE_ADMIN')">
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'users' || sessionScope.PAGE_INDEX == 'user' ? 'active' : '' }"><a href="#"> <i class="fa fa-pie-chart"></i>
-					<span>User management</span> <span class="pull-right-container">
+					<span>Quản lý tài khoản</span> <span class="pull-right-container">
 						<i class="fa fa-angle-left pull-right"></i>
 				</span>
 			</a>
 				<ul class="treeview-menu menu-open">
-					<li class="${sessionScope.PAGE_INDEX == 'users' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/user/view/10/1"><i
-							class="fa fa-circle-o"></i> Users</a></li>
+					<li class="${sessionScope.PAGE_INDEX == 'users' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/user/view?page=0&size=10"><i
+							class="fa fa-circle-o"></i> Danh sách</a></li>
 					<li class="${sessionScope.PAGE_INDEX == 'user' ? 'active' : '' }"><a href="${pageContext.request.contextPath }/user"><i
-							class="fa fa-circle-o"></i> Create new</a></li>
+							class="fa fa-circle-o"></i> Tạo mới</a></li>
 				</ul>
 			</li>
 			</security:authorize>

@@ -32,4 +32,9 @@ public class UserRole implements Serializable {
     private String name;
     @ManyToMany(targetEntity = User.class, mappedBy = "roles")
     private List<User> users;
+    
+    @Override
+    public String toString() {
+    	return name;
+    }
 }

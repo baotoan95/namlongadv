@@ -26,7 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/resources/**").permitAll()
         .anyRequest().authenticated()
         .and().formLogin().loginPage("/login").loginProcessingUrl("/perform_login")
-        .defaultSuccessUrl("/")
+        .defaultSuccessUrl("/adv/view?page=0&size=10")
         .failureUrl("/login?error")
         .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login");
     }
@@ -49,4 +49,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(11);
     }
+    
 }

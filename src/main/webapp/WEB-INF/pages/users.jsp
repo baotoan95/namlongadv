@@ -21,15 +21,17 @@
 								<th>Phòng</th>
 								<th>SĐT</th>
 								<th>Email</th>
-								<th>Action</th>
+								<th>Quyền</th>
+								<th></th>
 							</tr>
-							<c:forEach items="${users }" var="user">
+							<c:forEach items="${page.content }" var="user">
 							<tr>
 								<td>${user.username }</td>
 								<td>${user.name }</td>
 								<td>${user.department }</td>
 								<td>${user.phone }</td>
 								<td>${user.email }</td>
+								<td>${user.roles }</td>
 								<td class="action">
 									<a href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
 									<br /> 
@@ -47,13 +49,18 @@
 				<div class="box-footer clearfix">
 					<a href="${pageContext.request.contextPath }/user"
 						class="btn btn-info">Thêm mới</a>
-
 					<ul class="pagination pagination-sm no-margin pull-right">
-						<li><a href="#">«</a></li>
-						<li><a href="#">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">3</a></li>
-						<li><a href="#">»</a></li>
+						<c:if test="${page.number > 0 }">
+						<li class=""><a href="${pageContext.request.contextPath }/user/view?page=${page.number - 1 }&size=${page.size }">«</a></li>
+						</c:if>
+						
+						<c:forEach begin="0" end="${page.totalPages - 1 }" varStatus="loop">
+							<li class="${loop.index == page.number ? 'active' : ''}"><a href="${pageContext.request.contextPath }/user/view?page=${loop.index }&size=${page.size }">${loop.index }</a></li>
+						</c:forEach>
+						
+						<c:if test="${page.number < page.totalPages - 1 }">
+						<li class=""><a href="${pageContext.request.contextPath }/user/view?page=${page.number + 1 }&size=${page.size }">»</a></li>
+						</c:if>
 					</ul>
 				</div>
 			</div>

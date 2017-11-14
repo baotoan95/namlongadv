@@ -9,7 +9,7 @@
 		<div class="col-xs-9">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">${user.id != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>
+					<h3 class="box-title">${id != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
@@ -27,7 +27,7 @@
 						<div class="form-group">
 							<label for="password" class="col-sm-2 control-label">Mật khẩu</label>
 							<div class="col-sm-10">
-								<form:password path="password" class="form-control" id="password" placeholder="Password"/>
+								<form:password path="password" class="form-control" id="password" placeholder="${user.id != null ? 'Nhập nếu cần thay đổi mật khẩu' : 'Nhập mật khẩu' }"/>
 								<form:errors path="password" cssClass="error"></form:errors>
 							</div>
 						</div>
@@ -63,7 +63,7 @@
 							<label for="accountNonLocked" class="col-sm-2 control-label"></label>
 							<div class="checkbox col-sm-5">
 			                  <label>
-			                    <form:checkbox path="accountNonLocked"/> Khoá
+			                    <form:checkbox path="accountNonLocked"/> Được quyền đăng nhập
 			                  </label>
 			                </div>
 						</div>
@@ -76,7 +76,7 @@
 					</div>
 					<!-- /.box-body -->
 					<div class="box-footer">
-						<a href="${pageContext.request.contextPath }/user/view/10/1" class="btn btn-default">Huỷ</a>
+						<a href="${pageContext.request.contextPath }/user/view?page=0&size=10" class="btn btn-default">Huỷ</a>
 						<button type="submit" class="btn btn-info pull-right">${user.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 					</div>
 					<!-- /.box-footer -->

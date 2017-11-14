@@ -6,83 +6,95 @@
 	
 <section class="content">
 	<div class="row">
+		<form:form modelAttribute="advertDto"
+			action="${pageContext.request.contextPath }/adv?${_csrf.parameterName }=${_csrf.token}" 
+				method="${advertDto.advertisement.id == null ? 'post' : 'put' }" enctype="multipart/form-data">
+			<form:hidden path="advertisement.id"/>
 		<div class="col-xs-9">
 			<div class="box box-info">
 				<div class="box-header with-border">
-					<h3 class="box-title">Tạo Mới</h3>
+					<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : 'Cập Nhật Thông Tin Bảng Quảng Cáo' }</h3>
+					<c:if test="${errorMsg != null }">
+					<span class="error">${errorMsg }</span>
+					</c:if>
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
-				<form class="form-horizontal">
+				<div class="form-horizontal">
 					<div class="box-body">
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Tên</label>
+							<label for="code" class="col-sm-2 control-label">Mã</label>
 							<div class="col-sm-10">
-								<input type="email" class="form-control" id="inputEmail3"
-									placeholder="Nhập tên">
+								<form:input type="text" path="advertisement.code" class="form-control" id="code"
+ 									placeholder="Nhập mã"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Số
-								nhà</label>
+							<label for="location" class="col-sm-2 control-label">Vị trí</label>
 							<div class="col-sm-10">
-								<input type="email" class="form-control" id="inputEmail3"
-									placeholder="Nhập số nhà">
+								<form:input type="text" path="advertisement.location" class="form-control" id="location"
+ 									placeholder="Nhập vị trí"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Tên đường</label>
+							<label for="houseNo" class="col-sm-2 control-label">Số nhà</label>
 							<div class="col-sm-10">
-								<input type="email" class="form-control" id="inputEmail3"
-									placeholder="Nhập tên đường">
+								<form:input path="advertisement.houseNo" type="text" class="form-control" id="houseNo"
+									placeholder="Nhập số nhà"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Phường</label>
+							<label for="street" class="col-sm-2 control-label">Tên đường</label>
 							<div class="col-sm-10">
-								<select class="form-control">
-									<option>-- Chọn phường --</option>
-									<option>Bình Chánh</option>
-									<option>Linh Trung</option>
-									<option>Linh Tây</option>
-								</select>
+								<form:input path="advertisement.street" type="text" class="form-control" id="street"
+									placeholder="Nhập tên đường"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Quận</label>
+							<label for="province" class="col-sm-2 control-label">Tỉnh</label>
 							<div class="col-sm-10">
-								<select class="form-control">
-									<option>-- Chọn quận --</option>
-									<option>Quận 1</option>
-									<option>Tân Bình</option>
-									<option>Quận 2</option>
-								</select>
+								<form:select cssClass="form-control" path="advertisement.province" items="${provinces }" itemLabel="name" itemValue="name"></form:select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="inputEmail3" class="col-sm-2 control-label">Tỉnh</label>
+							<label for="district" class="col-sm-2 control-label">Quận</label>
 							<div class="col-sm-10">
-								<select class="form-control">
-									<option>-- Chọn tỉnh --</option>
-									<option>Bình Định</option>
-									<option>Đà Nẵng</option>
-									<option>HCM</option>
-								</select>
+								<form:select cssClass="form-control" path="advertisement.district" items="${districts }" itemLabel="name" itemValue="name"></form:select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="ward" class="col-sm-2 control-label">Phường</label>
+							<div class="col-sm-10">
+								<form:select cssClass="form-control" path="advertisement.ward" items="${wards }" itemLabel="name" itemValue="name"></form:select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="map" class="col-sm-2 control-label">Google map</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" id="map"
-									placeholder="Link goole map">
+								<form:input path="advertisement.map" type="text" class="form-control" id="map"
+									placeholder="Link goole map"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="size" class="col-sm-2 control-label">Kích thước</label>
+							<div class="col-sm-10">
+								<form:input path="advertisement.size" type="text" class="form-control" id="size"
+									placeholder="Nhập kích thước"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="price" class="col-sm-2 control-label">Đơn giá</label>
+							<div class="col-sm-10">
+								<form:input path="advertisement.price" type="text" class="form-control" id="price"
+									placeholder="Nhập đơn giá"/>
 							</div>
 						</div>
 						
 						<div class="form-group">
 							<label for="note" class="col-sm-2 control-label">Ghi chú</label>
 							<div class="col-sm-10">
-								<textarea type="text" class="form-control" id="note"
-									placeholder="Ghi chú"></textarea>
+								<form:textarea path="advertisement.note" class="form-control" id="note" style="resize: none;"
+									placeholder="Ghi chú"/>
 							</div>
 						</div>
 
@@ -94,39 +106,39 @@
 									</div>
 									<!-- /.box-header -->
 									<!-- form start -->
-									<form class="form-horizontal">
+									<div class="form-horizontal">
 										<div class="box-body">
 											<div class="form-group">
-												<label for="phone" class="col-sm-2 control-label">ĐT</label>
+												<label for="ownerPhone" class="col-sm-2 control-label">ĐT</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="phone"
-														placeholder="Số điện thoại">
+													<form:input path="advertisement.ownerPhone" type="text" class="form-control" id="ownerPhone"
+														placeholder="Số điện thoại"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="email" class="col-sm-2 control-label">Email</label>
+												<label for="ownerEmail" class="col-sm-2 control-label">Email</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="email"
-														placeholder="Email">
+													<form:input path="advertisement.ownerEmail" type="text" class="form-control" id="ownerEmail"
+														placeholder="Email"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="price" class="col-sm-2 control-label">Giá</label>
+												<label for="ownerPrice" class="col-sm-2 control-label">Giá</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="price"
-														placeholder="Giá thuê">
+													<form:input path="advertisement.ownerPrice" type="text" class="form-control" id="ownerPrice"
+														placeholder="Giá thuê"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="custName" class="col-sm-2 control-label">NLH</label>
+												<label for="ownerContactPerson" class="col-sm-2 control-label">NLH</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="custName"
-														placeholder="Người liên hệ">
+													<form:input path="advertisement.ownerContactPerson" type="text" class="form-control" id="ownerContactPerson"
+														placeholder="Người liên hệ"/>
 												</div>
 											</div>
 										</div>
 										<!-- /.box-footer -->
-									</form>
+									</div>
 								</div>
 							</div>
 
@@ -137,79 +149,84 @@
 									</div>
 									<!-- /.box-header -->
 									<!-- form start -->
-									<form class="form-horizontal">
+									<div class="form-horizontal">
 										<div class="box-body">
 											<div class="form-group">
-												<label for="phone" class="col-sm-2 control-label">ĐT</label>
+												<label for="advCompPhone" class="col-sm-2 control-label">Phone</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="phone"
-														placeholder="Số điện thoại">
+													<form:input path="advertisement.advCompPhone" type="text" class="form-control" id="advCompPhone"
+														placeholder="Email"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="email" class="col-sm-2 control-label">Email</label>
+												<label for="advCompEmail" class="col-sm-2 control-label">Email</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="email"
-														placeholder="Email">
+													<form:input path="advertisement.advCompEmail" type="text" class="form-control" id="advCompEmail"
+														placeholder="Email"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="price" class="col-sm-2 control-label">Giá</label>
+												<label for="advCompPrice" class="col-sm-2 control-label">Giá</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="price"
-														placeholder="Giá thuê">
+													<form:input path="advertisement.advCompPrice" type="text" class="form-control" id="advCompPrice"
+														placeholder="Giá thuê"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="custName" class="col-sm-2 control-label">NLH</label>
+												<label for="advCompContactPerson" class="col-sm-2 control-label">NLH</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control" id="custName"
-														placeholder="Người liên hệ">
+													<form:input path="advertisement.advCompContactPerson" type="text" class="form-control" id="advCompContactPerson"
+														placeholder="Người liên hệ"/>
 												</div>
 											</div>
 										</div>
 										<!-- /.box-footer -->
-									</form>
+									</div>
 								</div>
 							</div>
 						</div>
 
-
 						<iframe
-							src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15673.3169232859!2d106.76861631158515!3d10.862544375601214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1509812552105"
+							src="${advertDto.advertisement.map }"
 							width="100%" height="450" frameborder="0" style="border: 0"
 							allowfullscreen></iframe>
 					</div>
 					<!-- /.box-body -->
 					<div class="box-footer">
-						<button type="submit" class="btn btn-default">Huỷ</button>
-						<button type="submit" class="btn btn-info pull-right">Lưu</button>
+						<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="btn btn-default">Huỷ</a>
+						<button type="submit" class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 					</div>
 					<!-- /.box-footer -->
-				</form>
+				</div>
 			</div>
 		</div>
 
 		<div class="col-md-3">
-			<img src="<c:url value='/resources/dist/img/photo1.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" /> <img
-				src="<c:url value='/resources/dist/img/photo2.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" /> <img
-				src="<c:url value='/resources/dist/img/photo1.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" /> <img
-				src="<c:url value='/resources/dist/img/photo2.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" /> <img
-				src="<c:url value='/resources/dist/img/photo1.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" /> <img
-				src="<c:url value='/resources/dist/img/photo2.png'/>"
-				class="img-thumbnail" alt="Cinque Terre" /> <input
-				class="form-control" type="file" />
+			<div id="preview">
+				<c:forEach items="${advertDto.advertisement.advImages }" var="advImage">
+					<img class="img-thumbnail" src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" alt="${advImage.name }"></img>
+				</c:forEach>
+			</div>
+			
+			<form:input id="imageBrowser" onchange="previewImages()" class="form-control" path="files" type="file" multiple="multiple" accept="image/x-png,image/gif,image/jpeg"/>
+			<script type="text/javascript">
+				function previewImages() {
+					$('#preview').empty();
+					
+					var files = document.getElementById("imageBrowser").files;
+					for(var i = 0; i < files.length; i++) {
+						var oFReader = new FileReader();
+				        oFReader.readAsDataURL(files[i]);
+				
+				        oFReader.onload = function (oFREvent) {
+				        	var image = "<img src='"+oFREvent.target.result+"' class='img-thumbnail'/>";
+				            $('#preview').append(image);
+				        };
+					}
+			    };
+			</script>
 		</div>
+		</form:form>
 	</div>
 	<!-- /.row -->
 </section>
