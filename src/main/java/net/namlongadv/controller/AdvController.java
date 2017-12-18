@@ -2,8 +2,12 @@ package net.namlongadv.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -11,9 +15,16 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.dto.AdvertisementDTO;
+import net.namlongadv.dto.AdvertisementWrapperDTO;
 import net.namlongadv.models.AdvImage;
 import net.namlongadv.models.Advertisement;
+import net.namlongadv.models.NLAdvUserDetails;
 import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
-import net.namlongadv.repositories.DistrictRepository;
-import net.namlongadv.repositories.ProvinceRepository;
-import net.namlongadv.repositories.WardRepository;
+import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.utils.UploadFileUtils;
 
 @Controller
@@ -42,11 +53,38 @@ public class AdvController {
 	@Autowired
 	private AdvImageRepository advImageRepository;
 	@Autowired
-	private ProvinceRepository provinceRepository;
-	@Autowired
-	private DistrictRepository districtRepository;
-	@Autowired
-	private WardRepository wardRepository;
+	private UserRepository userRepository;
+
+	@InitBinder
+	public void bindingPreparation(WebDataBinder binder) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		CustomDateEditor orderDateEditor = new CustomDateEditor(dateFormat, true);
+		binder.registerCustomEditor(Date.class, orderDateEditor);
+	}
+
+	@RequestMapping(value = "/search")
+	public String search(@RequestParam(value = "code", required = false) Optional<String> code,
+			@RequestParam(value = "address", required = false) Optional<String> address,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, ModelMap model) {
+		Page<Advertisement> rs = null;
+		if (code.isPresent() && code.get().trim().length() > 0) {
+			model.put("code", code.get());
+			rs = advertisementRepository.findByCodeContainingOrderByStartDate(code.get(),
+					new PageRequest(page.intValue(), size.intValue()));
+		} else if (address.isPresent() && address.get().trim().length() > 0) {
+			model.put("address", address.get());
+			rs = advertisementRepository.findByAddressOrderByStartDate(address.get(),
+					new PageRequest(page.intValue(), size.intValue()));
+		} else {
+			return "redirect:/adv/view?page=0&size=10";
+		}
+
+		log.debug("Page: {} - {}", rs.getNumber(), rs.getContent().size());
+
+		model.put("page", rs);
+		return "advs";
+	}
 
 	@RequestMapping(value = { "/view" }, method = RequestMethod.GET)
 	public String advs(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
@@ -54,10 +92,10 @@ public class AdvController {
 			ModelMap model) {
 		log.info("Getting advs page");
 		session.setAttribute(pageIndex, "advs");
-		model.addAttribute("page", advertisementRepository.findAll(new PageRequest(page, size)));
-		model.addAttribute("provinces", provinceRepository.findAll());
-		model.addAttribute("districts", districtRepository.findAll());
-		model.addAttribute("wards", wardRepository.findAll());
+		
+		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
+		model.addAttribute("page",
+				advertisementRepository.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endDate"))));
 		return "advs";
 	}
 
@@ -66,14 +104,14 @@ public class AdvController {
 		log.debug("Getting adv page");
 		session.setAttribute(pageIndex, "adv");
 		model.addAttribute("advertDto", new AdvertisementDTO());
-		model.addAttribute("provinces", provinceRepository.findAll());
-		model.addAttribute("districts", districtRepository.findAll());
-		model.addAttribute("wards", wardRepository.findAll());
 		return "adv";
 	}
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
 	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
+		Authentication authenticate = SecurityContextHolder.getContext().getAuthentication();
+		NLAdvUserDetails userDetails = (NLAdvUserDetails) authenticate.getPrincipal();
+
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
 
@@ -100,9 +138,11 @@ public class AdvController {
 		}
 
 		advert.setAdvImages(advImages);
+		// For update
 		if (prevAdvertisement != null) {
+			advert.setUpdatedDate(new Date());
 			log.debug("Image is empty: " + advImages.size());
-			if(advImages.isEmpty()) {
+			if (advImages.isEmpty()) {
 				advert.setAdvImages(prevAdvertisement.getAdvImages());
 			} else {
 				// Delete previous files
@@ -115,8 +155,12 @@ public class AdvController {
 					}
 				}
 			}
+		} else {
+			advert.setCreatedDate(new Date());
+			advert.setUpdatedDate(new Date());
 		}
 
+		advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);
@@ -135,9 +179,6 @@ public class AdvController {
 		log.debug("Getting {}'s info", advId);
 		session.setAttribute(pageIndex, "advs");
 
-		model.addAttribute("provinces", provinceRepository.findAll());
-		model.addAttribute("districts", districtRepository.findAll());
-		model.addAttribute("wards", wardRepository.findAll());
 		Advertisement advertisement = advertisementRepository.findOne(advId);
 		if (advertisement != null) {
 			AdvertisementDTO advertDto = new AdvertisementDTO();

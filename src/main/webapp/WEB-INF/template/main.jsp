@@ -40,6 +40,11 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+<link rel="stylesheet" href="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.css'/>">
+  
+  <!-- jQuery 2.2.3 -->
+	<script
+		src="<c:url value='/resources/plugins/jQuery/jquery-2.2.3.min.js'/>"></script>
 
 <style type="text/css">
 table tr td {
@@ -91,9 +96,8 @@ table tr td {
 	</div>
 	<!-- ./wrapper -->
 
-	<!-- jQuery 2.2.3 -->
-	<script
-		src="<c:url value='/resources/plugins/jQuery/jquery-2.2.3.min.js'/>"></script>
+	
+	<script src="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.min.js'/>"></script>
 	<!-- Bootstrap 3.3.6 -->
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<!-- DataTables -->
