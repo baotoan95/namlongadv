@@ -3,12 +3,14 @@ package net.namlongadv.controller;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -40,6 +42,7 @@ import net.namlongadv.models.NLAdvUserDetails;
 import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.UploadFileUtils;
 
 @Controller
@@ -66,13 +69,18 @@ public class AdvController {
 	public String search(@RequestParam(value = "code", required = false) Optional<String> code,
 			@RequestParam(value = "address", required = false) Optional<String> address,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, ModelMap model) {
+			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
+			@RequestParam(value = "createdBy", required = false, defaultValue = "") Optional<String> createdBy,
+			@RequestParam(value = "daterange", required = false, defaultValue = "") Optional<String> daterange, ModelMap model) {
+		model.addAttribute("isSearch", true);
 		Page<Advertisement> rs = null;
 		if (code.isPresent() && code.get().trim().length() > 0) {
+			log.debug("Filter by code {}", code.get());
 			model.put("code", code.get());
 			rs = advertisementRepository.findByCodeContainingOrderByStartDate(code.get(),
 					new PageRequest(page.intValue(), size.intValue()));
 		} else if (address.isPresent() && address.get().trim().length() > 0) {
+			log.debug("Filter by address {}", address.get());
 			model.put("address", address.get());
 			rs = advertisementRepository.findByAddressOrderByStartDate(address.get(),
 					new PageRequest(page.intValue(), size.intValue()));
@@ -81,6 +89,27 @@ public class AdvController {
 		}
 
 		log.debug("Page: {} - {}", rs.getNumber(), rs.getContent().size());
+		
+		// Filter result
+		if(createdBy.isPresent() && createdBy.get().length() > 0) {
+			model.put("createdBy", createdBy.get());
+			log.debug("Filter by user {}", createdBy.get());
+			rs.getContent().stream().filter(adv -> adv.getCreatedBy().getUsername().equalsIgnoreCase(createdBy.get())).collect(Collectors.toList());
+		}
+		
+		if(daterange.isPresent() && daterange.get().length() > 0) {
+			model.put("daterange", daterange.get());
+			log.debug("Filter by daterange {}", daterange.get());
+			try {
+				String[] dates = daterange.get().trim().split(" - ");
+				Date from = DateUtils.convertStringToDate(dates[0]);
+				Date to = DateUtils.convertStringToDate(dates[1]);
+				rs.getContent().stream().filter(adv -> adv.getUpdatedDate().after(from)).filter(adv -> adv.getUpdatedDate().before(to)).collect(Collectors.toList());
+			} catch (ParseException e) {
+				log.debug("Error when parse daterange");
+				// Do nothing
+			}
+		}
 
 		model.put("page", rs);
 		return "advs";

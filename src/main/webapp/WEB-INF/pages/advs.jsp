@@ -89,15 +89,15 @@ table tr th {
 		<div class="col-xs-12" id="accordion" role="tablist">
 			<div class="box box-danger">
 				<div class="box-header with-border" role="tab" id="headingOne">
-					<h4 class="panel-title" data-toggle="collapse"
+					<h4 class="panel-title ${isSearch ? '' : 'collapsed' }" data-toggle="collapse"
 						style="cursor: pointer;" data-parent="#accordion"
-						href="#collapseOne" aria-expanded="false"
+						href="#collapseOne" aria-expanded="${isSearch }"
 						aria-controls="collapseOne">
 						<a role="button"> Bộ Lọc </a>
 					</h4>
 				</div>
-				<div id="collapseOne" class="panel-collapse collapse"
-					role="tabpanel" aria-labelledby="headingOne">
+				<div id="collapseOne" class="panel-collapse collapse ${isSearch ? 'in' : '' }"
+					role="tabpanel" aria-labelledby="headingOne" aria-expanded="${isSearch }">
 					<form action="${pageContext.request.contextPath }/adv/search"
 						method="get">
 						<div class="box-body">
@@ -107,14 +107,13 @@ table tr th {
 										placeholder="Mã" value="${code }">
 								</div>
 								<div class="col-xs-3">
-									<input id="address" type="text" name="address" value="${address }"
-										class="form-control" placeholder="Địa chỉ">
+									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ">
 								</div>
 								<div class="col-xs-3">
-								    <input type="text" class="form-control" placeholder="Tạo bởi" name="created" id="createByFilter" />
+								    <input type="text" class="form-control" value="${createdBy }" placeholder="Tạo bởi" name="createdBy" id="createByFilter" />
 								</div>
 								<div class="col-xs-3">
-								    <input type="text" class="form-control" placeholder="Ngày tạo" name="daterange" id="createByFilter" />
+								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange" id="createByFilter" />
 								</div>
 								<script>
 									$(function() {
@@ -187,7 +186,7 @@ table tr th {
 <!-- 								<th>Kích thước</th> -->
 <!-- 								<th>Đơn giá</th> -->
 								<th style="width: 20px;"></th>
-								<th style="width: 10%;">Người liên hệ</th>
+								<th style="width: 13%;">Người liên hệ</th>
 								<th style="width: 10%;">SĐT</th>
 <!-- 								<th style="width: 10%;">Email</th> -->
 <!-- 								<th>Giá thuê</th> -->
@@ -243,11 +242,11 @@ table tr th {
 											<c:forEach items="${adv.advImages }" var="advImage" varStatus="i">
 										  <li>
 										  	<input type="checkbox" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
-										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
-										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
 										    <label for="cb${loop.index }-${i.index }">
 										    	<img src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }&w=200&h=200" />
 										    </label>
+										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
+										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
 										  </li>
 										  </c:forEach>
 <%-- 										  <li><input type="checkbox" id="cbb${loop.index }" /> --%>
