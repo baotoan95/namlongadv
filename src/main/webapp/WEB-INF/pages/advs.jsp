@@ -98,22 +98,20 @@ table tr th {
 				</div>
 				<div id="collapseOne" class="panel-collapse collapse ${isSearch ? 'in' : '' }"
 					role="tabpanel" aria-labelledby="headingOne" aria-expanded="${isSearch }">
-					<form action="${pageContext.request.contextPath }/adv/search"
-						method="get">
+					<form action="${pageContext.request.contextPath }/adv/search" method="get">
 						<div class="box-body">
 							<div class="row">
 								<div class="col-xs-3 ui-widget">
-									<input type="text" name="code" class="form-control"
-										placeholder="Mã" value="${code }">
+									<input type="text" name="code" class="form-control" placeholder="Mã" value="${code }"/>
 								</div>
 								<div class="col-xs-3">
-									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ">
+									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ"/>
 								</div>
 								<div class="col-xs-3">
-								    <input type="text" class="form-control" value="${createdBy }" placeholder="Tạo bởi" name="createdBy" id="createByFilter" />
+								    <input type="text" name="createdBy" class="form-control" value="${createdBy }" placeholder="Tạo bởi"/>
 								</div>
 								<div class="col-xs-3">
-								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange" id="createByFilter" />
+								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
 								</div>
 								<script>
 									$(function() {
@@ -121,12 +119,20 @@ table tr th {
 											source: "${pageContext.request.contextPath}/location",
 										    minLength: 2,
 										    select: function( event, ui ) {
-										    	console.log( "Selected: " + ui.item.value + " aka " + ui.item.id );
+										    	console.log("Selected: " + ui.item.value);
 										    }
 										});
-										console.log($('input[name="daterange"]'));
+										
+										var daterange = '${daterange}'.split(" - ");
+										if(daterange.length < 2) {
+											var today = new Date();
+											daterange[0] = "01/01/2017";
+											daterange[1] = (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
+										}
 										$('input[name="daterange"]').daterangepicker({
-											 "opens": "left"
+											 opens: "left",
+											 startDate: daterange[0],
+											 endDate: daterange[1]
 										});
 									});
 									
@@ -135,7 +141,7 @@ table tr th {
 						                    url : "${pageContext.request.contextPath}/users",
 						                    type : "get",
 						                    success : function (result){
-						                    	$('#createByFilter').autocomplete({
+						                    	$('input[name=createdBy]').autocomplete({
 										            source: result,
 										            minLength: 0,
 										            scroll: true
@@ -154,7 +160,8 @@ table tr th {
 						<!-- /.box-body -->
 						<div class="footer">
 							<div class="box-footer">
-								<button type="submit" class="btn btn-info">Lọc</button>
+								<input type="submit" class="btn btn-info" value="Lọc">
+								<input type="reset" class="btn btn-info pull-right" value="Đặt lại">
 							</div>
 						</div>
 					</form>

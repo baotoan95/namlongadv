@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -70,45 +69,42 @@ public class AdvController {
 			@RequestParam(value = "address", required = false) Optional<String> address,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-			@RequestParam(value = "createdBy", required = false, defaultValue = "") Optional<String> createdBy,
-			@RequestParam(value = "daterange", required = false, defaultValue = "") Optional<String> daterange, ModelMap model) {
-		model.addAttribute("isSearch", true);
-		Page<Advertisement> rs = null;
-		if (code.isPresent() && code.get().trim().length() > 0) {
-			log.debug("Filter by code {}", code.get());
-			model.put("code", code.get());
-			rs = advertisementRepository.findByCodeContainingOrderByStartDate(code.get(),
-					new PageRequest(page.intValue(), size.intValue()));
-		} else if (address.isPresent() && address.get().trim().length() > 0) {
-			log.debug("Filter by address {}", address.get());
-			model.put("address", address.get());
-			rs = advertisementRepository.findByAddressOrderByStartDate(address.get(),
-					new PageRequest(page.intValue(), size.intValue()));
-		} else {
-			return "redirect:/adv/view?page=0&size=10";
-		}
+			@RequestParam(value = "createdBy", required = false) Optional<String> createdBy,
+			@RequestParam(value = "daterange", required = false) Optional<String> daterange, ModelMap model) {
 
-		log.debug("Page: {} - {}", rs.getNumber(), rs.getContent().size());
+		model.addAttribute("isSearch", true);
 		
-		// Filter result
-		if(createdBy.isPresent() && createdBy.get().length() > 0) {
-			model.put("createdBy", createdBy.get());
-			log.debug("Filter by user {}", createdBy.get());
-			rs.getContent().stream().filter(adv -> adv.getCreatedBy().getUsername().equalsIgnoreCase(createdBy.get())).collect(Collectors.toList());
-		}
-		
-		if(daterange.isPresent() && daterange.get().length() > 0) {
-			model.put("daterange", daterange.get());
-			log.debug("Filter by daterange {}", daterange.get());
-			try {
-				String[] dates = daterange.get().trim().split(" - ");
-				Date from = DateUtils.convertStringToDate(dates[0]);
-				Date to = DateUtils.convertStringToDate(dates[1]);
-				rs.getContent().stream().filter(adv -> adv.getUpdatedDate().after(from)).filter(adv -> adv.getUpdatedDate().before(to)).collect(Collectors.toList());
-			} catch (ParseException e) {
-				log.debug("Error when parse daterange");
-				// Do nothing
+		Page<Advertisement> rs = null;
+		try {
+			if(!daterange.isPresent() || (daterange.isPresent() && daterange.get().trim().length() == 0)) {
+				log.debug("Filter with default date range");
+				daterange = Optional.of("01/01/2017 - " + DateUtils.convertDateToString(new Date()));
 			}
+			model.put("daterange", daterange.get());
+			
+			String[] dates = daterange.get().trim().split(" - ");
+			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
+			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
+			
+			String sCode = null;
+			String sAddress = "";
+			String sCreatedBy = null;
+			if(code.isPresent() && code.get().length() > 0) {
+				sCode = code.get();
+				model.put("code", code.get());
+			}
+			if(address.isPresent() && address.get().length() > 0) {
+				sAddress = address.get().toUpperCase();
+				model.put("address", address.get());
+			}
+			if(createdBy.isPresent() && createdBy.get().length() > 0) {
+				sCreatedBy = createdBy.get();
+				model.put("createdBy", createdBy.get());
+			}
+			
+			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, new PageRequest(page.intValue(), size.intValue()));
+		} catch (ParseException e) {
+			return "redirect:/adv/view?page=0&size=10";
 		}
 
 		model.put("page", rs);

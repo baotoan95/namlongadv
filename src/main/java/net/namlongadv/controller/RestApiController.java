@@ -29,10 +29,10 @@ public class RestApiController {
 		
 		rs.getContent().stream().forEach(adv -> {
 			StringBuilder iAddress = new StringBuilder();
-			iAddress.append(adv.getHouseNo().length() > 0 ? adv.getHouseNo().concat(" ") : "");
-			iAddress.append(adv.getStreet().length() > 0 ? adv.getStreet().concat(" ") : "");
-			iAddress.append(adv.getWard().length() > 0 ? adv.getWard().concat(" ") : "");
-			iAddress.append(adv.getDistrict().length() > 0 ? adv.getDistrict().concat(" ") : "");
+			iAddress.append(adv.getHouseNo().length() > 0 ? adv.getHouseNo().concat(", ") : "");
+			iAddress.append(adv.getStreet().length() > 0 ? adv.getStreet().concat(", ") : "");
+			iAddress.append(adv.getWard().length() > 0 ? adv.getWard().concat(", ") : "");
+			iAddress.append(adv.getDistrict().length() > 0 ? adv.getDistrict().concat(", ") : "");
 			iAddress.append(adv.getProvince().length() > 0 ? adv.getProvince() : "");
 			addresses.add(iAddress.toString());
 		});
