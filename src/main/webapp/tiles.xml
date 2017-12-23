@@ -29,4 +29,8 @@
 		<put-attribute name="content" value="/WEB-INF/pages/user.jsp" />
 	</definition>
 	
+	<definition name="404" extends="main">
+		<put-attribute name="content" value="/WEB-INF/pages/404.jsp" />
+	</definition>
+	
 </tiles-definitions>

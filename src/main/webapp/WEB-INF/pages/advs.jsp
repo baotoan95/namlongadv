@@ -113,48 +113,6 @@ table tr th {
 								<div class="col-xs-3">
 								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
 								</div>
-								<script>
-									$(function() {
-										$("#address").autocomplete({
-											source: "${pageContext.request.contextPath}/location",
-										    minLength: 2,
-										    select: function( event, ui ) {
-										    	console.log("Selected: " + ui.item.value);
-										    }
-										});
-										
-										var daterange = '${daterange}'.split(" - ");
-										if(daterange.length < 2) {
-											var today = new Date();
-											daterange[0] = "01/01/2017";
-											daterange[1] = (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
-										}
-										$('input[name="daterange"]').daterangepicker({
-											 opens: "left",
-											 startDate: daterange[0],
-											 endDate: daterange[1]
-										});
-									});
-									
-									$(document).ready(function() {
-										$.ajax({
-						                    url : "${pageContext.request.contextPath}/users",
-						                    type : "get",
-						                    success : function (result){
-						                    	$('input[name=createdBy]').autocomplete({
-										            source: result,
-										            minLength: 0,
-										            scroll: true
-										        }).focus(function() {
-										            $(this).autocomplete("search", "");
-										        });
-						                    },
-						                    error: function(e) {
-						                    	console.log("Error: " + e);
-						                    }
-						                });
-								    });
-								</script>
 							</div>
 						</div>
 						<!-- /.box-body -->
@@ -172,7 +130,7 @@ table tr th {
 	<div class="row">
 		<div class="col-xs-12">
 			<div class="box">
-				<form:form name="exportForm" action="${pageContext.request.contextPath }/export/excel" method="post" modelAttribute="advertWrapper">
+				<form:form id="exportForm" name="exportForm" action="${pageContext.request.contextPath }/export/excel" method="post" modelAttribute="advertWrapper">
 				<div class="box-header">
 					<h3 class="box-title">Data</h3>
 				</div>
@@ -277,7 +235,7 @@ table tr th {
 										</ul>
 									</td>
 <%-- 									<td rowspan="2">${adv.note }</td> --%>
-									<td rowspan="2" class="action" style="text-align: center;"><a title="Xoá"
+									<td rowspan="2" class="action" style="text-align: center;"><a class="delete" title="Xoá"
 										href="${pageContext.request.contextPath }/adv/delete/${adv.id }"><i
 											class="fa fa-fw fa-trash"></i></a> <br /> <a title="Xem"
 										href="${pageContext.request.contextPath }/adv/${adv.id }"><i
@@ -301,19 +259,13 @@ table tr th {
 				<div class="box-footer clearfix">
 					<security:authorize
 						access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
-						<button type="button" id="exportExcel" class="btn btn-info">Xuất Excel</button>
+						<button id="exportExcel" id="exportExcel" class="btn btn-info">Xuất Excel</button>
 					</security:authorize>
 					<security:authorize
 						access="hasAnyRole('ROLE_ADMIN', 'ROLE_BUSINESS')">
-						<input type="submit" id="exportPowerpoint" class="btn btn-info">Xuất
-							Powerpoint</input>
+						<button id="exportPowerpoint" id="exportPowerpoint" class="btn btn-info">Xuất
+							Powerpoint</button>
 					</security:authorize>
-					
-					<script type="text/javascript">
-// 						$('#exportExcel').click(function(e) {
-// 							$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath}');
-// 						});
-					</script>
 
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:if test="${page.number > 0 }">
@@ -346,3 +298,65 @@ table tr th {
 
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<script>
+$(document).ready(function() {
+	$('.delete').click(function(e) {
+		e.preventDefault();
+		var answer = confirm("Bạn có chắc muốn xoá?");
+		if(answer === true) {
+			window.location.href = $(this).attr('href');
+		}
+	});
+	
+	// Address
+	$("#address").autocomplete({
+		source: "${pageContext.request.contextPath}/location",
+	    minLength: 2,
+	    select: function( event, ui ) {
+	    	console.log("Selected: " + ui.item.value);
+	    }
+	});
+	
+	var daterange = '${daterange}'.split(" - ");
+	if(daterange.length < 2) {
+		var today = new Date();
+		daterange[0] = "01/01/2017";
+		daterange[1] = (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
+	}
+	$('input[name="daterange"]').daterangepicker({
+		 opens: "left",
+		 startDate: daterange[0],
+		 endDate: daterange[1]
+	});
+	
+	// Get users for compobox
+	$.ajax({
+        url : "${pageContext.request.contextPath}/users",
+        type : "get",
+        success : function (result){
+        	$('input[name=createdBy]').autocomplete({
+	            source: result,
+	            minLength: 0,
+	            scroll: true
+	        }).focus(function() {
+	            $(this).autocomplete("search", "");
+	        });
+        },
+        error: function(e) {
+        	console.log("Error: " + e);
+        }
+    });
+	
+	// Export actions
+	$('#exportExcel').click(function(e) {
+		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel');
+		$('form[name=exportForm]').submit();
+	});
+	$('#exportPowerpoint').click(function(e) {
+		alert('This function does not supported yet');
+		e.preventDefault();
+// 		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint');
+// 		$('form[name=exportForm]').submit();
+	});
+})
+</script>

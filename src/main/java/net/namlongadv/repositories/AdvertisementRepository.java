@@ -27,7 +27,7 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	@Query("select adv from Advertisement adv where "
 			+ "(:address is null or concat(upper(adv.houseNo), ', ', upper(adv.street), ', ', upper(adv.ward), ', ', upper(adv.district), ', ', upper(adv.province)) "
 			+ "like concat('%',:address,'%')) "
-			+ "and (:code is null or adv.code = :code) "
+			+ "and (:code is null or upper(adv.code) = upper(:code)) "
 			+ "and (:username is null or adv.createdBy.username = :username) "
 			+ "and (adv.updatedDate between :fromDate and :toDate)")
 	public Page<Advertisement> search(

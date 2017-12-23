@@ -29,6 +29,7 @@ public class UploadFileUtils {
 				log.info("Uploading: " + mpf.getOriginalFilename());
 				String pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + mpf.getOriginalFilename();
 				File serverFile = new File(pathFile);
+				log.debug("Upload to " + pathFile);
 				if(mpf.getBytes().length > 0) {
 					FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(serverFile));
 					log.info(mpf.getOriginalFilename() + " uploaded! ");

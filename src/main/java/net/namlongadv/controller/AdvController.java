@@ -73,36 +73,37 @@ public class AdvController {
 			@RequestParam(value = "daterange", required = false) Optional<String> daterange, ModelMap model) {
 
 		model.addAttribute("isSearch", true);
-		
+
 		Page<Advertisement> rs = null;
 		try {
-			if(!daterange.isPresent() || (daterange.isPresent() && daterange.get().trim().length() == 0)) {
+			if (!daterange.isPresent() || (daterange.isPresent() && daterange.get().trim().length() == 0)) {
 				log.debug("Filter with default date range");
 				daterange = Optional.of("01/01/2017 - " + DateUtils.convertDateToString(new Date()));
 			}
 			model.put("daterange", daterange.get());
-			
+
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
-			
+
 			String sCode = null;
 			String sAddress = "";
 			String sCreatedBy = null;
-			if(code.isPresent() && code.get().length() > 0) {
+			if (code.isPresent() && code.get().length() > 0) {
 				sCode = code.get();
 				model.put("code", code.get());
 			}
-			if(address.isPresent() && address.get().length() > 0) {
+			if (address.isPresent() && address.get().length() > 0) {
 				sAddress = address.get().toUpperCase();
 				model.put("address", address.get());
 			}
-			if(createdBy.isPresent() && createdBy.get().length() > 0) {
+			if (createdBy.isPresent() && createdBy.get().length() > 0) {
 				sCreatedBy = createdBy.get();
 				model.put("createdBy", createdBy.get());
 			}
-			
-			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, new PageRequest(page.intValue(), size.intValue()));
+
+			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to,
+					new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}
@@ -117,7 +118,7 @@ public class AdvController {
 			ModelMap model) {
 		log.info("Getting advs page");
 		session.setAttribute(pageIndex, "advs");
-		
+
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
 		model.addAttribute("page",
 				advertisementRepository.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endDate"))));
