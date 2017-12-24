@@ -33,7 +33,7 @@
 								<td>${user.email }</td>
 								<td>${user.roles }</td>
 								<td class="action">
-									<a href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
+									<a class="delete" href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
 									<br /> 
 									<a href="${pageContext.request.contextPath }/user/${user.id }">
 									<i class="fa fa-fw fa-edit"></i>Xem</a>
@@ -70,3 +70,12 @@
 	</div>
 	<!-- /.row -->
 </section>
+<script>
+$('.delete').click(function(e) {
+	e.preventDefault();
+	var answer = confirm("Bạn có chắc muốn xoá?");
+	if(answer === true) {
+		window.location.href = $(this).attr('href');
+	}
+});
+</script>

@@ -1,61 +1,30 @@
 package net.namlongadv.services;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.models.Email;
-
-@Component
-@Slf4j
+@Service
 public class MailService {
 	@Autowired
-	private JavaMailSender mailSender;
+	private JavaMailSender sender;
+	
+	public void sendEmail() throws Exception {
+		MimeMessage message = sender.createMimeMessage();
 
-	public void send(Email eParams) {
-		if (eParams.isHtml()) {
-			try {
-				sendHtmlMail(eParams);
-			} catch (MessagingException e) {
-				log.error("Could not send email to : {} Error = {}", eParams.getToAsList(), e.getMessage());
-			}
-		} else {
-			sendPlainTextMail(eParams);
-		}
-	}
+		// Enable the multiple part flag!
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-	private void sendHtmlMail(Email eParams) throws MessagingException {
-		boolean isHtml = true;
-		MimeMessage message = mailSender.createMimeMessage();
-		MimeMessageHelper helper = new MimeMessageHelper(message);
-		helper.setTo(eParams.getTo().toArray(new String[eParams.getTo().size()]));
-		helper.setReplyTo(eParams.getFrom());
-		helper.setFrom(eParams.getFrom());
-		helper.setSubject(eParams.getSubject());
-		helper.setText(eParams.getMessage(), isHtml);
-		if (eParams.getCc().size() > 0) {
-			helper.setCc(eParams.getCc().toArray(new String[eParams.getCc().size()]));
-		}
-		mailSender.send(message);
-	}
+		helper.setTo("baotoan.95@gmail.com");
+		helper.setText("<html><body>Here is a cat picture! <img src='cid:id101'/><body></html>", true);
+		helper.setSubject("Hi");
 
-	private void sendPlainTextMail(Email eParams) {
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		eParams.getTo().toArray(new String[eParams.getTo().size()]);
-		mailMessage.setTo(eParams.getTo().toArray(new String[eParams.getTo().size()]));
-		mailMessage.setReplyTo(eParams.getFrom());
-		mailMessage.setFrom(eParams.getFrom());
-		mailMessage.setSubject(eParams.getSubject());
-		mailMessage.setText(eParams.getMessage());
-		if (eParams.getCc().size() > 0) {
-			mailMessage.setCc(eParams.getCc().toArray(new String[eParams.getCc().size()]));
-		}
-		mailSender.send(mailMessage);
+//		ClassPathResource file = new ClassPathResource("cat.jpg");
+//		helper.addInline("id101", file);
+
+		sender.send(message);
 	}
 }

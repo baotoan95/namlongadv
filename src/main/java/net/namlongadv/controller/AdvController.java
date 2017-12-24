@@ -90,7 +90,7 @@ public class AdvController {
 			String sAddress = "";
 			String sCreatedBy = null;
 			if (code.isPresent() && code.get().length() > 0) {
-				sCode = code.get();
+				sCode = code.get().toUpperCase();
 				model.put("code", code.get());
 			}
 			if (address.isPresent() && address.get().length() > 0) {
@@ -98,7 +98,7 @@ public class AdvController {
 				model.put("address", address.get());
 			}
 			if (createdBy.isPresent() && createdBy.get().length() > 0) {
-				sCreatedBy = createdBy.get();
+				sCreatedBy = createdBy.get().toLowerCase();
 				model.put("createdBy", createdBy.get());
 			}
 

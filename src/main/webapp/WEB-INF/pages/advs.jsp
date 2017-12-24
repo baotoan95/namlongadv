@@ -119,7 +119,7 @@ table tr th {
 						<div class="footer">
 							<div class="box-footer">
 								<input type="submit" class="btn btn-info" value="Lọc">
-								<input type="reset" class="btn btn-info pull-right" value="Đặt lại">
+								<input type="reset" class="btn btn-danger" value="Đặt lại">
 							</div>
 						</div>
 					</form>
@@ -306,6 +306,13 @@ $(document).ready(function() {
 		if(answer === true) {
 			window.location.href = $(this).attr('href');
 		}
+	});
+	
+	$('input[type=reset]').click(function(e) {
+		$('input[name=code]').val('');
+		$('input[name=address]').val('');
+		$('input[name=createdBy]').val('');
+		$('input[name=daterange]').val('');
 	});
 	
 	// Address
