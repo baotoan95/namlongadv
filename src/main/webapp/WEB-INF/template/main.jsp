@@ -60,6 +60,18 @@ table tr td {
 .striped {
 	background-color: #f4f4f4;
 }
+.transition {
+    -webkit-transform: scale(1.6); 
+    -moz-transform: scale(1.6);
+    -o-transform: scale(1.6);
+    transform: scale(1.6);
+}
+.image {
+	-webkit-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+}
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -126,6 +138,13 @@ table tr td {
 				"info" : true,
 				"autoWidth" : false
 			});
+		});
+		$(document).ready(function(){
+		    $('.image').hover(function() {
+		        $(this).addClass('transition');
+		    }, function() {
+		        $(this).removeClass('transition');
+		    });
 		});
 	</script>
 </body>

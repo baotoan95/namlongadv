@@ -86,7 +86,7 @@ table tr th {
 
 <section class="content">
 	<div class="row">
-		<div class="col-xs-12" id="accordion" role="tablist">
+		<div class="col-md-12" id="accordion" role="tablist">
 			<div class="box box-danger">
 				<div class="box-header with-border" role="tab" id="headingOne">
 					<h4 class="panel-title ${isSearch ? '' : 'collapsed' }" data-toggle="collapse"
@@ -101,16 +101,19 @@ table tr th {
 					<form action="${pageContext.request.contextPath }/adv/search" method="get">
 						<div class="box-body">
 							<div class="row">
-								<div class="col-xs-3 ui-widget">
+								<div class="col-md-2 ui-widget">
 									<input type="text" name="code" class="form-control" placeholder="Mã" value="${code }"/>
 								</div>
-								<div class="col-xs-3">
-									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ"/>
+								<div class="col-md-2 ui-widget">
+									<input type="text" name="contactPerson" class="form-control" placeholder="NLH" value="${contactPerson }"/>
 								</div>
-								<div class="col-xs-3">
+								<div class="col-md-2">
 								    <input type="text" name="createdBy" class="form-control" value="${createdBy }" placeholder="Tạo bởi"/>
 								</div>
-								<div class="col-xs-3">
+								<div class="col-md-3">
+									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ"/>
+								</div>
+								<div class="col-md-3">
 								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
 								</div>
 							</div>
@@ -128,7 +131,7 @@ table tr th {
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-12">
+		<div class="col-md-12">
 			<div class="box">
 				<form:form id="exportForm" name="exportForm" action="${pageContext.request.contextPath }/export/excel" method="post" modelAttribute="advertWrapper">
 				<div class="box-header">
@@ -140,9 +143,12 @@ table tr th {
 						style="max-width: none !important; margin-right: 10px;">
 						<thead>
 							<tr>
-								<th style="width: 8px; text-align: center;">C</th>
+								<th style="width: 8px; text-align: center;">
+									<input type="checkbox" checked="checked" id="checkAll"/>
+								</th>
 								<th style="width: 8px;">#</th>
-								<th style="width: 20%;">Vị Trí</th>
+								<th style="width: 20%;">Tiêu đề</th>
+								<th style="width: 20%;">Địa chỉ</th>
 <!-- 								<th>Tên Đường</th> -->
 <!-- 								<th>Số Nhà</th> -->
 <!-- 								<th>Xã</th> -->
@@ -170,22 +176,21 @@ table tr th {
 							<c:forEach items="${page.content }" var="adv" varStatus="loop">
 								<tr>
 									<td rowspan="2">
-										<input type="checkbox" name="advs[${loop.index }].id" 
-											checked="checked" value="${adv.id }" />
-										<input type="hidden" 
-											name="advs[${loop.index }].ownerPhone"
+										<input type="checkbox" class="check" name="advs[${loop.index }].id" checked="checked" value="${adv.id }" />
+										<input type="hidden" name="advs[${loop.index }].ownerPhone"
 											value="${adv.ownerPhone }"/>
-										<input type="hidden" 
-											name="advs[${loop.index }].ownerContactPerson"
+										<input type="hidden" name="advs[${loop.index }].ownerContactPerson"
 											value="${adv.ownerContactPerson }"/>
-										<input type="hidden" 
-											name="advs[${loop.index }].location" 
-											value="${adv.location }"/>
+										<input type="hidden" name="advs[${loop.index }].title" 
+											value="${adv.title }"/>
 									</td>
 									<td rowspan="2">${loop.index + 1 }</td>
 									<td rowspan="2">
-										${adv.location }
+										<a href="${pageContext.request.contextPath }/adv/${adv.id }">
+											${adv.title }
+										</a>
 									</td>
+									<td rowspan="2">${adv.houseNo }, ${adv.street }, ${adv.ward }, ${adv.district }, ${adv.province }</td>
 <%-- 									<td rowspan="2">${adv.street }</td> --%>
 <%-- 									<td rowspan="2">${adv.houseNo }</td> --%>
 <%-- 									<td rowspan="2">${adv.ward }</td> --%>
@@ -208,7 +213,7 @@ table tr th {
 										  <li>
 										  	<input type="checkbox" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
 										    <label for="cb${loop.index }-${i.index }">
-										    	<img src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }&w=200&h=200" />
+										    	<img class="image" src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }&w=200&h=200" />
 										    </label>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
@@ -313,6 +318,7 @@ $(document).ready(function() {
 		$('input[name=address]').val('');
 		$('input[name=createdBy]').val('');
 		$('input[name=daterange]').val('');
+		$('input[name=contactPerson]').val('');
 	});
 	
 	// Address
@@ -360,10 +366,28 @@ $(document).ready(function() {
 		$('form[name=exportForm]').submit();
 	});
 	$('#exportPowerpoint').click(function(e) {
-		alert('This function does not supported yet');
-		e.preventDefault();
-// 		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint');
-// 		$('form[name=exportForm]').submit();
+		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint');
+		$('form[name=exportForm]').submit();
+	});
+	
+	// Check all
+	$('#checkAll').click(function(e) {
+		var check = $(this)[0].checked;
+		var checkboxes = $('.check');
+		for(var i = 0; i < checkboxes.length; i++) {
+			$('.check')[i].checked = check;
+		}
+	});
+	
+	$('.check').click(function() {
+		var checkboxes = $('.check');
+		for(var i = 0; i < checkboxes.length; i++) {
+			if($('.check')[i].checked === false) {
+				$('#checkAll')[0].checked = false;
+				return;
+			}
+		}
+		$('#checkAll')[0].checked = true;
 	});
 })
 </script>

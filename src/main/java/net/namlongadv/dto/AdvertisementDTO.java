@@ -1,6 +1,7 @@
 package net.namlongadv.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,6 @@ public class AdvertisementDTO implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Advertisement advertisement;
-	private List<MultipartFile> files;
+	private Advertisement advertisement = new Advertisement();
+	private List<MultipartFile> files = new ArrayList<>();
 }

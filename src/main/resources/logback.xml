@@ -43,10 +43,8 @@
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily -->
-      <fileNamePattern>${DEV_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log
-                        </fileNamePattern>
-      <timeBasedFileNamingAndTriggeringPolicy
-        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+      <fileNamePattern>${DEV_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
         <maxFileSize>10MB</maxFileSize>
       </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
@@ -61,6 +59,7 @@
 
   <root level="error">
     <appender-ref ref="FILE-ERROR" />
+    <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>

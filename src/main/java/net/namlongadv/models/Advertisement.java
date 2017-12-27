@@ -28,26 +28,29 @@ public class Advertisement {
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	private UUID id;
 	private String code;
-	private String location;
+	private String title;
 	private String street;
 	private String houseNo;
 	private String ward;
 	private String district;
 	private String province;
 	private String size;
-	private String price;
 	private String map;
+	private String describe;
 	private String ownerPhone;
 	private String ownerEmail;
 	private String ownerPrice;
 	private String ownerContactPerson;
+	private Date ownerStartDate;
+	private Date ownerEndDate;
 	private String advCompPhone;
 	private String advCompEmail;
 	private String advCompPrice;
 	private String advCompContactPerson;
+	private String advCompName;
+	private Date advCompStartDate;
+	private Date advCompEndDate;
 	private String note;
-	private Date startDate;
-	private Date endDate;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
 	private User createdBy;

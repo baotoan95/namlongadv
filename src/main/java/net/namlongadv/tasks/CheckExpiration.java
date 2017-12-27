@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,20 +16,36 @@ import net.namlongadv.services.MailService;
 import net.namlongadv.utils.DateUtils;
 
 @Slf4j
-//@Configuration
-//@EnableScheduling
+@Configuration
+@EnableScheduling
 public class CheckExpiration {
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
 	private MailService mailService;
+	@Value("${namlongadv.base_url}")
+	private String baseUrl;
 	
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 518400000)
 	public void scheduleFixedRateTask() {
-		List<Advertisement> advs = advertisementRepository.findByEndDateLessThanEqual(DateUtils.addDays(new Date(), 30));
+		Date date = DateUtils.addDays(new Date(), 30);
+		List<Advertisement> advs = advertisementRepository.findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqual(date, date);
 		if(advs != null && !advs.isEmpty()) {
 			try {
-				mailService.sendEmail();
+				StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append("<b>FYI</b><br/><br/>There are some advertisement contracts almost expired:<br/>");
+				int index = 1;
+				for(Advertisement adv: advs) {
+					stringBuilder.append(index);
+					stringBuilder.append(". <a href='"+baseUrl+"/adv/"+adv.getId()+"'>");
+					stringBuilder.append(adv.getTitle());
+					stringBuilder.append("</a><br/>");
+					index++;
+				}
+				stringBuilder.append("<br/>Please take a moment to look over these<br/><br/>");
+				stringBuilder.append("Thank you and best regards!<br/>");
+				stringBuilder.append("<b>NamLong-Management App</b><br/><br/><i>(This is an automated email, please do not reply to this email)</i>");
+				mailService.sendEmail(new String[] {"baotoan.95@gmail.com", "linh.do@namlongadvertising.com"}, stringBuilder.toString(), "Expiration alert - NamLongManagement App");
 			} catch (Exception e) {
 				log.error("Can't send a mail: " + e.getMessage());
 			}

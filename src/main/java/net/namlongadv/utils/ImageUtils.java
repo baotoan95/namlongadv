@@ -11,61 +11,64 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ImageUtils {
-	public static File reduceImageFileSize(int size, String in, String out) throws Exception {
+	public static String reduceImageFileSize(int size, File file, String out) throws Exception {
 		float quality = 1.0f;
-		
-		File file = new File(in);
-		File fileOut = new File(file.getName());
-		
 		long fileSize = file.length();
+		File fileOut2 = null;
 
 		if (fileSize <= size) {
-			return file;
+			log.debug("{}bytes: Don't need to reduce", fileSize);
+			return null;
 		}
 
-		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(FileUtils.getExtensions(in));
+		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(FileUtils.getExtensions(file.getPath()));
 		ImageWriter writer = (ImageWriter) iter.next();
 		ImageWriteParam iwp = writer.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		
 		FileInputStream inputStream = new FileInputStream(file);
-
 		BufferedImage originalImage = ImageIO.read(inputStream);
 		IIOImage image = new IIOImage(originalImage, null, null);
 
 		float percent = 0.1f;
-
 		while (fileSize > size) {
 			if (percent >= quality) {
-				percent = percent * 0.1f;
+				percent = percent * quality;
 			}
 
 			quality -= percent;
-			fileOut = new File(out);
+
+			File fileOut = new File(out);
 			if (fileOut.exists()) {
 				fileOut.delete();
 			}
-//			FileImageOutputStream output = new FileImageOutputStream(fileOut);
-
-			writer.setOutput(fileOut);
+			FileImageOutputStream output = new FileImageOutputStream(fileOut);
+			writer.setOutput(output);
 			iwp.setCompressionQuality(quality);
 			writer.write(null, image, iwp);
-			File fileOut2 = new File(out);
+
+			fileOut2 = new File(out);
 			long newFileSize = fileOut2.length();
 			if (newFileSize == fileSize) {
 				break;
 			} else {
 				fileSize = newFileSize;
 			}
-//			output.close();
+			output.close();
 		}
 
 		writer.dispose();
-		return fileOut;
+		return fileOut2.getPath();
 	}
 	
 	public static File resizeImage(int x, int y, File in) throws IOException {
+		log.debug("Resizing {}", in.getName());
 		BufferedImage originalImage = ImageIO.read(in);
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 

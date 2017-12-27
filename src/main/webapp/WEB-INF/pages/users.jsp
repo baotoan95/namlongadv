@@ -27,16 +27,20 @@
 							<c:forEach items="${page.content }" var="user">
 							<tr>
 								<td>${user.username }</td>
-								<td>${user.name }</td>
+								<td>
+									<a href="${pageContext.request.contextPath }/user/${user.id }">
+										${user.name }
+									</a>
+								</td>
 								<td>${user.department }</td>
 								<td>${user.phone }</td>
 								<td>${user.email }</td>
 								<td>${user.roles }</td>
 								<td class="action">
-									<a class="delete" href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i>Xoá</a> 
+									<a title="Xoá" class="delete" href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i></a> 
 									<br /> 
-									<a href="${pageContext.request.contextPath }/user/${user.id }">
-									<i class="fa fa-fw fa-edit"></i>Xem</a>
+									<a title="Xem" href="${pageContext.request.contextPath }/user/${user.id }">
+									<i class="fa fa-fw fa-edit"></i></a>
 								</td>
 							</tr>
 							</c:forEach>

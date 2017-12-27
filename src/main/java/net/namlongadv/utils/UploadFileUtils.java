@@ -20,7 +20,7 @@ public class UploadFileUtils {
 	 * @param files
 	 * @return list of path files
 	 */
-	public static List<String> uploadMultipleFile(List<MultipartFile> files) {
+	public static List<String> uploadMultipleFile(List<MultipartFile> files, int reduce) {
 		List<String> pathFilesUploaded = new ArrayList<>();
 		File dir = new File(PathContants.UPLOAD_PATH);
 
@@ -28,12 +28,27 @@ public class UploadFileUtils {
 			for (MultipartFile mpf : files) {
 				log.info("Uploading: " + mpf.getOriginalFilename());
 				String pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + mpf.getOriginalFilename();
-				File serverFile = new File(pathFile);
-				log.debug("Upload to " + pathFile);
-				if(mpf.getBytes().length > 0) {
-					FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(serverFile));
-					log.info(mpf.getOriginalFilename() + " uploaded! ");
-					pathFilesUploaded.add(serverFile.getPath());
+				if(mpf.getSize() > reduce) {
+					log.debug("Reducing size of image");
+					File file = FileUtils.convertMultipartToFile(mpf);
+					try {
+						String pathUploaded = ImageUtils.reduceImageFileSize(reduce, file, pathFile);
+						log.debug("Saved to storage: {}", pathUploaded);
+						pathFilesUploaded.add(pathUploaded);
+					} catch (Exception e) {
+						log.error("Fail to upload file with large size: " + e.getMessage());
+					}
+				} else {
+					File containFolder = new File(dir.getAbsolutePath());
+					containFolder.mkdirs();
+					File serverFile = new File(pathFile);
+					serverFile.createNewFile();
+					log.debug("Upload to " + pathFile);
+					if(mpf.getBytes().length > 0) {
+						FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(serverFile));
+						log.info(mpf.getOriginalFilename() + " uploaded! ");
+						pathFilesUploaded.add(serverFile.getPath());
+					}
 				}
 			}
 		} catch (IOException e) {

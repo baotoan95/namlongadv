@@ -24,7 +24,7 @@ public class RestApiController {
 	
 	@RequestMapping(value = "/location", method = RequestMethod.GET)
 	public List<String> addresses(@RequestParam(value = "term", required = true) String address) {
-		Page<Advertisement> rs = advertisementRepository.findByAddressOrderByStartDate(address, new PageRequest(0, 20));
+		Page<Advertisement> rs = advertisementRepository.findByAddress(address, new PageRequest(0, 20));
 		List<String> addresses = new ArrayList<>();
 		
 		rs.getContent().stream().forEach(adv -> {

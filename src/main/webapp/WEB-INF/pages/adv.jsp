@@ -19,7 +19,7 @@
 			method="${advertDto.advertisement.id == null ? 'post' : 'put' }"
 			enctype="multipart/form-data">
 			<form:hidden path="advertisement.id" />
-			<div class="col-xs-9">
+			<div class="col-md-9">
 				<div class="box box-info">
 					<div class="box-header with-border">
 						<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : 'Cập Nhật Thông Tin Bảng Quảng Cáo' }</h3>
@@ -32,107 +32,89 @@
 					<div class="form-horizontal">
 						<div class="box-body">
 							<div class="form-group">
-								<label for="code" class="col-sm-2 control-label">Mã</label>
-								<div class="col-sm-10">
+								<label for="code" class="col-md-2 control-label">Mã</label>
+								<div class="col-md-10">
 									<form:input type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Nhập mã" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="location" class="col-sm-2 control-label">Vị
-									trí</label>
-								<div class="col-sm-10">
-									<form:input type="text" path="advertisement.location"
-										class="form-control" id="location" placeholder="Nhập vị trí" />
+								<label for="title" class="col-md-2 control-label">Tiêu đề</label>
+								<div class="col-md-10">
+									<form:input type="text" path="advertisement.title"
+										class="form-control" id="title" placeholder="Nhập tiêu đề" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="houseNo" class="col-sm-2 control-label">Số
+								<label for="houseNo" class="col-md-2 control-label">Số
 									nhà</label>
-								<div class="col-sm-10">
+								<div class="col-md-10">
 									<form:input path="advertisement.houseNo" type="text"
 										class="form-control" id="houseNo" placeholder="Nhập số nhà" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="street" class="col-sm-2 control-label">Tên
+								<label for="street" class="col-md-2 control-label">Tên
 									đường</label>
-								<div class="col-sm-10">
+								<div class="col-md-10">
 									<form:input path="advertisement.street" type="text"
 										class="form-control" id="street" placeholder="Nhập tên đường" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="province" class="col-sm-2 control-label">Tỉnh</label>
-								<div class="col-sm-10">
-									<form:input cssClass="form-control"
-										path="advertisement.province" placeholder="Nhập tên tỉnh" />
+								<label for="ward" class="col-md-2 control-label">Phường</label>
+								<div class="col-md-10">
+									<form:input cssClass="form-control" path="advertisement.ward"
+										placeholder="Nhập tên phường/xã" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="district" class="col-sm-2 control-label">Quận</label>
-								<div class="col-sm-10">
+								<label for="district" class="col-md-2 control-label">Quận</label>
+								<div class="col-md-10">
 									<form:input cssClass="form-control"
 										path="advertisement.district"
 										placeholder="Nhập tên quận/huyện" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="ward" class="col-sm-2 control-label">Phường</label>
-								<div class="col-sm-10">
-									<form:input cssClass="form-control" path="advertisement.ward"
-										placeholder="Nhập tên phường/xã" />
+								<label for="province" class="col-md-2 control-label">Tỉnh</label>
+								<div class="col-md-10">
+									<form:input cssClass="form-control"
+										path="advertisement.province" placeholder="Nhập tên tỉnh" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="map" class="col-sm-2 control-label">Toạ độ</label>
-								<div class="col-sm-10">
+								<label for="map" class="col-md-2 control-label">Toạ độ</label>
+								<div class="col-md-10">
 									<form:input path="advertisement.map" type="text" onchange="initialize()"
 										class="form-control" id="coordinates" name="coordinates" placeholder="" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="size" class="col-sm-2 control-label">Kích
+								<label for="size" class="col-md-2 control-label">Kích
 									thước</label>
-								<div class="col-sm-10">
+								<div class="col-md-10">
 									<form:input path="advertisement.size" type="text"
 										class="form-control" id="size" placeholder="Nhập kích thước" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="price" class="col-sm-2 control-label">Đơn
-									giá</label>
-								<div class="col-sm-10">
-									<form:input path="advertisement.price" type="text"
-										class="form-control" id="price" placeholder="Nhập đơn giá" />
+								<label for="describe" class="col-md-2 control-label">Mô tả</label>
+								<div class="col-md-10">
+									<form:textarea path="advertisement.describe" class="form-control"
+										id="describe" style="resize: none;" placeholder="Nhập Mô tả" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="startDate" class="col-sm-2 control-label">Bắt
-									đầu</label>
-								<div class="col-sm-4">
-									<form:input path="advertisement.startDate" type="date"
- 										class="form-control" id="startDate" placeholder="" />
-								</div>
-
-								<label for="endDate" class="col-sm-2 control-label">Kết
-									thúc</label>
-								<div class="col-sm-4">
-									<form:input path="advertisement.endDate" type="date"
- 										class="form-control" id="endDate" placeholder="" />
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label for="note" class="col-sm-2 control-label">Ghi chú</label>
-								<div class="col-sm-10">
+								<label for="note" class="col-md-2 control-label">Ghi chú</label>
+								<div class="col-md-10">
 									<form:textarea path="advertisement.note" class="form-control"
-										id="note" style="resize: none;" placeholder="Ghi chú" />
+										id="note" style="resize: none;" placeholder="Nhập ghi chú" />
 								</div>
 							</div>
 
 							<div class="row">
-								<div class="col-sm-6">
+								<div class="col-md-6">
 									<div class="box box-info">
 										<div class="box-header with-border">
 											<h3 class="box-title">Thông Tin Chủ Nhà</h3>
@@ -142,23 +124,23 @@
 										<div class="form-horizontal">
 											<div class="box-body">
 												<div class="form-group">
-													<label for="ownerPhone" class="col-sm-2 control-label">ĐT</label>
-													<div class="col-sm-10">
+													<label for="ownerPhone" class="col-md-3 control-label">Phone</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.ownerPhone" type="text"
 															class="form-control" id="ownerPhone"
 															placeholder="Số điện thoại" />
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="ownerEmail" class="col-sm-2 control-label">Email</label>
-													<div class="col-sm-10">
+													<label for="ownerEmail" class="col-md-3 control-label">Email</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.ownerEmail" type="text"
 															class="form-control" id="ownerEmail" placeholder="Email" />
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="ownerPrice" class="col-sm-2 control-label">Giá</label>
-													<div class="col-sm-10">
+													<label for="ownerPrice" class="col-md-3 control-label">Giá</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.ownerPrice" type="text"
 															class="form-control" id="ownerPrice"
 															placeholder="Giá thuê" />
@@ -166,11 +148,27 @@
 												</div>
 												<div class="form-group">
 													<label for="ownerContactPerson"
-														class="col-sm-2 control-label">NLH</label>
-													<div class="col-sm-10">
+														class="col-md-3 control-label">NLH</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.ownerContactPerson"
 															type="text" class="form-control" id="ownerContactPerson"
 															placeholder="Người liên hệ" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="ownerStartDate"
+														class="col-md-3 control-label">Bắt đầu</label>
+													<div class="col-md-9">
+														<form:input path="advertisement.ownerStartDate"
+															type="date" class="form-control" id="ownerStartDate" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="ownerEndDate"
+														class="col-md-3 control-label">Kết thúc</label>
+													<div class="col-md-9">
+														<form:input path="advertisement.ownerEndDate"
+															type="date" class="form-control" id="ownerEndDate" />
 													</div>
 												</div>
 											</div>
@@ -179,7 +177,7 @@
 									</div>
 								</div>
 
-								<div class="col-sm-6">
+								<div class="col-md-6">
 									<div class="box box-info">
 										<div class="box-header with-border">
 											<h3 class="box-title">Thông Tin CT Quảng Cáo</h3>
@@ -189,24 +187,32 @@
 										<div class="form-horizontal">
 											<div class="box-body">
 												<div class="form-group">
-													<label for="advCompPhone" class="col-sm-2 control-label">Phone</label>
-													<div class="col-sm-10">
+													<label for="advCompName" class="col-md-3 control-label">Tên Cty</label>
+													<div class="col-md-9">
+														<form:input path="advertisement.advCompName" type="text"
+															class="form-control" id="advCompName"
+															placeholder="Tên công ty" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="advCompPhone" class="col-md-3 control-label">Phone</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.advCompPhone" type="text"
 															class="form-control" id="advCompPhone"
 															placeholder="Email" />
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="advCompEmail" class="col-sm-2 control-label">Email</label>
-													<div class="col-sm-10">
+													<label for="advCompEmail" class="col-md-3 control-label">Email</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.advCompEmail" type="text"
 															class="form-control" id="advCompEmail"
 															placeholder="Email" />
 													</div>
 												</div>
 												<div class="form-group">
-													<label for="advCompPrice" class="col-sm-2 control-label">Giá</label>
-													<div class="col-sm-10">
+													<label for="advCompPrice" class="col-md-3 control-label">Giá</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.advCompPrice" type="text"
 															class="form-control" id="advCompPrice"
 															placeholder="Giá thuê" />
@@ -214,11 +220,27 @@
 												</div>
 												<div class="form-group">
 													<label for="advCompContactPerson"
-														class="col-sm-2 control-label">NLH</label>
-													<div class="col-sm-10">
+														class="col-md-3 control-label">NLH</label>
+													<div class="col-md-9">
 														<form:input path="advertisement.advCompContactPerson"
 															type="text" class="form-control"
 															id="advCompContactPerson" placeholder="Người liên hệ" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="advCompStartDate"
+														class="col-md-3 control-label">Bắt đầu</label>
+													<div class="col-md-9">
+														<form:input path="advertisement.advCompStartDate"
+															type="date" class="form-control" id="advCompStartDate" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="advCompEndDate"
+														class="col-md-3 control-label">Kết thúc</label>
+													<div class="col-md-9">
+														<form:input path="advertisement.advCompEndDate"
+															type="date" class="form-control" id="advCompEndDate" />
 													</div>
 												</div>
 											</div>

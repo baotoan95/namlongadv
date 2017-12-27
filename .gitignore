@@ -11,6 +11,7 @@ target/
 .mvn
 mvnw
 mvnw.cmd
+logs
 
 ### IntelliJ IDEA ###
 .idea

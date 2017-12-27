@@ -56,9 +56,12 @@ public class AdvController {
 	private AdvImageRepository advImageRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Value("${namlongadv.file.limit}")
+	private int fileLimit;
 
 	@InitBinder
 	public void bindingPreparation(WebDataBinder binder) {
+		log.debug("Parse date");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		CustomDateEditor orderDateEditor = new CustomDateEditor(dateFormat, true);
 		binder.registerCustomEditor(Date.class, orderDateEditor);
@@ -70,7 +73,8 @@ public class AdvController {
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
 			@RequestParam(value = "createdBy", required = false) Optional<String> createdBy,
-			@RequestParam(value = "daterange", required = false) Optional<String> daterange, ModelMap model) {
+			@RequestParam(value = "daterange", required = false) Optional<String> daterange,
+			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson, ModelMap model) {
 
 		model.addAttribute("isSearch", true);
 
@@ -89,6 +93,7 @@ public class AdvController {
 			String sCode = null;
 			String sAddress = "";
 			String sCreatedBy = null;
+			String sContactPerson = "";
 			if (code.isPresent() && code.get().length() > 0) {
 				sCode = code.get().toUpperCase();
 				model.put("code", code.get());
@@ -101,9 +106,13 @@ public class AdvController {
 				sCreatedBy = createdBy.get().toLowerCase();
 				model.put("createdBy", createdBy.get());
 			}
+			if(contactPerson.isPresent() && contactPerson.get().length() > 0) {
+				sContactPerson = contactPerson.get().toUpperCase();
+				model.put("contactPerson", contactPerson.get());
+			}
 
 			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to,
-					new PageRequest(page.intValue(), size.intValue()));
+					sContactPerson, new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}
@@ -121,7 +130,7 @@ public class AdvController {
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
 		model.addAttribute("page",
-				advertisementRepository.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endDate"))));
+				advertisementRepository.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
 		return "advs";
 	}
 
@@ -129,7 +138,10 @@ public class AdvController {
 	public String adv(HttpSession session, ModelMap model) {
 		log.debug("Getting adv page");
 		session.setAttribute(pageIndex, "adv");
-		model.addAttribute("advertDto", new AdvertisementDTO());
+		// Generate code
+		AdvertisementDTO advDto = new AdvertisementDTO();
+		advDto.getAdvertisement().setCode(String.valueOf(new Date().getTime()));
+		model.addAttribute("advertDto", advDto);
 		return "adv";
 	}
 
@@ -152,7 +164,7 @@ public class AdvController {
 		List<String> pathFiles = new ArrayList<>();
 		if (advertDto.getFiles() != null) {
 			log.info("Preparing to upload files");
-			pathFiles = UploadFileUtils.uploadMultipleFile(advertDto.getFiles());
+			pathFiles = UploadFileUtils.uploadMultipleFile(advertDto.getFiles(), fileLimit);
 			log.info("Upload successful");
 
 		}
