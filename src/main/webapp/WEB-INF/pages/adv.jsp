@@ -24,7 +24,9 @@
 					<div class="box-header with-border">
 						<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : 'Cập Nhật Thông Tin Bảng Quảng Cáo' }</h3>
 						<c:if test="${errorMsg != null }">
-							<span class="error">${errorMsg }</span>
+							<br/>
+							<br/>
+							<p class="error">${errorMsg }</p>
 						</c:if>
 					</div>
 					<!-- /.box-header -->
@@ -96,6 +98,13 @@
 								<div class="col-md-10">
 									<form:input path="advertisement.size" type="text"
 										class="form-control" id="size" placeholder="Nhập kích thước" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="numOfLamps" class="col-md-2 control-label">Lượng đèn</label>
+								<div class="col-md-10">
+									<form:input path="advertisement.numOfLamps" type="text"
+										class="form-control" id="numOfLamps" placeholder="Nhập số lượng đèn" />
 								</div>
 							</div>
 							<div class="form-group">

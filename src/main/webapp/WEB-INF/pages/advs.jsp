@@ -177,12 +177,56 @@ table tr th {
 								<tr>
 									<td rowspan="2">
 										<input type="checkbox" class="check" name="advs[${loop.index }].id" checked="checked" value="${adv.id }" />
-										<input type="hidden" name="advs[${loop.index }].ownerPhone"
-											value="${adv.ownerPhone }"/>
-										<input type="hidden" name="advs[${loop.index }].ownerContactPerson"
-											value="${adv.ownerContactPerson }"/>
+										<input type="hidden" name="advs[${loop.index }].code" 
+											value="${adv.code }"/>
 										<input type="hidden" name="advs[${loop.index }].title" 
 											value="${adv.title }"/>
+											<input type="hidden" name="advs[${loop.index }].houseNo" 
+											value="${adv.houseNo }"/>
+										<input type="hidden" name="advs[${loop.index }].street"
+											value="${adv.street }"/>
+										<input type="hidden" name="advs[${loop.index }].ward"
+											value="${adv.ward }"/>
+											<input type="hidden" name="advs[${loop.index }].district"
+											value="${adv.district }"/>
+											<input type="hidden" name="advs[${loop.index }].province"
+											value="${adv.province }"/>
+											<input type="hidden" name="advs[${loop.index }].map"
+											value="${adv.map }"/>
+											<input type="hidden" name="advs[${loop.index }].size"
+											value="${adv.size }"/>
+											<input type="hidden" name="advs[${loop.index }].numOfLamps"
+											value="${adv.numOfLamps }"/>
+											<input type="hidden" name="advs[${loop.index }].describe"
+											value="${adv.describe }"/>
+											<input type="hidden" name="advs[${loop.index }].note"
+											value="${adv.note }"/>
+											
+											<input type="hidden" name="advs[${loop.index }].ownerPhone"
+											value="${adv.ownerPhone }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerEmail"
+											value="${adv.ownerEmail }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerPrice"
+											value="${adv.ownerPrice }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerStartDate"
+											value="${adv.ownerStartDate }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerEndDate"
+											value="${adv.ownerEndDate }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerContactPerson"
+											value="${adv.ownerContactPerson }"/>
+											
+											<input type="hidden" name="advs[${loop.index }].advCompPhone"
+											value="${adv.advCompPhone }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompEmail"
+											value="${adv.advCompEmail }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompPrice"
+											value="${adv.advCompPrice }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompStartDate"
+											value="${adv.advCompEndDate }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompContactPerson"
+											value="${adv.advCompContactPerson }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompName"
+											value="${adv.advCompName }"/>
 									</td>
 									<td rowspan="2">${loop.index + 1 }</td>
 									<td rowspan="2">

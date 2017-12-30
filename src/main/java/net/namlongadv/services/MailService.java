@@ -15,7 +15,6 @@ public class MailService {
 	public void sendEmail(String[] tos, String content, String subject) throws Exception {
 		MimeMessage message = sender.createMimeMessage();
 
-		// Enable the multiple part flag!
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
 		helper.setTo(tos);

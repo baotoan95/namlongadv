@@ -28,6 +28,9 @@ public class UploadFileUtils {
 			for (MultipartFile mpf : files) {
 				log.info("Uploading: " + mpf.getOriginalFilename());
 				String pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + mpf.getOriginalFilename();
+				File containFolder = new File(dir.getAbsolutePath());
+				containFolder.mkdirs();
+				
 				if(mpf.getSize() > reduce) {
 					log.debug("Reducing size of image");
 					File file = FileUtils.convertMultipartToFile(mpf);
@@ -39,8 +42,6 @@ public class UploadFileUtils {
 						log.error("Fail to upload file with large size: " + e.getMessage());
 					}
 				} else {
-					File containFolder = new File(dir.getAbsolutePath());
-					containFolder.mkdirs();
 					File serverFile = new File(pathFile);
 					serverFile.createNewFile();
 					log.debug("Upload to " + pathFile);

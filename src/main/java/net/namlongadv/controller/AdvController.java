@@ -42,6 +42,7 @@ import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.utils.DateUtils;
+import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
 
 @Controller
@@ -58,6 +59,8 @@ public class AdvController {
 	private UserRepository userRepository;
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
+	@Value("${namlongadv.base_url}")
+	private String baseUrl;
 
 	@InitBinder
 	public void bindingPreparation(WebDataBinder binder) {
@@ -106,13 +109,13 @@ public class AdvController {
 				sCreatedBy = createdBy.get().toLowerCase();
 				model.put("createdBy", createdBy.get());
 			}
-			if(contactPerson.isPresent() && contactPerson.get().length() > 0) {
+			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
 				sContactPerson = contactPerson.get().toUpperCase();
 				model.put("contactPerson", contactPerson.get());
 			}
 
-			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to,
-					sContactPerson, new PageRequest(page.intValue(), size.intValue()));
+			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson,
+					new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}
@@ -129,8 +132,8 @@ public class AdvController {
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		model.addAttribute("page",
-				advertisementRepository.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
+		model.addAttribute("page", advertisementRepository
+				.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
 		return "advs";
 	}
 
@@ -138,9 +141,9 @@ public class AdvController {
 	public String adv(HttpSession session, ModelMap model) {
 		log.debug("Getting adv page");
 		session.setAttribute(pageIndex, "adv");
-		// Generate code
 		AdvertisementDTO advDto = new AdvertisementDTO();
-		advDto.getAdvertisement().setCode(String.valueOf(new Date().getTime()));
+		// Generate code
+		advDto.getAdvertisement().setCode(StringUtils.randomCode());
 		model.addAttribute("advertDto", advDto);
 		return "adv";
 	}
@@ -149,7 +152,7 @@ public class AdvController {
 	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
 		Authentication authenticate = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authenticate.getPrincipal();
-
+		
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
 
@@ -159,6 +162,28 @@ public class AdvController {
 			prevAdvertisement = advertisementRepository.findOne(advert.getId());
 		} catch (Exception e) {
 			// Do nothing
+		}
+
+		// Validation code
+		if (advert.getCode().trim().length() == 0) {
+			advert.setCode(StringUtils.randomCode());
+		}
+		// Validation address
+		String fullAddress = StringUtils.standardize(advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
+				+ advert.getDistrict() + ", " + advert.getProvince());
+		String fullExAddress = null;
+		if(prevAdvertisement != null) {
+			fullExAddress = StringUtils.standardize(prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", " + prevAdvertisement.getWard() + ", "
+				+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince());
+		}
+		List<Advertisement> advs = advertisementRepository.findByAddress(fullAddress, new PageRequest(0, 1))
+				.getContent();
+		if (advs.size() > 0 && (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress))) {
+			model.addAttribute("advertDto", advertDto);
+			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>"
+					+ "<a href='"+baseUrl+"/adv/"+advs.get(0).getId()+"'>Bấm vào đây để xem chi tiết</a>";
+			model.addAttribute("errorMsg", errorMsg);
+			return "adv";
 		}
 
 		List<String> pathFiles = new ArrayList<>();

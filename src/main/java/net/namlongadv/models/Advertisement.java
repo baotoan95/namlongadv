@@ -18,10 +18,12 @@ import org.hibernate.annotations.GenericGenerator;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 @Table(name = "advertisements")
 @Setter
 @Getter
 @Entity
+@ToString
 public class Advertisement {
 	@Id
 	@GeneratedValue(generator = "uuid2")
@@ -56,6 +58,7 @@ public class Advertisement {
 	private User createdBy;
 	private Date createdDate;
 	private Date updatedDate;
+	private Integer numOfLamps;
 	@OneToMany(mappedBy = "advertisement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AdvImage> advImages;
 }

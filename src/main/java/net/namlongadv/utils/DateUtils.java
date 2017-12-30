@@ -37,7 +37,7 @@ public class DateUtils {
 	}
 
 	public static String convertDateToString(Date date) {
-		String dateString = null;
+		String dateString = "";
 		SimpleDateFormat sdfr = new SimpleDateFormat("MM/dd/yyyy");
 		try {
 			dateString = sdfr.format(date);
