@@ -36,7 +36,7 @@
 								<td>${user.phone }</td>
 								<td>${user.email }</td>
 								<td>${user.roles }</td>
-								<td class="action">
+								<td class="action" style="text-align: center;">
 									<a title="Xoá" class="delete" href="${pageContext.request.contextPath }/user/delete/${user.id }"><i class="fa fa-fw fa-trash"></i></a> 
 									<br /> 
 									<a title="Xem" href="${pageContext.request.contextPath }/user/${user.id }">

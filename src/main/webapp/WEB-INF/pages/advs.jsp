@@ -227,6 +227,16 @@ table tr th {
 											value="${adv.advCompContactPerson }"/>
 											<input type="hidden" name="advs[${loop.index }].advCompName"
 											value="${adv.advCompName }"/>
+											<input type="hidden" name="advs[${loop.index }].views"
+											value="${adv.views }"/>
+											<input type="hidden" name="advs[${loop.index }].flow"
+											value="${adv.flow }"/>
+											<input type="hidden" name="advs[${loop.index }].implTime"
+											value="${adv.implTime }"/>
+											<input type="hidden" name="advs[${loop.index }].implForm"
+											value="${adv.implForm }"/>
+											<input type="hidden" name="advs[${loop.index }].lightSystem"
+											value="${adv.lightSystem }"/>
 									</td>
 									<td rowspan="2">${loop.index + 1 }</td>
 									<td rowspan="2">
@@ -255,7 +265,7 @@ table tr th {
 										<ul>
 											<c:forEach items="${adv.advImages }" var="advImage" varStatus="i">
 										  <li>
-										  	<input type="checkbox" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
+										  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
 										    <label for="cb${loop.index }-${i.index }">
 										    	<img class="image" src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }&w=200&h=200" />
 										    </label>

@@ -34,84 +34,117 @@
 					<div class="form-horizontal">
 						<div class="box-body">
 							<div class="form-group">
-								<label for="code" class="col-md-2 control-label">Mã</label>
-								<div class="col-md-10">
+								<label for="code" class="col-md-3 control-label">Mã</label>
+								<div class="col-md-9">
 									<form:input type="text" path="advertisement.code"
-										class="form-control" id="code" placeholder="Nhập mã" />
+										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="title" class="col-md-2 control-label">Tiêu đề</label>
-								<div class="col-md-10">
+								<label for="title" class="col-md-3 control-label">Tiêu đề</label>
+								<div class="col-md-9">
 									<form:input type="text" path="advertisement.title"
 										class="form-control" id="title" placeholder="Nhập tiêu đề" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="houseNo" class="col-md-2 control-label">Số
-									nhà</label>
-								<div class="col-md-10">
+								<label for="houseNo" class="col-md-3 control-label">Số nhà</label>
+								<div class="col-md-9">
 									<form:input path="advertisement.houseNo" type="text"
 										class="form-control" id="houseNo" placeholder="Nhập số nhà" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="street" class="col-md-2 control-label">Tên
+								<label for="street" class="col-md-3 control-label">Tên
 									đường</label>
-								<div class="col-md-10">
+								<div class="col-md-9">
 									<form:input path="advertisement.street" type="text"
 										class="form-control" id="street" placeholder="Nhập tên đường" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="ward" class="col-md-2 control-label">Phường</label>
-								<div class="col-md-10">
+								<label for="ward" class="col-md-3 control-label">Phường</label>
+								<div class="col-md-9">
 									<form:input cssClass="form-control" path="advertisement.ward"
 										placeholder="Nhập tên phường/xã" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="district" class="col-md-2 control-label">Quận</label>
-								<div class="col-md-10">
+								<label for="district" class="col-md-3 control-label">Quận</label>
+								<div class="col-md-9">
 									<form:input cssClass="form-control"
 										path="advertisement.district"
 										placeholder="Nhập tên quận/huyện" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="province" class="col-md-2 control-label">Tỉnh</label>
-								<div class="col-md-10">
+								<label for="province" class="col-md-3 control-label">Tỉnh</label>
+								<div class="col-md-9">
 									<form:input cssClass="form-control"
 										path="advertisement.province" placeholder="Nhập tên tỉnh" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="map" class="col-md-2 control-label">Toạ độ</label>
-								<div class="col-md-10">
+								<label for="map" class="col-md-3 control-label">Toạ độ</label>
+								<div class="col-md-9">
 									<form:input path="advertisement.map" type="text" onchange="initialize()"
 										class="form-control" id="coordinates" name="coordinates" placeholder="" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="size" class="col-md-2 control-label">Kích
-									thước</label>
-								<div class="col-md-10">
+								<label for="size" class="col-md-3 control-label">Kích thước</label>
+								<div class="col-md-9">
 									<form:input path="advertisement.size" type="text"
 										class="form-control" id="size" placeholder="Nhập kích thước" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="numOfLamps" class="col-md-2 control-label">Lượng đèn</label>
-								<div class="col-md-10">
-									<form:input path="advertisement.numOfLamps" type="text"
+								<label for="numOfLamps" class="col-md-3 control-label">Lượng đèn</label>
+								<div class="col-md-9">
+									<form:input type="number" path="advertisement.numOfLamps"
 										class="form-control" id="numOfLamps" placeholder="Nhập số lượng đèn" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="views" class="col-md-3 control-label">Tầm nhìn</label>
+								<div class="col-md-9">
+									<form:input path="advertisement.views" class="form-control"
+										id="views" style="resize: none;" placeholder="Nhập tầm nhìn" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="flow" class="col-md-3 control-label">Lưu lượng</label>
+								<div class="col-md-9">
+									<form:input type="number" path="advertisement.flow" class="form-control"
+										id="views" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="implTime" class="col-md-3 control-label">Thời gian thực hiện</label>
+								<div class="col-md-9">
+									<form:input type="number" path="advertisement.implTime" class="form-control"
+										id="implTime" style="resize: none;" placeholder="Nhập số ngày thực hiện" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
+								<div class="col-md-9">
+									<form:input path="advertisement.implForm" class="form-control"
+										id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="lightSystem" class="col-md-3 control-label">Hệ thống chiếu sáng</label>
+								<div class="col-md-9">
+									<form:input path="advertisement.lightSystem" class="form-control"
+										id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="describe" class="col-md-2 control-label">Mô tả</label>
 								<div class="col-md-10">
 									<form:textarea path="advertisement.describe" class="form-control"
-										id="describe" style="resize: none;" placeholder="Nhập Mô tả" />
+										id="describe" style="resize: none;" placeholder="Nhập mô tả" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -208,7 +241,7 @@
 													<div class="col-md-9">
 														<form:input path="advertisement.advCompPhone" type="text"
 															class="form-control" id="advCompPhone"
-															placeholder="Email" />
+															placeholder="Số điện thoại" />
 													</div>
 												</div>
 												<div class="form-group">

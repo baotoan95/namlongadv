@@ -14,6 +14,8 @@
 <meta
 	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 	name="viewport">
+<link rel="shortcut icon" type="image/x-icon" href="<c:url value='/resources/dist/img/namlong_logo.ico'/>" />	
+	
 <!-- Bootstrap 3.3.6 -->
 <link rel="stylesheet"
 	href="<c:url value='/resources/bootstrap/css/bootstrap.min.css'/>">

@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
@@ -15,19 +19,18 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xslf.usermodel.SlideLayout;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFPictureData;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
-import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -35,6 +38,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.models.AdvImage;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.utils.DateUtils;
 
@@ -61,7 +65,6 @@ public class ExportFileService {
 			Advertisement adv = null;
 
 			XSSFCellStyle cellStyle = null;
-			
 
 			for (int i = 0; i < advs.size(); i++) {
 				adv = advs.get(i);
@@ -76,7 +79,7 @@ public class ExportFileService {
 					cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 					Font font = workbook.createFont();
 					font.setFontName("Times New Roman");
-					font.setFontHeightInPoints((short)13);
+					font.setFontHeightInPoints((short) 13);
 					font.setColor(IndexedColors.BLACK.getIndex());
 					cellStyle.setFont(font);
 				} else {
@@ -89,23 +92,21 @@ public class ExportFileService {
 					cellStyle.setFillForegroundColor(new XSSFColor(new Color(138, 220, 247)));
 					cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 					Font font = workbook.createFont();
-					font.setFontHeightInPoints((short)13);
+					font.setFontHeightInPoints((short) 13);
 					font.setFontName("Times New Roman");
 					cellStyle.setFont(font);
 				}
-				
-				
+
 				for (int k = 1; k <= 2; k++) {
 					row = sheet.createRow(startData);
 
-					
 					if (startData % 2 != 0) {
 						// Index
 						cellStyle.setAlignment(HorizontalAlignment.CENTER);
 						cell = row.createCell(0);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(i + 1);
-						
+
 						cellStyle.setAlignment(HorizontalAlignment.JUSTIFY);
 						// Code
 						cell = row.createCell(1);
@@ -183,7 +184,7 @@ public class ExportFileService {
 						cell = row.createCell(19);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerContactPerson());
-						
+
 						cell = row.createCell(20);
 						cell.setCellStyle(cellStyle);
 					} else {
@@ -227,7 +228,7 @@ public class ExportFileService {
 					startData++;
 				}
 			}
-			 mergeCell(sheet, startData - (advs.size() * 2), advs.size());
+			mergeCell(sheet, startData - (advs.size() * 2), advs.size());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -245,29 +246,132 @@ public class ExportFileService {
 	}
 
 	public XMLSlideShow exportPowerpoint(List<Advertisement> advs) {
-		// Create a new presentation slide
-		XMLSlideShow ppt = new XMLSlideShow();
+		XMLSlideShow ppt = null;
+		try {
+			File template = new ClassPathResource("templates/quotation.pptx").getFile();
+			// Create a new presentation slide
+			ppt = new XMLSlideShow(new FileInputStream(template));
 
-		// Get layout
-		XSLFSlideMaster defaultMaster = ppt.getSlideMasters().get(0);
-		XSLFSlideLayout layout = defaultMaster.getLayout(SlideLayout.TITLE_AND_CONTENT);
-		// Create new slide
-		XSLFSlide slide = ppt.createSlide(layout);
-		XSLFTextShape titleShape = slide.getPlaceholder(0);
-		titleShape.setText("This is the title");
-		XSLFTextShape contentShape = slide.getPlaceholder(1);
-		contentShape.setText("And this is the content of this slide");
+			XSLFSlide slide = null;
+			Advertisement adv = null;
 
-		XSLFTextBox shape = slide.createTextBox();
-		XSLFTextParagraph p = shape.addNewTextParagraph();
-		XSLFTextRun r = p.addNewTextRun();
-		r.setText("Baeldung");
-		r.setFontColor(Color.green);
-		r.setFontSize(24.);
-		shape.setAnchor(new Rectangle(10, 20, 800, 700));
-		shape.setTopInset(100);
-		shape.setLeftInset(100);
+			String text = "";
+			for (int i = 0; i < advs.size(); i++) {
+				adv = advs.get(i);
+				slide = ppt.createSlide();
+				
+				createProvinceHolder(slide, adv.getProvince());
+				
+				XSLFTextBox textBox = slide.createTextBox();
+				textBox.setAnchor(new Rectangle(0, 100, 300, 500));
+				text = "Vị trí: " + adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", " + adv.getDistrict() + ", " + adv.getProvince();
+				createListImage(text, textBox);
+				
+				text = "Tầm nhìn: " + adv.getViews();
+				createListImage(text, textBox);
+				
+				text = "Lưu lượng: " + adv.getFlow() + " (người/ngày)";
+				createListImage(text, textBox);
+				
+				text = "Đơn giá: ... (USD/năm)";
+				createListImage(text, textBox);
+				
+				text = "Thời gian thực hiện: " + adv.getImplTime() + " ngày";
+				createListImage(text, textBox);
+				
+				text = "Hình thức thực hiện: " + adv.getImplForm();
+				createListImage(text, textBox);
+				
+				text = "Hệ thống chiếu sáng: " + adv.getLightSystem();
+				createListImage(text, textBox);
+				
+				XSLFTextParagraph l5 = textBox.addNewTextParagraph();
+				l5.setIndentLevel(0);
+				XSLFTextRun text5 = l5.addNewTextRun();
+				text5.setText("Đơn giá trên bao gồm: in ấn, công treo, xin phép và bảo hành 12 tháng. Chưa bao gồm VAT.");
+				text5.setBold(true);
+				text5.setFontSize(16d);
+				
+				XSLFTextBox title = slide.createTextBox();
+				title.setAnchor(new Rectangle(300, 80, 400, 30));
+				title.setTextAutofit(TextAutofit.NORMAL);
+				XSLFTextParagraph pTitle = title.addNewTextParagraph();
+				pTitle.setTextAlign(TextAlign.CENTER);
+				XSLFTextRun textTitle = pTitle.addNewTextRun();
+				textTitle.setText(adv.getTitle());
+				textTitle.setBold(true);
+				textTitle.setFontColor(Color.blue);
+				textTitle.setFontSize(20d);
+				
+				List<AdvImage> images = adv.getAdvImages();
+				images = images.stream().filter(image -> image.getId() != null).collect(Collectors.toList());
+				if(images != null && !images.isEmpty()) {
+					String imagePath = images.get(0).getUrl();
+					insertImage(imagePath, new Rectangle(305, 140, 400, 380), ppt, slide);
+					images.remove(0);
+
+					for(AdvImage advImage: images) {
+						slide = ppt.createSlide();
+						createProvinceHolder(slide, adv.getProvince());
+						
+						XSLFTextBox slideTitle = slide.createTextBox();
+						slideTitle.setAnchor(new Rectangle(0, 60, 700, 30));
+						slideTitle.setTextAutofit(TextAutofit.NORMAL);
+						XSLFTextParagraph pTitle2 = slideTitle.addNewTextParagraph();
+						pTitle2.setTextAlign(TextAlign.CENTER);
+						XSLFTextRun textTitle2 = pTitle2.addNewTextRun();
+						textTitle2.setText(adv.getTitle());
+						textTitle2.setBold(true);
+						textTitle2.setFontColor(Color.blue);
+						textTitle2.setFontSize(20d);
+						
+						insertImage(advImage.getUrl(), new Rectangle(110, 140, 500, 380), ppt, slide);
+					}
+				}
+				
+			}
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
 
 		return ppt;
+	}
+	
+	private void createListImage(String text, XSLFTextBox textBox) {
+		XSLFTextParagraph l1 = textBox.addNewTextParagraph();
+		l1.setIndentLevel(0);
+		l1.setBullet(true);
+		l1.setIndent(-20d);
+		l1.setLeftMargin(30d);
+		XSLFTextRun text1 = l1.addNewTextRun();
+		text1.setText(text);
+		text1.setBold(true);
+		text1.setFontSize(16d);
+	}
+	
+	private void insertImage(String imgUrl, Rectangle anchor, XMLSlideShow ppt, XSLFSlide slide) {
+		byte[] pictureData;
+		try {
+			pictureData = IOUtils.toByteArray(new FileInputStream(imgUrl));
+			XSLFPictureData pd = ppt.addPicture(pictureData, PictureData.PictureType.PNG);
+			XSLFPictureShape picture = slide.createPicture(pd);
+			picture.setAnchor(anchor);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+	private void createProvinceHolder(XSLFSlide slide, String province) {
+		XSLFAutoShape cardRect = ((XSLFSlide) slide).createAutoShape();
+		cardRect.setShapeType(ShapeType.RECT);
+		cardRect.setFillColor(Color.ORANGE);
+		cardRect.setAnchor(new Rectangle(0, 0, 250, 50));
+		cardRect.setVerticalAlignment(org.apache.poi.sl.usermodel.VerticalAlignment.MIDDLE);
+		XSLFTextParagraph textParagraph = cardRect.addNewTextParagraph();
+		XSLFTextRun textRun = textParagraph.addNewTextRun();
+		textRun.setText(province);
+		textRun.setFontColor(Color.RED);
+		textRun.setFontSize(25d);
+		textRun.setBold(true);
 	}
 }

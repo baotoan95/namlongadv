@@ -31,7 +31,7 @@ public class ImageUtils {
 		ImageWriter writer = (ImageWriter) iter.next();
 		ImageWriteParam iwp = writer.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-		
+
 		FileInputStream inputStream = new FileInputStream(file);
 		BufferedImage originalImage = ImageIO.read(inputStream);
 		IIOImage image = new IIOImage(originalImage, null, null);
@@ -66,7 +66,7 @@ public class ImageUtils {
 		writer.dispose();
 		return fileOut2.getPath();
 	}
-	
+
 	public static File resizeImage(int x, int y, File in) throws IOException {
 		log.debug("Resizing {}", in.getName());
 		BufferedImage originalImage = ImageIO.read(in);
@@ -79,10 +79,29 @@ public class ImageUtils {
 		// Draw image original with new width and new height
 		g.drawImage(originalImage, 0, 0, x, y, null);
 		g.dispose();
-		
+
 		File output = new File(in.getName());
 		ImageIO.write(image, FileUtils.getExtensions(in.getPath()), output);
-		
+
 		return output;
 	}
+	
+	public static int getWidth(String path) {
+		try {
+			return ImageIO.read(new File(path)).getWidth();
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+		return 0;
+	}
+	
+	public static int getHeight(String path) {
+		try {
+			return ImageIO.read(new File(path)).getHeight();
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+		return 0;
+	}
+
 }

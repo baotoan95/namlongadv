@@ -39,6 +39,11 @@ public class Advertisement {
 	private String size;
 	private String map;
 	private String describe;
+	private String views;
+	private Integer flow;
+	private Integer implTime;
+	private String implForm;
+	private String lightSystem;
 	private String ownerPhone;
 	private String ownerEmail;
 	private String ownerPrice;
