@@ -58,6 +58,7 @@ public class Advertisement {
 	private Date advCompStartDate;
 	private Date advCompEndDate;
 	private String note;
+	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
 	private User createdBy;

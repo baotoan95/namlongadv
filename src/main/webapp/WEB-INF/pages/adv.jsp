@@ -91,6 +91,15 @@
 										class="form-control" id="coordinates" name="coordinates" placeholder="" />
 								</div>
 							</div>
+							<security:authorize access="hasRole('ROLE_ADMIN')">
+							<div class="form-group">
+								<label for="price" class="col-md-3 control-label">Đơn giá</label>
+								<div class="col-md-9">
+									<form:input path="advertisement.price" type="text"
+										class="form-control" id="price" name="price" placeholder="Nhập đơn giá (USD/năm)" />
+								</div>
+							</div>
+							</security:authorize>
 							<div class="form-group">
 								<label for="size" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-9">

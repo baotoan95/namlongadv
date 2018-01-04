@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -78,6 +80,11 @@ public class AdvController {
 			@RequestParam(value = "createdBy", required = false) Optional<String> createdBy,
 			@RequestParam(value = "daterange", required = false) Optional<String> daterange,
 			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson, ModelMap model) {
+		// Get user roles info
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		List<String> roles = new ArrayList<>();
+		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 
 		model.addAttribute("isSearch", true);
 
@@ -115,7 +122,7 @@ public class AdvController {
 			}
 
 			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson,
-					new PageRequest(page.intValue(), size.intValue()));
+					roles, new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}
@@ -128,12 +135,19 @@ public class AdvController {
 	public String advs(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, HttpSession session,
 			ModelMap model) {
+		// Get user roles info
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		List<String> roles = new ArrayList<>();
+		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+
 		log.info("Getting advs page");
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		model.addAttribute("page", advertisementRepository
-				.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
+		log.info("Role size: {}", roles);
+		model.addAttribute("page", advertisementRepository.findByRoles(roles,
+				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
 		return "advs";
 	}
 
@@ -150,9 +164,13 @@ public class AdvController {
 
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
 	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
-		Authentication authenticate = SecurityContextHolder.getContext().getAuthentication();
-		NLAdvUserDetails userDetails = (NLAdvUserDetails) authenticate.getPrincipal();
-		
+		// Get user roles info
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		List<String> roles = new ArrayList<>();
+		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
 
@@ -169,19 +187,20 @@ public class AdvController {
 			advert.setCode(StringUtils.randomCode());
 		}
 		// Validation address
-		String fullAddress = StringUtils.standardize(advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
-				+ advert.getDistrict() + ", " + advert.getProvince());
+		String fullAddress = StringUtils.standardize(advert.getHouseNo() + ", " + advert.getStreet() + ", "
+				+ advert.getWard() + ", " + advert.getDistrict() + ", " + advert.getProvince());
 		String fullExAddress = null;
-		if(prevAdvertisement != null) {
-			fullExAddress = StringUtils.standardize(prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", " + prevAdvertisement.getWard() + ", "
-				+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince());
+		if (prevAdvertisement != null) {
+			fullExAddress = StringUtils.standardize(prevAdvertisement.getHouseNo() + ", "
+					+ prevAdvertisement.getStreet() + ", " + prevAdvertisement.getWard() + ", "
+					+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince());
 		}
-		List<Advertisement> advs = advertisementRepository.findByAddress(fullAddress, new PageRequest(0, 1))
+		List<Advertisement> advs = advertisementRepository.findByAddress(fullAddress, roles, new PageRequest(0, 1))
 				.getContent();
 		if (advs.size() > 0 && (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress))) {
 			model.addAttribute("advertDto", advertDto);
-			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>"
-					+ "<a href='"+baseUrl+"/adv/"+advs.get(0).getId()+"'>Bấm vào đây để xem chi tiết</a>";
+			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>" + "<a href='" + baseUrl + "/adv/"
+					+ advs.get(0).getId() + "'>Bấm vào đây để xem chi tiết</a>";
 			model.addAttribute("errorMsg", errorMsg);
 			return "adv";
 		}

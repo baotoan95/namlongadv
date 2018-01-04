@@ -237,6 +237,8 @@ table tr th {
 											value="${adv.implForm }"/>
 											<input type="hidden" name="advs[${loop.index }].lightSystem"
 											value="${adv.lightSystem }"/>
+											<input type="hidden" name="advs[${loop.index }].price"
+											value="${adv.price }"/>
 									</td>
 									<td rowspan="2">${loop.index + 1 }</td>
 									<td rowspan="2">

@@ -1,5 +1,7 @@
 package net.namlongadv.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,12 +14,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService nLAdvUserDetailsService;
+    @Autowired
+    private DataSource dataSource;
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -28,8 +34,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and().formLogin().loginPage("/login").loginProcessingUrl("/perform_login")
         .defaultSuccessUrl("/adv/view?page=0&size=10")
         .failureUrl("/login?error")
-        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login");
+        .and().logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/login")
+        .and().csrf()
+        .and().rememberMe()
+        .tokenValiditySeconds(259200).rememberMeParameter("remember-me")
+        .key("secret-namlongadv-btit95@123")
+        .rememberMeCookieName("namlongadv-mgm@123")
+        .tokenRepository(persistentTokenRepository());
     }
+    
+    @Bean
+	public PersistentTokenRepository persistentTokenRepository() {
+		JdbcTokenRepositoryImpl db = new JdbcTokenRepositoryImpl();
+		db.setDataSource(dataSource);
+		return db;
+	}
     
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

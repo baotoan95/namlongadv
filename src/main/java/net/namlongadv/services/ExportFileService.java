@@ -270,10 +270,13 @@ public class ExportFileService {
 				text = "Tầm nhìn: " + adv.getViews();
 				createListImage(text, textBox);
 				
-				text = "Lưu lượng: " + adv.getFlow() + " (người/ngày)";
+				text = "Kích thước: " + adv.getSize();
 				createListImage(text, textBox);
 				
-				text = "Đơn giá: ... (USD/năm)";
+				text = "Đơn giá: " + adv.getPrice() + " (USD/năm)";
+				createListImage(text, textBox);
+				
+				text = "Mật độ: " + adv.getFlow() + " (người/ngày)";
 				createListImage(text, textBox);
 				
 				text = "Thời gian thực hiện: " + adv.getImplTime() + " ngày";
