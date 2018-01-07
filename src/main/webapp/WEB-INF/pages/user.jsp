@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>	
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 
 <section class="content">
 	<div class="row">
@@ -13,7 +13,9 @@
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
-				<form:form modelAttribute="user" action="${pageContext.request.contextPath }/user" method="${user.id != null ? 'put' : 'post' }" class="form-horizontal">
+				<form:form modelAttribute="user" accept-charset="utf-8"
+				 action="${pageContext.request.contextPath }/user"
+				  method="${user.id != null ? 'put' : 'post' }" class="form-horizontal">
 					<form:hidden path="id"/>
 					<div class="box-body">
 						<div class="form-group">
@@ -70,7 +72,7 @@
 						<div class="form-group">
 							<label for="roles" class="col-sm-2 control-label">Quyền</label>
 							<div class="col-sm-10">
-								<form:select multiple="true" cssClass="form-control" path="roles" items="${roles}" itemLabel="name" itemValue="id" />
+								<form:select multiple="false" cssClass="form-control" path="roles" items="${roles}" itemLabel="name" itemValue="id" />
 							</div>
 						</div>
 					</div>

@@ -19,10 +19,11 @@
 			method="${advertDto.advertisement.id == null ? 'post' : 'put' }"
 			enctype="multipart/form-data">
 			<form:hidden path="advertisement.id" />
+			<input type="hidden" id="allowEdit" value="${advertDto.advertisement.allowEdit }">
 			<div class="col-md-9">
 				<div class="box box-info">
 					<div class="box-header with-border">
-						<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : 'Cập Nhật Thông Tin Bảng Quảng Cáo' }</h3>
+						<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : (advertDto.advertisement.allowEdit ? 'Cập Nhật Thông Tin Bảng Quảng Cáo' : 'Thông Tin Bảng Quảng Cáo') }</h3>
 						<c:if test="${errorMsg != null }">
 							<br/>
 							<br/>
@@ -105,13 +106,6 @@
 								<div class="col-md-9">
 									<form:input path="advertisement.size" type="text"
 										class="form-control" id="size" placeholder="Nhập kích thước" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="numOfLamps" class="col-md-3 control-label">Lượng đèn</label>
-								<div class="col-md-9">
-									<form:input type="number" path="advertisement.numOfLamps"
-										class="form-control" id="numOfLamps" placeholder="Nhập số lượng đèn" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -315,10 +309,10 @@
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">
-							<a
-								href="${pageContext.request.contextPath }/adv/view?page=0&size=10"
-								class="btn btn-default">Huỷ</a>
-							<button type="submit" class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
+							<c:if test="${advertDto.advertisement.allowEdit }">
+								<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="btn btn-default">Huỷ</a>
+							</c:if>
+							<button type="submit" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 						</div>
 						<!-- /.box-footer -->
 					</div>
@@ -337,16 +331,14 @@
 
 				<form:input id="imageBrowser" onchange="previewImages()"
 					class="form-control" path="files" type="file" multiple="multiple"
-					accept="image/x-png,image/gif,image/jpeg" />
+					accept="image/gif,image/jpeg" />
 				<script type="text/javascript">
 					function previewImages() {
 						$('#preview').empty();
-
 						var files = document.getElementById("imageBrowser").files;
 						for (var i = 0; i < files.length; i++) {
 							var oFReader = new FileReader();
 							oFReader.readAsDataURL(files[i]);
-
 							oFReader.onload = function(oFREvent) {
 								var image = "<img src='"+oFREvent.target.result+"' class='img-thumbnail'/>";
 								$('#preview').append(image);
@@ -359,6 +351,19 @@
 	</div>
 	<!-- /.row -->
 </section>
+
+<script>
+	$(document).ready(function() {
+		var disabled = $('#allowEdit').val();
+		if(disabled === 'true') {
+			$('input').removeAttr('disabled');
+			$('textarea').removeAttr('disabled');
+		} else {
+			$('input[type=text], input[type=number], input[type=date], input[type=file]').attr('disabled', true);
+			$('textarea').attr('disabled', true);
+		}
+	});
+</script>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyCf3QMz3TbdiJvz7goQinnfwLoQcStQqLg"></script>
 <script src="<c:url value='/resources/app/location-api.js'/>"></script>

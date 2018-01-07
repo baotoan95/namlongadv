@@ -1,6 +1,7 @@
 package net.namlongadv.models;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,4 +52,5 @@ public class User implements Serializable {
             @JoinColumn(name = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
                     @JoinColumn(name = "role", nullable = false, updatable = false) })
     private List<UserRole> roles;
+    private Date createdDate = new Date();
 }

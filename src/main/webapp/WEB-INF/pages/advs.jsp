@@ -147,22 +147,13 @@ table tr th {
 									<input type="checkbox" checked="checked" id="checkAll"/>
 								</th>
 								<th style="width: 8px;">#</th>
+								<th style="width: 5%;">Mã</th>
 								<th style="width: 20%;">Tiêu đề</th>
 								<th style="width: 20%;">Địa chỉ</th>
-<!-- 								<th>Tên Đường</th> -->
-<!-- 								<th>Số Nhà</th> -->
-<!-- 								<th>Xã</th> -->
-<!-- 								<th>Quận</th> -->
-<!-- 								<th>Tỉnh</th> -->
-<!-- 								<th>Kích thước</th> -->
-<!-- 								<th>Đơn giá</th> -->
 								<th style="width: 20px;"></th>
 								<th style="width: 13%;">Người liên hệ</th>
 								<th style="width: 10%;">SĐT</th>
-<!-- 								<th style="width: 10%;">Email</th> -->
-<!-- 								<th>Giá thuê</th> -->
 								<th style="width: 50%;">Hình ảnh</th>
-<!-- 								<th>Ghi chú</th> -->
 								<th style="width: 5%;"></th>
 							</tr>
 						</thead>
@@ -173,7 +164,7 @@ table tr th {
 										thấy dữ liệu</td>
 								</tr>
 							</c:if>
-							<c:forEach items="${page.content }" var="adv" varStatus="loop">
+							<c:forEach items="${pageContent }" var="adv" varStatus="loop">
 								<tr>
 									<td rowspan="2">
 										<input type="checkbox" class="check" name="advs[${loop.index }].id" checked="checked" value="${adv.id }" />
@@ -195,13 +186,10 @@ table tr th {
 											value="${adv.map }"/>
 											<input type="hidden" name="advs[${loop.index }].size"
 											value="${adv.size }"/>
-											<input type="hidden" name="advs[${loop.index }].numOfLamps"
-											value="${adv.numOfLamps }"/>
 											<input type="hidden" name="advs[${loop.index }].describe"
 											value="${adv.describe }"/>
 											<input type="hidden" name="advs[${loop.index }].note"
 											value="${adv.note }"/>
-											
 											<input type="hidden" name="advs[${loop.index }].ownerPhone"
 											value="${adv.ownerPhone }"/>
 											<input type="hidden" name="advs[${loop.index }].ownerEmail"
@@ -241,19 +229,13 @@ table tr th {
 											value="${adv.price }"/>
 									</td>
 									<td rowspan="2">${loop.index + 1 }</td>
+									<td rowspan="2">${adv.code }</td>
 									<td rowspan="2">
 										<a href="${pageContext.request.contextPath }/adv/${adv.id }">
 											${adv.title }
 										</a>
 									</td>
 									<td rowspan="2">${adv.houseNo }, ${adv.street }, ${adv.ward }, ${adv.district }, ${adv.province }</td>
-<%-- 									<td rowspan="2">${adv.street }</td> --%>
-<%-- 									<td rowspan="2">${adv.houseNo }</td> --%>
-<%-- 									<td rowspan="2">${adv.ward }</td> --%>
-<%-- 									<td rowspan="2">${adv.district }</td> --%>
-<%-- 									<td rowspan="2">${adv.province }</td> --%>
-<%-- 									<td rowspan="2">${adv.size }</td> --%>
-<%-- 									<td rowspan="2">${adv.price }</td> --%>
 									<td>TTCN</td>
 									<td>
 										${adv.ownerContactPerson }
@@ -261,8 +243,6 @@ table tr th {
 									<td>
 										${adv.ownerPhone }
 									</td>
-<%-- 									<td>${adv.ownerEmail }</td> --%>
-<%-- 									<td>${adv.ownerPrice }</td> --%>
 									<td rowspan="2" class="imageSelector">
 										<ul>
 											<c:forEach items="${adv.advImages }" var="advImage" varStatus="i">
@@ -275,39 +255,25 @@ table tr th {
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
 										  </li>
 										  </c:forEach>
-<%-- 										  <li><input type="checkbox" id="cbb${loop.index }" /> --%>
-<%-- 										    <label for="cbb${loop.index }"><img src="http://lorempixel.com/101/101" /></label> --%>
-<!-- 										  </li> -->
-<%-- 										  <li><input type="checkbox" id="cbc${loop.index }" /> --%>
-<%-- 										    <label for="cbc${loop.index }"><img src="http://lorempixel.com/102/102" /></label> --%>
-<!-- 										  </li> -->
-<%-- 										  <li><input type="checkbox" id="cbd${loop.index }" /> --%>
-<%-- 										    <label for="cbd${loop.index }"><img src="http://lorempixel.com/103/103" /></label> --%>
-<!-- 										  </li> -->
-<%-- 										  <li><input type="checkbox" id="cbe${loop.index }" /> --%>
-<%-- 										    <label for="cbe${loop.index }"><img src="http://lorempixel.com/103/103" /></label> --%>
-<!-- 										  </li> -->
-<%-- 										  <li><input type="checkbox" id="cbf${loop.index }" /> --%>
-<%-- 										    <label for="cbf${loop.index }"><img src="http://lorempixel.com/103/103" /></label> --%>
-<!-- 										  </li> -->
-<%-- 										  <li><input type="checkbox" id="cbg${loop.index }" /> --%>
-<%-- 										    <label for="cbg${loop.index }"><img src="http://lorempixel.com/103/103" /></label> --%>
-<!-- 										  </li> -->
 										</ul>
 									</td>
-<%-- 									<td rowspan="2">${adv.note }</td> --%>
-									<td rowspan="2" class="action" style="text-align: center;"><a class="delete" title="Xoá"
-										href="${pageContext.request.contextPath }/adv/delete/${adv.id }"><i
-											class="fa fa-fw fa-trash"></i></a> <br /> <a title="Xem"
-										href="${pageContext.request.contextPath }/adv/${adv.id }"><i
-											class="fa fa-fw fa-edit"></i></a></td>
+									<td rowspan="2" class="action" style="text-align: center;">
+										<c:if test="${adv.allowEdit }">
+										<a class="delete" title="Xoá"
+											href="${pageContext.request.contextPath }/adv/delete/${adv.id }">
+											<i class="fa fa-fw fa-trash"></i>
+										</a>
+										<br /> 
+										<a title="Xem" href="${pageContext.request.contextPath }/adv/${adv.id }">
+											<i class="fa fa-fw fa-edit"></i>
+										</a>
+										</c:if>
+									</td>
 								</tr>
 								<tr>
 									<td>TTCTQC</td>
 									<td>${adv.advCompContactPerson }</td>
 									<td>${adv.advCompPhone }</td>
-<%-- 									<td>${adv.advCompEmail }</td> --%>
-<%-- 									<td>${adv.advCompPrice }</td> --%>
 								</tr>
 							</c:forEach>
 						</tbody>

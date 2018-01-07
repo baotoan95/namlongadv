@@ -116,6 +116,7 @@ public class ExportFileService {
 						cell = row.createCell(2);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getTitle());
+						log.debug("Title: {}", adv.getTitle());
 						// House no
 						cell = row.createCell(3);
 						cell.setCellStyle(cellStyle);
@@ -144,10 +145,10 @@ public class ExportFileService {
 						cell = row.createCell(9);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getSize());
-						// Number of lamps
+						// Light system
 						cell = row.createCell(10);
 						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getNumOfLamps() != null ? adv.getNumOfLamps() : 0);
+						cell.setCellValue(adv.getLightSystem());
 						// Describe
 						cell = row.createCell(11);
 						cell.setCellStyle(cellStyle);
@@ -259,42 +260,44 @@ public class ExportFileService {
 			for (int i = 0; i < advs.size(); i++) {
 				adv = advs.get(i);
 				slide = ppt.createSlide();
-				
+
 				createProvinceHolder(slide, adv.getProvince());
-				
+
 				XSLFTextBox textBox = slide.createTextBox();
 				textBox.setAnchor(new Rectangle(0, 100, 300, 500));
-				text = "Vị trí: " + adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", " + adv.getDistrict() + ", " + adv.getProvince();
+				text = "Vị trí: " + adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", "
+						+ adv.getDistrict() + ", " + adv.getProvince();
 				createListImage(text, textBox);
-				
+
 				text = "Tầm nhìn: " + adv.getViews();
 				createListImage(text, textBox);
-				
+
 				text = "Kích thước: " + adv.getSize();
 				createListImage(text, textBox);
-				
+
 				text = "Đơn giá: " + adv.getPrice() + " (USD/năm)";
 				createListImage(text, textBox);
-				
+
 				text = "Mật độ: " + adv.getFlow() + " (người/ngày)";
 				createListImage(text, textBox);
-				
+
 				text = "Thời gian thực hiện: " + adv.getImplTime() + " ngày";
 				createListImage(text, textBox);
-				
+
 				text = "Hình thức thực hiện: " + adv.getImplForm();
 				createListImage(text, textBox);
-				
+
 				text = "Hệ thống chiếu sáng: " + adv.getLightSystem();
 				createListImage(text, textBox);
-				
+
 				XSLFTextParagraph l5 = textBox.addNewTextParagraph();
 				l5.setIndentLevel(0);
 				XSLFTextRun text5 = l5.addNewTextRun();
-				text5.setText("Đơn giá trên bao gồm: in ấn, công treo, xin phép và bảo hành 12 tháng. Chưa bao gồm VAT.");
+				text5.setText(
+						"Đơn giá trên bao gồm: in ấn, công treo, xin phép và bảo hành 12 tháng. Chưa bao gồm VAT.");
 				text5.setBold(true);
 				text5.setFontSize(16d);
-				
+
 				XSLFTextBox title = slide.createTextBox();
 				title.setAnchor(new Rectangle(300, 80, 400, 30));
 				title.setTextAutofit(TextAutofit.NORMAL);
@@ -305,33 +308,34 @@ public class ExportFileService {
 				textTitle.setBold(true);
 				textTitle.setFontColor(Color.blue);
 				textTitle.setFontSize(20d);
-				
-				List<AdvImage> images = adv.getAdvImages();
-				images = images.stream().filter(image -> image.getId() != null).collect(Collectors.toList());
-				if(images != null && !images.isEmpty()) {
-					String imagePath = images.get(0).getUrl();
-					insertImage(imagePath, new Rectangle(305, 140, 400, 380), ppt, slide);
-					images.remove(0);
 
-					for(AdvImage advImage: images) {
-						slide = ppt.createSlide();
-						createProvinceHolder(slide, adv.getProvince());
-						
-						XSLFTextBox slideTitle = slide.createTextBox();
-						slideTitle.setAnchor(new Rectangle(0, 60, 700, 30));
-						slideTitle.setTextAutofit(TextAutofit.NORMAL);
-						XSLFTextParagraph pTitle2 = slideTitle.addNewTextParagraph();
-						pTitle2.setTextAlign(TextAlign.CENTER);
-						XSLFTextRun textTitle2 = pTitle2.addNewTextRun();
-						textTitle2.setText(adv.getTitle());
-						textTitle2.setBold(true);
-						textTitle2.setFontColor(Color.blue);
-						textTitle2.setFontSize(20d);
-						
-						insertImage(advImage.getUrl(), new Rectangle(110, 140, 500, 380), ppt, slide);
+				List<AdvImage> images = adv.getAdvImages();
+				if (images != null) {
+					images = images.stream().filter(image -> image.getId() != null).collect(Collectors.toList());
+					if (!images.isEmpty()) {
+						String imagePath = images.get(0).getUrl();
+						insertImage(imagePath, new Rectangle(305, 140, 400, 380), ppt, slide);
+						images.remove(0);
+
+						for (AdvImage advImage : images) {
+							slide = ppt.createSlide();
+							createProvinceHolder(slide, adv.getProvince());
+
+							XSLFTextBox slideTitle = slide.createTextBox();
+							slideTitle.setAnchor(new Rectangle(0, 60, 700, 30));
+							slideTitle.setTextAutofit(TextAutofit.NORMAL);
+							XSLFTextParagraph pTitle2 = slideTitle.addNewTextParagraph();
+							pTitle2.setTextAlign(TextAlign.CENTER);
+							XSLFTextRun textTitle2 = pTitle2.addNewTextRun();
+							textTitle2.setText(adv.getTitle());
+							textTitle2.setBold(true);
+							textTitle2.setFontColor(Color.blue);
+							textTitle2.setFontSize(20d);
+
+							insertImage(advImage.getUrl(), new Rectangle(110, 140, 500, 380), ppt, slide);
+						}
 					}
 				}
-				
 			}
 		} catch (IOException e) {
 			log.error(e.getMessage());
@@ -339,7 +343,7 @@ public class ExportFileService {
 
 		return ppt;
 	}
-	
+
 	private void createListImage(String text, XSLFTextBox textBox) {
 		XSLFTextParagraph l1 = textBox.addNewTextParagraph();
 		l1.setIndentLevel(0);
@@ -351,7 +355,7 @@ public class ExportFileService {
 		text1.setBold(true);
 		text1.setFontSize(16d);
 	}
-	
+
 	private void insertImage(String imgUrl, Rectangle anchor, XMLSlideShow ppt, XSLFSlide slide) {
 		byte[] pictureData;
 		try {
@@ -363,7 +367,7 @@ public class ExportFileService {
 			log.error(e.getMessage());
 		}
 	}
-	
+
 	private void createProvinceHolder(XSLFSlide slide, String province) {
 		XSLFAutoShape cardRect = ((XSLFSlide) slide).createAutoShape();
 		cardRect.setShapeType(ShapeType.RECT);

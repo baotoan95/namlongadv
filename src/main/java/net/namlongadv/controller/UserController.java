@@ -1,9 +1,11 @@
 package net.namlongadv.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.assertj.core.util.Lists;
@@ -14,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,9 +58,13 @@ public class UserController {
 		return "user";
 	}
 
-	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })
-	public String user(@ModelAttribute("user") @Validated User user, BindingResult bindingResult, ModelMap model) {
+	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST }, produces="text/html;charset=UTF-8")
+	public String user(@ModelAttribute("user") User user, BindingResult bindingResult, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
+		request.setCharacterEncoding("utf-8");
+		System.setProperty("file.encoding","UTF-8");
 		model.addAttribute("roles", roleRepository.findAll());
+		
+		log.debug("Full name: {}", user.getName());
 
 		User prevUser = userRepository.findByUsername(user.getUsername());
 		// If id not null == add action
@@ -121,6 +126,7 @@ public class UserController {
 		if (user == null) {
 			return "redirect:/user/view?page=0&size=10";
 		}
+		log.debug("Full name: {}", user.getName());
 		model.addAttribute("roles", roleRepository.findAll());
 		model.addAttribute("user", user);
 		return "user";

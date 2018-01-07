@@ -23,6 +23,7 @@ public class UploadFileUtils {
 	public static List<String> uploadMultipleFile(List<MultipartFile> files, int reduce) {
 		List<String> pathFilesUploaded = new ArrayList<>();
 		File dir = new File(PathContants.UPLOAD_PATH);
+		log.debug("Uploading {} images", files.size());
 
 		try {
 			for (MultipartFile mpf : files) {
@@ -39,7 +40,7 @@ public class UploadFileUtils {
 						log.debug("Saved to storage: {}", pathUploaded);
 						pathFilesUploaded.add(pathUploaded);
 					} catch (Exception e) {
-						log.error("Fail to upload file with large size: " + e.getMessage());
+						log.error(e.getMessage());
 					}
 				} else {
 					File serverFile = new File(pathFile);

@@ -41,13 +41,10 @@
 								<security:authorize access="isAuthenticated()">
 									<security:authentication property="principal.name" />
 								</security:authorize>
-								<small>Nov. 2017</small>
+								<small><security:authentication property="principal.authorities" /></small>
 							</p></li>
 						<!-- Menu Footer-->
 						<li class="user-footer">
-							<div class="pull-left">
-								<a href="#" class="btn btn-default btn-flat">Profile</a>
-							</div>
 							<div class="pull-right">
 								<form:form action="${pageContext.request.contextPath}/logout" method="POST">
 									<input type="submit" class="btn btn-default btn-flat"

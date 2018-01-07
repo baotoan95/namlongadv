@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -64,7 +65,8 @@ public class Advertisement {
 	private User createdBy;
 	private Date createdDate;
 	private Date updatedDate;
-	private Integer numOfLamps;
 	@OneToMany(mappedBy = "advertisement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AdvImage> advImages;
+	@Transient
+	private boolean allowEdit = true;
 }

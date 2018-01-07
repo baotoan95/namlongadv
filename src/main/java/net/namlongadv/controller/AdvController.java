@@ -43,6 +43,7 @@ import net.namlongadv.models.NLAdvUserDetails;
 import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.services.AdvertisementService;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
@@ -59,6 +60,8 @@ public class AdvController {
 	private AdvImageRepository advImageRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private AdvertisementService advertisementService;
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
 	@Value("${namlongadv.base_url}")
@@ -66,7 +69,6 @@ public class AdvController {
 
 	@InitBinder
 	public void bindingPreparation(WebDataBinder binder) {
-		log.debug("Parse date");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		CustomDateEditor orderDateEditor = new CustomDateEditor(dateFormat, true);
 		binder.registerCustomEditor(Date.class, orderDateEditor);
@@ -82,6 +84,7 @@ public class AdvController {
 			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson, ModelMap model) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
@@ -105,28 +108,31 @@ public class AdvController {
 			String sCreatedBy = null;
 			String sContactPerson = "";
 			if (code.isPresent() && code.get().length() > 0) {
-				sCode = code.get().toUpperCase();
-				model.put("code", code.get());
+				sCode = code.get().trim().toUpperCase();
+				model.put("code", code.get().trim());
 			}
 			if (address.isPresent() && address.get().length() > 0) {
-				sAddress = address.get().toUpperCase();
-				model.put("address", address.get());
+				sAddress = address.get().trim().toUpperCase();
+				model.put("address", address.get().trim());
 			}
 			if (createdBy.isPresent() && createdBy.get().length() > 0) {
-				sCreatedBy = createdBy.get().toLowerCase();
-				model.put("createdBy", createdBy.get());
+				sCreatedBy = createdBy.get().trim().toLowerCase();
+				model.put("createdBy", createdBy.get().trim());
 			}
 			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
-				sContactPerson = contactPerson.get().toUpperCase();
-				model.put("contactPerson", contactPerson.get());
+				sContactPerson = contactPerson.get().trim().toUpperCase();
+				model.put("contactPerson", contactPerson.get().trim());
 			}
 
-			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson,
-					roles, new PageRequest(page.intValue(), size.intValue()));
+			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, roles,
+					new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}
 
+		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(), roles,
+				userDetails.getUserId());
+		model.addAttribute("pageContent", pageContent);
 		model.put("page", rs);
 		return "advs";
 	}
@@ -137,6 +143,7 @@ public class AdvController {
 			ModelMap model) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
@@ -145,9 +152,13 @@ public class AdvController {
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		log.info("Role size: {}", roles);
-		model.addAttribute("page", advertisementRepository.findByRoles(roles,
-				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate"))));
+		log.info("Roles: {}", roles);
+		Page<Advertisement> result = advertisementService.findByRoles(roles,
+				new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate")));
+		List<Advertisement> pageContent = advertisementService.setPermission(result.getContent(), roles,
+				userDetails.getUserId());
+		model.addAttribute("pageContent", pageContent);
+		model.addAttribute("page", result);
 		return "advs";
 	}
 
@@ -170,6 +181,8 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+		
+		log.debug("Title: {}", advertDto.getAdvertisement().getTitle());
 
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
@@ -210,7 +223,6 @@ public class AdvController {
 			log.info("Preparing to upload files");
 			pathFiles = UploadFileUtils.uploadMultipleFile(advertDto.getFiles(), fileLimit);
 			log.info("Upload successful");
-
 		}
 
 		List<AdvImage> advImages = new ArrayList<>();
@@ -258,10 +270,18 @@ public class AdvController {
 
 	@RequestMapping(value = "/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
+		// Get user roles info
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
+		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		List<String> roles = new ArrayList<>();
+		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+
 		log.debug("Getting {}'s info", advId);
 		session.setAttribute(pageIndex, "advs");
 
-		Advertisement advertisement = advertisementRepository.findOne(advId);
+		Advertisement advertisement = advertisementService.setPermission(advertisementRepository.findOne(advId), roles,
+				userDetails.getUserId());
 		if (advertisement != null) {
 			AdvertisementDTO advertDto = new AdvertisementDTO();
 			advertDto.setAdvertisement(advertisement);
