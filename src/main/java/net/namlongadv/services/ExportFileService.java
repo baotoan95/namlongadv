@@ -65,6 +65,7 @@ public class ExportFileService {
 			Advertisement adv = null;
 
 			XSSFCellStyle cellStyle = null;
+			Font font = null;
 
 			for (int i = 0; i < advs.size(); i++) {
 				adv = advs.get(i);
@@ -77,7 +78,7 @@ public class ExportFileService {
 					cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 					cellStyle.setFillForegroundColor(new XSSFColor(Color.WHITE));
 					cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-					Font font = workbook.createFont();
+					font = workbook.createFont();
 					font.setFontName("Times New Roman");
 					font.setFontHeightInPoints((short) 13);
 					font.setColor(IndexedColors.BLACK.getIndex());
@@ -91,7 +92,7 @@ public class ExportFileService {
 					cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 					cellStyle.setFillForegroundColor(new XSSFColor(new Color(138, 220, 247)));
 					cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-					Font font = workbook.createFont();
+					font = workbook.createFont();
 					font.setFontHeightInPoints((short) 13);
 					font.setFontName("Times New Roman");
 					cellStyle.setFont(font);
@@ -257,13 +258,18 @@ public class ExportFileService {
 			Advertisement adv = null;
 
 			String text = "";
+			XSLFTextBox textBox = null;
+			XSLFTextParagraph paragraph = null;
+			XSLFTextRun textRun = null;
+			List<AdvImage> images = null;
+			
 			for (int i = 0; i < advs.size(); i++) {
 				adv = advs.get(i);
 				slide = ppt.createSlide();
 
 				createProvinceHolder(slide, adv.getProvince());
 
-				XSLFTextBox textBox = slide.createTextBox();
+				textBox = slide.createTextBox();
 				textBox.setAnchor(new Rectangle(0, 100, 300, 500));
 				text = "Vị trí: " + adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", "
 						+ adv.getDistrict() + ", " + adv.getProvince();
@@ -290,26 +296,25 @@ public class ExportFileService {
 				text = "Hệ thống chiếu sáng: " + adv.getLightSystem();
 				createListImage(text, textBox);
 
-				XSLFTextParagraph l5 = textBox.addNewTextParagraph();
-				l5.setIndentLevel(0);
-				XSLFTextRun text5 = l5.addNewTextRun();
-				text5.setText(
-						"Đơn giá trên bao gồm: in ấn, công treo, xin phép và bảo hành 12 tháng. Chưa bao gồm VAT.");
-				text5.setBold(true);
-				text5.setFontSize(16d);
+				paragraph = textBox.addNewTextParagraph();
+				paragraph.setIndentLevel(0);
+				textRun = paragraph.addNewTextRun();
+				textRun.setText("Đơn giá trên bao gồm: in ấn, công treo, xin phép và bảo hành 12 tháng. Chưa bao gồm VAT.");
+				textRun.setBold(true);
+				textRun.setFontSize(16d);
 
-				XSLFTextBox title = slide.createTextBox();
-				title.setAnchor(new Rectangle(300, 80, 400, 30));
-				title.setTextAutofit(TextAutofit.NORMAL);
-				XSLFTextParagraph pTitle = title.addNewTextParagraph();
-				pTitle.setTextAlign(TextAlign.CENTER);
-				XSLFTextRun textTitle = pTitle.addNewTextRun();
-				textTitle.setText(adv.getTitle());
-				textTitle.setBold(true);
-				textTitle.setFontColor(Color.blue);
-				textTitle.setFontSize(20d);
+				textBox = slide.createTextBox();
+				textBox.setAnchor(new Rectangle(300, 80, 400, 30));
+				textBox.setTextAutofit(TextAutofit.NORMAL);
+				paragraph = textBox.addNewTextParagraph();
+				paragraph.setTextAlign(TextAlign.CENTER);
+				textRun = paragraph.addNewTextRun();
+				textRun.setText(adv.getTitle());
+				textRun.setBold(true);
+				textRun.setFontColor(Color.blue);
+				textRun.setFontSize(20d);
 
-				List<AdvImage> images = adv.getAdvImages();
+				images = adv.getAdvImages();
 				if (images != null) {
 					images = images.stream().filter(image -> image.getId() != null).collect(Collectors.toList());
 					if (!images.isEmpty()) {
@@ -321,16 +326,16 @@ public class ExportFileService {
 							slide = ppt.createSlide();
 							createProvinceHolder(slide, adv.getProvince());
 
-							XSLFTextBox slideTitle = slide.createTextBox();
-							slideTitle.setAnchor(new Rectangle(0, 60, 700, 30));
-							slideTitle.setTextAutofit(TextAutofit.NORMAL);
-							XSLFTextParagraph pTitle2 = slideTitle.addNewTextParagraph();
-							pTitle2.setTextAlign(TextAlign.CENTER);
-							XSLFTextRun textTitle2 = pTitle2.addNewTextRun();
-							textTitle2.setText(adv.getTitle());
-							textTitle2.setBold(true);
-							textTitle2.setFontColor(Color.blue);
-							textTitle2.setFontSize(20d);
+							textBox = slide.createTextBox();
+							textBox.setAnchor(new Rectangle(0, 60, 700, 30));
+							textBox.setTextAutofit(TextAutofit.NORMAL);
+							paragraph = textBox.addNewTextParagraph();
+							paragraph.setTextAlign(TextAlign.CENTER);
+							textRun = paragraph.addNewTextRun();
+							textRun.setText(adv.getTitle());
+							textRun.setBold(true);
+							textRun.setFontColor(Color.blue);
+							textRun.setFontSize(20d);
 
 							insertImage(advImage.getUrl(), new Rectangle(110, 140, 500, 380), ppt, slide);
 						}

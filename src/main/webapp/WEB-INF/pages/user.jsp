@@ -13,8 +13,8 @@
 				</div>
 				<!-- /.box-header -->
 				<!-- form start -->
-				<form:form modelAttribute="user" accept-charset="utf-8"
-				 action="${pageContext.request.contextPath }/user"
+				<form:form modelAttribute="user" accept-charset="utf-8" enctype="multipart/form-data"
+				 action="${pageContext.request.contextPath }/user?${_csrf.parameterName }=${_csrf.token}"
 				  method="${user.id != null ? 'put' : 'post' }" class="form-horizontal">
 					<form:hidden path="id"/>
 					<div class="box-body">

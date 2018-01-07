@@ -133,7 +133,10 @@ table tr th {
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
-				<form:form id="exportForm" name="exportForm" action="${pageContext.request.contextPath }/export/excel" method="post" modelAttribute="advertWrapper">
+				<form:form id="exportForm" enctype="multipart/form-data"
+					name="exportForm" action="${pageContext.request.contextPath }/export/excel" 
+					method="post" modelAttribute="advertWrapper">
+				<input type="hidden" name="csrf" value="${_csrf.token}"/>
 				<div class="box-header">
 					<h3 class="box-title">Data</h3>
 				</div>
@@ -384,11 +387,13 @@ $(document).ready(function() {
 	
 	// Export actions
 	$('#exportExcel').click(function(e) {
-		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel');
+		var token = $('input[name=csrf]').val();
+		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel?_csrf=' + token);
 		$('form[name=exportForm]').submit();
 	});
 	$('#exportPowerpoint').click(function(e) {
-		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint');
+		var token = $('input[name=csrf]').val();
+		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint?_csrf=' + token);
 		$('form[name=exportForm]').submit();
 	});
 	

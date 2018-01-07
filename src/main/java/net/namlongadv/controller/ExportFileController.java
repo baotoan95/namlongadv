@@ -1,10 +1,12 @@
 package net.namlongadv.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -38,7 +40,10 @@ public class ExportFileController {
 	}
 
 	@RequestMapping(value = "excel", method = RequestMethod.POST)
-	public void exportExcel(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, HttpServletResponse response) {
+	public void exportExcel(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, 
+			HttpServletResponse response, HttpServletRequest request) throws UnsupportedEncodingException {
+		request.setCharacterEncoding("utf-8");
+		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
 		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advertWrapperDto.getAdvs());
 
