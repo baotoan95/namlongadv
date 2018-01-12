@@ -27,12 +27,12 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 			@Param("roles") List<String> roles,Pageable pageable);
 
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "(:address is null or (concat(upper(adv.houseNo), ', ', upper(adv.street), ', ', upper(adv.ward), ', ', upper(adv.district), ', ', upper(adv.province)) "
-			+ "like concat('%',:address,'%'))) " + "and (:code is null or upper(adv.code) = :code) "
-			+ "and (:username is null or adv.createdBy.username = :username) "
+			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address% " 
+			+ "and (lower(adv.code) like %:code%)"
+			+ "and (lower(adv.createdBy.username) like %:username%) "
 			+ "and (adv.updatedDate between :fromDate and :toDate) "
-			+ "and ((:contactName is null or upper(adv.ownerContactPerson) like concat('%',:contactName,'%')) "
-			+ "or (:contactName is null or upper(adv.advCompName) like concat('%',:contactName,'%')))")
+			+ "and (lower(adv.advCompName) like %:contactName% "
+			+ "or lower(adv.ownerContactPerson) like %:contactName%)")
 	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable);

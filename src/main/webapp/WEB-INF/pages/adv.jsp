@@ -1,3 +1,7 @@
+<%@page import="net.namlongadv.models.AdvImage"%>
+<%@page import="java.util.List"%>
+<%@page import="net.namlongadv.models.Advertisement"%>
+<%@page import="net.namlongadv.dto.AdvertisementDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -9,6 +13,23 @@
 #mapCanvas {
 	width: 300px;
 	height: 400px;
+}
+.error {
+	color: red;
+}
+.preview-item {
+	background: white;
+	margin-bottom: 20px;
+	border: 1px solid white;
+}
+.close {
+	height: 20px;
+	text-align: right;
+	font-weight: bold;
+	width: 100%;
+}
+.close:hover {
+	color: red;
 }
 </style>
 
@@ -36,9 +57,14 @@
 						<div class="box-body">
 							<div class="form-group">
 								<label for="code" class="col-md-3 control-label">Mã</label>
-								<div class="col-md-9">
+								<div class="col-md-3">
 									<form:input type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
+								</div>
+								<label for="provinceCode" class="col-md-3 control-label">Mã tỉnh</label>
+								<div class="col-md-3">
+									<form:input type="text" path="advertisement.provinceCode"
+										class="form-control" id="provinceCode" placeholder="Nhập mã tỉnh" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -81,8 +107,9 @@
 							<div class="form-group">
 								<label for="province" class="col-md-3 control-label">Tỉnh</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control"
-										path="advertisement.province" placeholder="Nhập tên tỉnh" />
+									<form:select path="advertisement.province" items="${provinces }" itemLabel="name" itemValue="code"></form:select>
+<%-- 									<form:input cssClass="form-control" --%>
+<%-- 										path="advertisement.province" placeholder="Nhập tên tỉnh" /> --%>
 								</div>
 							</div>
 							<div class="form-group">
@@ -103,9 +130,16 @@
 							</security:authorize>
 							<div class="form-group">
 								<label for="size" class="col-md-3 control-label">Kích thước</label>
-								<div class="col-md-9">
-									<form:input path="advertisement.size" type="text"
-										class="form-control" id="size" placeholder="Nhập kích thước" />
+								<div class="col-md-4">
+									<form:input path="advertisement.widthSize" type="text"
+										class="form-control" id="size" placeholder="Chiều rộng (m)" />
+								</div>
+								<div class="col-md-1" style="text-align: center;">
+									<label class="control-label">x</label>
+								</div>
+								<div class="col-md-4">
+									<form:input path="advertisement.heightSize" type="text"
+										class="form-control" id="size" placeholder="Chiều cao (m)" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -147,14 +181,7 @@
 								<label for="describe" class="col-md-2 control-label">Mô tả</label>
 								<div class="col-md-10">
 									<form:textarea path="advertisement.describe" class="form-control"
-										id="describe" style="resize: none;" placeholder="Nhập mô tả" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="note" class="col-md-2 control-label">Ghi chú</label>
-								<div class="col-md-10">
-									<form:textarea path="advertisement.note" class="form-control"
-										id="note" style="resize: none;" placeholder="Nhập ghi chú" />
+										id="describe" placeholder="Nhập mô tả" />
 								</div>
 							</div>
 
@@ -214,6 +241,13 @@
 													<div class="col-md-9">
 														<form:input path="advertisement.ownerEndDate"
 															type="date" class="form-control" id="ownerEndDate" />
+													</div>
+												</div>
+												<div class="form-group">
+													<label for="ownerNote" class="col-md-3 control-label">Ghi chú</label>
+													<div class="col-md-9">
+														<form:textarea path="advertisement.ownerNote" class="form-control"
+															id="ownerNote" placeholder="Nhập ghi chú" />
 													</div>
 												</div>
 											</div>
@@ -288,6 +322,13 @@
 															type="date" class="form-control" id="advCompEndDate" />
 													</div>
 												</div>
+												<div class="form-group">
+													<label for="advCompNote" class="col-md-3 control-label">Ghi chú</label>
+													<div class="col-md-9">
+														<form:textarea path="advertisement.advCompNote" class="form-control"
+															id="advCompNote" placeholder="Nhập ghi chú" />
+													</div>
+												</div>
 											</div>
 											<!-- /.box-footer -->
 										</div>
@@ -321,30 +362,56 @@
 
 			<div class="col-md-3">
 				<div id="preview">
-					<c:forEach items="${advertDto.advertisement.advImages }"
-						var="advImage">
-						<img class="img-thumbnail"
-							src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }"
-							alt="${advImage.name }"></img>
-					</c:forEach>
+				<%
+					AdvertisementDTO advertDto = (AdvertisementDTO) request.getAttribute("advertDto");
+					List<AdvImage> images = advertDto.getAdvertisement().getAdvImages();
+					int numOfImagesAvailable = images != null ? images.size() : 0;
+					int numOfImages = 6;
+					AdvImage advImage = null;
+					for(int i = 0; i < numOfImages; i++) {
+						if(i < numOfImagesAvailable) {
+							advImage = images.get(i);
+				%>
+						<div class="preview-item">
+							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							<input type="hidden" name="prevImages[<%= i %>]" value="<%= advImage.getId() %>"/>
+							<img class="img-thumbnail"
+		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
+		 						alt="${advImage.name }"></img>
+							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg" name="files[<%= i %>]" class="form-control"/>
+						</div>
+				<%
+						} else {
+				%>
+						<div class="preview-item">
+							<img class="img-thumbnail" src="" alt="${advImage.name }"></img>
+							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg" name="files[<%= i %>]" class="form-control"/>
+						</div>
+				<%
+						}
+					}
+				%>
 				</div>
 
-				<form:input id="imageBrowser" onchange="previewImages()"
-					class="form-control" path="files" type="file" multiple="multiple"
-					accept="image/gif,image/jpeg" />
 				<script type="text/javascript">
-					function previewImages() {
-						$('#preview').empty();
-						var files = document.getElementById("imageBrowser").files;
-						for (var i = 0; i < files.length; i++) {
-							var oFReader = new FileReader();
-							oFReader.readAsDataURL(files[i]);
-							oFReader.onload = function(oFREvent) {
-								var image = "<img src='"+oFREvent.target.result+"' class='img-thumbnail'/>";
-								$('#preview').append(image);
-							};
+					function previewImages(input, isPrevImage) {
+						if (input.files && input.files[0]) {
+						    var reader = new FileReader();
+
+						    reader.onload = function(e) {
+						    	$(input).prev().attr('src', e.target.result);
+						    }
+						    reader.readAsDataURL(input.files[0]);
 						}
-					};
+						deleteImage(input);
+					}
+					
+					function deleteImage(element) {
+						$(element).parent().find('input[type=hidden]').remove();
+						$(element).parent().find('img').removeAttr('src');
+						$(element).parent().find('img').removeAttr('alt');
+						$(element).parent().find('.close').remove();
+					}
 				</script>
 			</div>
 		</form:form>

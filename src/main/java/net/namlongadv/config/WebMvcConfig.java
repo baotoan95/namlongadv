@@ -14,12 +14,18 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
+import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.common.PathContants;
+
 @Configuration
 @EnableWebMvc
+@Slf4j
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+		log.debug(PathContants.rootPath);
+		registry.addResourceHandler("/images/**").addResourceLocations(PathContants.rootPath);
 	}
 
 	@Bean

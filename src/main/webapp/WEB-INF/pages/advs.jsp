@@ -10,76 +10,6 @@ table tr th {
 	text-align: center;
 	background: #99ddfc;
 }
-
-.imageSelector ul {
-  list-style-type: none;
-}
-
-.imageSelector li {
-  display: inline-block;
-}
-
-.imageSelector input[type="checkbox"][id^="cb"] {
-  display: none;
-}
-
-.imageSelector label {
-  border: 1px solid #fff;
-  padding: 5px;
-  display: block;
-  position: relative;
-  margin: 10px;
-  cursor: pointer;
-}
-
-.imageSelector label:before {
-  background-color: white;
-  color: white;
-  content: " ";
-  display: block;
-  border-radius: 50%;
-  border: 1px solid grey;
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  width: 25px;
-  height: 25px;
-  text-align: center;
-  line-height: 28px;
-  transition-duration: 0.4s;
-  transform: scale(0);
-}
-
-.imageSelector label img {
-  heigh: 50px;
-  width: 50px;
-  transition-duration: 0.2s;
-  transform-origin: 50% 50%;
-}
-
-.imageSelector :checked + label {
-  border-color: #ddd;
-}
-
-.imageSelector :checked + label:before {
-  content: "✓";
-  background-color: green;
-  transform: scale(1);
-  z-index: 9;
-  opacity: 0.8;
-}
-
-.imageSelector :checked + label img {
-  transform: scale(0.9);
-  box-shadow: 0 0 5px #333;
-  z-index: -1;
-}
-
-.ui-autocomplete { 
-            cursor:pointer; 
-            height:120px; 
-            overflow-y:scroll;
-        }
 </style>
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
@@ -105,7 +35,7 @@ table tr th {
 									<input type="text" name="code" class="form-control" placeholder="Mã" value="${code }"/>
 								</div>
 								<div class="col-md-2 ui-widget">
-									<input type="text" name="contactPerson" class="form-control" placeholder="NLH" value="${contactPerson }"/>
+									<input type="text" name="contactPerson" class="form-control" placeholder="Tên công ty" value="${contactPerson }"/>
 								</div>
 								<div class="col-md-2">
 								    <input type="text" name="createdBy" class="form-control" value="${createdBy }" placeholder="Tạo bởi"/>
@@ -141,7 +71,7 @@ table tr th {
 					<h3 class="box-title">Data</h3>
 				</div>
 				<!-- /.box-header -->
-				<div class="box-body">
+				<div class="box-body" style="overflow: auto;">
 					<table class="table table-bordered table-responsive"
 						style="max-width: none !important; margin-right: 10px;">
 						<thead>
@@ -163,8 +93,7 @@ table tr th {
 						<tbody>
 							<c:if test="${empty page.content }">
 								<tr>
-									<td colspan="21" style="text-align: center;">Không tìm
-										thấy dữ liệu</td>
+									<td colspan="21" style="text-align: center;">Không tìm thấy dữ liệu</td>
 								</tr>
 							</c:if>
 							<c:forEach items="${pageContent }" var="adv" varStatus="loop">
@@ -187,12 +116,12 @@ table tr th {
 											value="${adv.province }"/>
 											<input type="hidden" name="advs[${loop.index }].map"
 											value="${adv.map }"/>
-											<input type="hidden" name="advs[${loop.index }].size"
-											value="${adv.size }"/>
+											<input type="hidden" name="advs[${loop.index }].widthSize"
+											value="${adv.widthSize }"/>
+											<input type="hidden" name="advs[${loop.index }].heightSize"
+											value="${adv.heightSize }"/>
 											<input type="hidden" name="advs[${loop.index }].describe"
 											value="${adv.describe }"/>
-											<input type="hidden" name="advs[${loop.index }].note"
-											value="${adv.note }"/>
 											<input type="hidden" name="advs[${loop.index }].ownerPhone"
 											value="${adv.ownerPhone }"/>
 											<input type="hidden" name="advs[${loop.index }].ownerEmail"
@@ -205,6 +134,8 @@ table tr th {
 											value="${adv.ownerEndDate }"/>
 											<input type="hidden" name="advs[${loop.index }].ownerContactPerson"
 											value="${adv.ownerContactPerson }"/>
+											<input type="hidden" name="advs[${loop.index }].ownerNote"
+											value="${adv.ownerNote }"/>
 											
 											<input type="hidden" name="advs[${loop.index }].advCompPhone"
 											value="${adv.advCompPhone }"/>
@@ -218,6 +149,9 @@ table tr th {
 											value="${adv.advCompContactPerson }"/>
 											<input type="hidden" name="advs[${loop.index }].advCompName"
 											value="${adv.advCompName }"/>
+											<input type="hidden" name="advs[${loop.index }].advCompNote"
+											value="${adv.advCompNote }"/>
+											
 											<input type="hidden" name="advs[${loop.index }].views"
 											value="${adv.views }"/>
 											<input type="hidden" name="advs[${loop.index }].flow"
@@ -247,17 +181,18 @@ table tr th {
 										${adv.ownerPhone }
 									</td>
 									<td rowspan="2" class="imageSelector">
-										<ul>
+										<ul class="image-group">
 											<c:forEach items="${adv.advImages }" var="advImage" varStatus="i">
-										  <li>
+										  	<li class="image-item">
 										  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
 										    <label for="cb${loop.index }-${i.index }">
-										    	<img class="image" src="${pageContext.request.contextPath }/resources/images?url=${advImage.url }&w=200&h=200" />
+										    	<img class="image lazy" data-original="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" />
+										    	<button type="button" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button>
 										    </label>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
-										  </li>
-										  </c:forEach>
+										  	</li>
+										  	</c:forEach>
 										</ul>
 									</td>
 									<td rowspan="2" class="action" style="text-align: center;">

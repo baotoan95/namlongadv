@@ -26,8 +26,8 @@
 			<li class="header">MAIN NAVIGATION ${sessionScope.PAGE_INDEX }</li>
 			
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'advs' ? 'active' : '' }"><a
-				href="${pageContext.request.contextPath }/adv/view?page=0&size=10"><i
-					class="fa fa-table"></i> <span>Danh sách quảng cáo</span>
+				href="${pageContext.request.contextPath }/adv/view?page=0&size=10">
+				<i class="fa fa-table"></i> <span>Danh sách quảng cáo</span>
 			</a></li>
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'adv' ? 'active' : '' }"><a
 				href="${pageContext.request.contextPath }/adv"> <i
@@ -35,7 +35,7 @@
 			</a></li>
 			
 			<security:authorize access="hasRole('ROLE_ADMIN')">
-			<li class="treeview ${sessionScope.PAGE_INDEX == 'users' || sessionScope.PAGE_INDEX == 'user' ? 'active' : '' }"><a href="#"> <i class="fa fa-pie-chart"></i>
+			<li class="treeview ${sessionScope.PAGE_INDEX == 'users' || sessionScope.PAGE_INDEX == 'user' ? 'active' : '' }"><a href="#"> <i class="fa fa-users"></i>
 					<span>Quản lý tài khoản</span> <span class="pull-right-container">
 						<i class="fa fa-angle-left pull-right"></i>
 				</span>

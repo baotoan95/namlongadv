@@ -17,6 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ImageUtils {
+	private static BufferedImage originalImage;
+	private static BufferedImage image;
+	private static Graphics2D graphics2d;
+	private static File output;
+	
 	public static String reduceImageFileSize(int size, File file, String out) throws Exception {
 		float quality = 1.0f;
 		long fileSize = file.length();
@@ -69,18 +74,18 @@ public class ImageUtils {
 
 	public static File resizeImage(int x, int y, File in) throws IOException {
 		log.debug("Resizing {}", in.getName());
-		BufferedImage originalImage = ImageIO.read(in);
+		originalImage = ImageIO.read(in);
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
 		// Create image object
-		BufferedImage image = new BufferedImage(x, y, type);
-		Graphics2D g = image.createGraphics();
+		image = new BufferedImage(x, y, type);
+		graphics2d = image.createGraphics();
 
 		// Draw image original with new width and new height
-		g.drawImage(originalImage, 0, 0, x, y, null);
-		g.dispose();
+		graphics2d.drawImage(originalImage, 0, 0, x, y, null);
+		graphics2d.dispose();
 
-		File output = new File(in.getName());
+		output = new File(in.getName());
 		ImageIO.write(image, FileUtils.getExtensions(in.getPath()), output);
 
 		return output;

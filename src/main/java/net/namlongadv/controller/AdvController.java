@@ -6,11 +6,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpSession;
 
@@ -42,6 +45,7 @@ import net.namlongadv.models.Advertisement;
 import net.namlongadv.models.NLAdvUserDetails;
 import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
+import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.services.AdvertisementService;
 import net.namlongadv.utils.DateUtils;
@@ -62,6 +66,9 @@ public class AdvController {
 	private UserRepository userRepository;
 	@Autowired
 	private AdvertisementService advertisementService;
+	@Autowired
+	private ProvinceRepository provinceRepository;
+	
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
 	@Value("${namlongadv.base_url}")
@@ -103,16 +110,16 @@ public class AdvController {
 			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
 
-			String sCode = null;
+			String sCode = "";
 			String sAddress = "";
-			String sCreatedBy = null;
+			String sCreatedBy = "";
 			String sContactPerson = "";
 			if (code.isPresent() && code.get().length() > 0) {
-				sCode = code.get().trim().toUpperCase();
+				sCode = code.get().trim().toLowerCase();
 				model.put("code", code.get().trim());
 			}
 			if (address.isPresent() && address.get().length() > 0) {
-				sAddress = address.get().trim().toUpperCase();
+				sAddress = address.get().trim().toLowerCase();
 				model.put("address", address.get().trim());
 			}
 			if (createdBy.isPresent() && createdBy.get().length() > 0) {
@@ -120,10 +127,15 @@ public class AdvController {
 				model.put("createdBy", createdBy.get().trim());
 			}
 			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
-				sContactPerson = contactPerson.get().trim().toUpperCase();
+				sContactPerson = contactPerson.get().trim().toLowerCase();
 				model.put("contactPerson", contactPerson.get().trim());
 			}
 
+			log.debug(sCode);
+			log.debug(sAddress);
+			log.debug(sCreatedBy);
+			log.debug(sContactPerson);
+			
 			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, roles,
 					new PageRequest(page.intValue(), size.intValue()));
 		} catch (ParseException e) {
@@ -170,6 +182,7 @@ public class AdvController {
 		// Generate code
 		advDto.getAdvertisement().setCode(StringUtils.randomCode());
 		model.addAttribute("advertDto", advDto);
+		model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "adv";
 	}
 
@@ -181,12 +194,11 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-		
-		log.debug("Title: {}", advertDto.getAdvertisement().getTitle());
 
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
 
+		// Check existed
 		Advertisement advert = advertDto.getAdvertisement();
 		Advertisement prevAdvertisement = null;
 		try {
@@ -195,7 +207,7 @@ public class AdvController {
 			// Do nothing
 		}
 
-		// Validation code
+		// Validation code if not auto generate
 		if (advert.getCode().trim().length() == 0) {
 			advert.setCode(StringUtils.randomCode());
 		}
@@ -210,7 +222,9 @@ public class AdvController {
 		}
 		List<Advertisement> advs = advertisementRepository.findByAddress(fullAddress, roles, new PageRequest(0, 1))
 				.getContent();
-		if (advs.size() > 0 && (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress))) {
+		log.debug(advs.size() + "");
+		if (advs.size() > 0 && fullAddress.length() > 8
+				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
 			model.addAttribute("advertDto", advertDto);
 			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>" + "<a href='" + baseUrl + "/adv/"
 					+ advs.get(0).getId() + "'>Bấm vào đây để xem chi tiết</a>";
@@ -218,6 +232,7 @@ public class AdvController {
 			return "adv";
 		}
 
+		// Upload files
 		List<String> pathFiles = new ArrayList<>();
 		if (advertDto.getFiles() != null) {
 			log.info("Preparing to upload files");
@@ -225,42 +240,43 @@ public class AdvController {
 			log.info("Upload successful");
 		}
 
+		// Add images to advertisement
 		List<AdvImage> advImages = new ArrayList<>();
 		for (String pathFile : pathFiles) {
 			String name = pathFile.substring(pathFile.lastIndexOf(File.separator), pathFile.length());
 			advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert));
 		}
 
-		advert.setAdvImages(advImages);
 		// For update
 		if (prevAdvertisement != null) {
-			advert.setUpdatedDate(new Date());
-			log.debug("Image is empty: " + advImages.size());
-			if (advImages.isEmpty()) {
-				advert.setAdvImages(prevAdvertisement.getAdvImages());
-			} else {
-				// Delete previous files
-				List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
-				for (AdvImage advImg : oldAdvImages) {
+			// Delete previous files
+			List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
+			oldAdvImages.forEach(image -> {
+				if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId())) {
 					try {
-						FileUtils.forceDelete(new File(advImg.getUrl()));
+						FileUtils.forceDelete(new File(image.getUrl()));
 					} catch (IOException e) {
 						// Do nothing
 					}
+				} else {
+					advImages.add(image);
 				}
-			}
+			});
+			
+			advert.setUpdatedDate(new Date());
 		} else {
 			advert.setCreatedDate(new Date());
 			advert.setUpdatedDate(new Date());
 		}
 
+		advert.setAdvImages(advImages);
 		advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);
 		if (advertisement == null) {
 			model.addAttribute("adv", advert);
-			model.addAttribute("errorMsg", "There is an error occur, please contact IT to support.");
+			model.addAttribute("errorMsg", "There is an error occur, please contact IT department to support.");
 			return "adv";
 		}
 		log.info("Save successful and redirect to view page");
@@ -286,6 +302,7 @@ public class AdvController {
 			AdvertisementDTO advertDto = new AdvertisementDTO();
 			advertDto.setAdvertisement(advertisement);
 			model.addAttribute("advertDto", advertDto);
+			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 			return "adv";
 		} else {
 			return "redirect:/adv/view?page=0&size=10";
@@ -294,8 +311,7 @@ public class AdvController {
 
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId) {
-		log.debug("Getting {}'s info", advId);
-
+		log.debug("Delete {}", advId);
 		advertisementRepository.delete(advId);
 		return "redirect:/adv/view?page=0&size=10";
 	}

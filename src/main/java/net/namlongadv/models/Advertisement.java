@@ -31,13 +31,15 @@ public class Advertisement {
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	private UUID id;
 	private String code;
+	private String provinceCode;
 	private String title;
 	private String street;
 	private String houseNo;
 	private String ward;
 	private String district;
 	private String province;
-	private String size;
+	private String widthSize;
+	private String heightSize;
 	private String map;
 	private String describe;
 	private String views;
@@ -51,6 +53,7 @@ public class Advertisement {
 	private String ownerContactPerson;
 	private Date ownerStartDate;
 	private Date ownerEndDate;
+	private String ownerNote;
 	private String advCompPhone;
 	private String advCompEmail;
 	private String advCompPrice;
@@ -58,7 +61,7 @@ public class Advertisement {
 	private String advCompName;
 	private Date advCompStartDate;
 	private Date advCompEndDate;
-	private String note;
+	private String advCompNote;
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
@@ -67,6 +70,7 @@ public class Advertisement {
 	private Date updatedDate;
 	@OneToMany(mappedBy = "advertisement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AdvImage> advImages;
+	private Boolean trash = false;
 	@Transient
 	private boolean allowEdit = true;
 }

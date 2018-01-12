@@ -3,6 +3,8 @@ package net.namlongadv.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.namlongadv.models.Advertisement;
+import net.namlongadv.models.Province;
 import net.namlongadv.repositories.AdvertisementRepository;
+import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
 
 @RestController
@@ -25,6 +29,8 @@ public class RestApiController {
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private ProvinceRepository provinceRepository;
 	
 	@RequestMapping(value = "/location", method = RequestMethod.GET)
 	public List<String> addresses(@RequestParam(value = "term", required = true) String address) {

@@ -145,7 +145,7 @@ public class ExportFileService {
 						// Size
 						cell = row.createCell(9);
 						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getSize());
+						cell.setCellValue(adv.getWidthSize() + " x " + adv.getHeightSize());
 						// Light system
 						cell = row.createCell(10);
 						cell.setCellStyle(cellStyle);
@@ -154,10 +154,6 @@ public class ExportFileService {
 						cell = row.createCell(11);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getDescribe());
-						// Note
-						cell = row.createCell(12);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getNote());
 
 						cell = row.createCell(13);
 						cell.setCellStyle(cellStyle);
@@ -189,6 +185,11 @@ public class ExportFileService {
 
 						cell = row.createCell(20);
 						cell.setCellStyle(cellStyle);
+						
+						// Owner contact
+						cell = row.createCell(21);
+						cell.setCellStyle(cellStyle);
+						cell.setCellValue(adv.getOwnerNote());
 					} else {
 						for (int j = 0; j <= 12; j++) {
 							cell = row.createCell(j);
@@ -226,6 +227,10 @@ public class ExportFileService {
 						cell = row.createCell(20);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompName());
+						// Company note
+						cell = row.createCell(21);
+						cell.setCellStyle(cellStyle);
+						cell.setCellValue(adv.getAdvCompNote());
 					}
 					startData++;
 				}
@@ -278,7 +283,7 @@ public class ExportFileService {
 				text = "Tầm nhìn: " + adv.getViews();
 				createListImage(text, textBox);
 
-				text = "Kích thước: " + adv.getSize();
+				text = "Kích thước: " + adv.getWidthSize() + " x " + adv.getHeightSize();
 				createListImage(text, textBox);
 
 				text = "Đơn giá: " + adv.getPrice() + " (USD/năm)";

@@ -29,7 +29,7 @@
 						<div class="form-group">
 							<label for="password" class="col-sm-2 control-label">Mật khẩu</label>
 							<div class="col-sm-10">
-								<form:password path="password" class="form-control" id="password" placeholder="${user.id != null ? 'Nhập nếu cần thay đổi mật khẩu' : 'Nhập mật khẩu' }"/>
+								<form:password autocomplete="new-password" path="password" class="form-control" id="password" placeholder="${user.id != null ? 'Nhập nếu cần thay đổi mật khẩu' : 'Nhập mật khẩu' }"/>
 								<form:errors path="password" cssClass="error"></form:errors>
 							</div>
 						</div>
