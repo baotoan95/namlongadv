@@ -271,6 +271,12 @@ public class AdvController {
 
 		advert.setAdvImages(advImages);
 		advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
+		
+		// Set province
+		if(advert.getProvinceCode() != null && advert.getProvinceCode().length() > 0) {
+			advert.setProvince(provinceRepository.findOne(advert.getProvinceCode()).getName());
+		}
+		
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);

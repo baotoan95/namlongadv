@@ -41,6 +41,8 @@
 	
 <link rel="stylesheet"
 	href="<c:url value='/resources/dist/css/custom.css'/>">
+<!-- Select2 -->
+<link rel="stylesheet" href="<c:url value='/resources/plugins/select2/select2.min.css'/>">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -113,6 +115,8 @@
 		src="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.min.js'/>"></script>
 	<!-- Bootstrap 3.3.6 -->
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
+	<!-- Select2 -->
+	<script src="<c:url value='/resources/plugins/select2/select2.full.min.js'/>"></script>
 	<!-- DataTables -->
 	<script
 		src="<c:url value='/resources/plugins/datatables/jquery.dataTables.min.js'/>"></script>

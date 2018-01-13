@@ -6,7 +6,7 @@
 
 <section class="content">
 	<div class="row">
-		<div class="col-xs-9">
+		<div class="col-md-9 col-sm-12">
 			<div class="box box-info">
 				<div class="box-header with-border">
 					<h3 class="box-title">${id != null ? 'Cập Nhật Thông Tin Thành Viên' : 'Tạo Mới Thành Viên' }</h3>

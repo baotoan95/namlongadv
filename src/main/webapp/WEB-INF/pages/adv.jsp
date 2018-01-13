@@ -57,14 +57,9 @@
 						<div class="box-body">
 							<div class="form-group">
 								<label for="code" class="col-md-3 control-label">Mã</label>
-								<div class="col-md-3">
-									<form:input type="text" path="advertisement.code"
+								<div class="col-md-4">
+									<form:input readonly="true" type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
-								</div>
-								<label for="provinceCode" class="col-md-3 control-label">Mã tỉnh</label>
-								<div class="col-md-3">
-									<form:input type="text" path="advertisement.provinceCode"
-										class="form-control" id="provinceCode" placeholder="Nhập mã tỉnh" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -107,9 +102,12 @@
 							<div class="form-group">
 								<label for="province" class="col-md-3 control-label">Tỉnh</label>
 								<div class="col-md-9">
-									<form:select path="advertisement.province" items="${provinces }" itemLabel="name" itemValue="code"></form:select>
-<%-- 									<form:input cssClass="form-control" --%>
-<%-- 										path="advertisement.province" placeholder="Nhập tên tỉnh" /> --%>
+									<form:select id="province" onchange="updateCode()" cssClass="form-control select2" path="advertisement.provinceCode">
+										<form:option value="">Chọn tỉnh</form:option>
+										<c:forEach items="${provinces }" var="province">
+										<form:option value="${province.code }">${province.name }</form:option>
+										</c:forEach>
+									</form:select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -131,16 +129,16 @@
 							<div class="form-group">
 								<label for="size" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-4">
-									<form:input path="advertisement.widthSize" type="text"
-										class="form-control" id="size" placeholder="Chiều rộng (m)" />
+									<form:input path="advertisement.heightSize" type="text"
+										class="form-control" id="size" placeholder="Chiều cao (m)" />
 								</div>
 								<div class="col-md-1" style="text-align: center;">
 									<label class="control-label">x</label>
 								</div>
 								<div class="col-md-4">
-									<form:input path="advertisement.heightSize" type="text"
-										class="form-control" id="size" placeholder="Chiều cao (m)" />
-								</div>
+									<form:input path="advertisement.widthSize" type="text"
+										class="form-control" id="size" placeholder="Chiều rộng (m)" />
+								</div>								
 							</div>
 							<div class="form-group">
 								<label for="views" class="col-md-3 control-label">Tầm nhìn</label>
@@ -421,6 +419,8 @@
 
 <script>
 	$(document).ready(function() {
+		$(".select2").select2();
+		
 		var disabled = $('#allowEdit').val();
 		if(disabled === 'true') {
 			$('input').removeAttr('disabled');
@@ -429,7 +429,18 @@
 			$('input[type=text], input[type=number], input[type=date], input[type=file]').attr('disabled', true);
 			$('textarea').attr('disabled', true);
 		}
+		
+		updateCode();
 	});
+	
+	function updateCode() {
+		var codeComponent = $('#code');
+		var code = codeComponent.val().split("-")[0];
+		var provinceCode = $('#province').val();
+		if(provinceCode) {
+			codeComponent.val(code + "-" + provinceCode);
+		}
+	}
 </script>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyCf3QMz3TbdiJvz7goQinnfwLoQcStQqLg"></script>

@@ -155,39 +155,40 @@ public class ExportFileService {
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getDescribe());
 
-						cell = row.createCell(13);
+						cell = row.createCell(12);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue("Thông tin chủ nhà");
 						// Owner Phone
-						cell = row.createCell(14);
+						cell = row.createCell(13);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerPhone());
 						// Owner Email
-						cell = row.createCell(15);
+						cell = row.createCell(14);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerEmail());
 						// Owner Price
-						cell = row.createCell(16);
+						cell = row.createCell(15);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerPrice());
 						// Owner start date
-						cell = row.createCell(17);
+						cell = row.createCell(16);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getOwnerStartDate()));
 						// Owner end date
-						cell = row.createCell(18);
+						cell = row.createCell(17);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getOwnerEndDate()));
 						// Owner contact
-						cell = row.createCell(19);
+						cell = row.createCell(18);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerContactPerson());
-
-						cell = row.createCell(20);
+						
+						// Empty
+						cell = row.createCell(19);
 						cell.setCellStyle(cellStyle);
 						
-						// Owner contact
-						cell = row.createCell(21);
+						// Owner note
+						cell = row.createCell(20);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getOwnerNote());
 					} else {
@@ -196,39 +197,39 @@ public class ExportFileService {
 							cell.setCellStyle(cellStyle);
 						}
 						// Company start date
-						cell = row.createCell(13);
+						cell = row.createCell(12);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue("Thông tin CT quảng cáo");
 						// Company start date
-						cell = row.createCell(14);
+						cell = row.createCell(13);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompPhone());
 						// Company start date
-						cell = row.createCell(15);
+						cell = row.createCell(14);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompEmail());
 						// Company start date
-						cell = row.createCell(16);
+						cell = row.createCell(15);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompPrice());
 						// Company start date
-						cell = row.createCell(17);
+						cell = row.createCell(16);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getAdvCompStartDate()));
 						// Company start date
-						cell = row.createCell(18);
+						cell = row.createCell(17);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getAdvCompEndDate()));
 						// Company start date
-						cell = row.createCell(19);
+						cell = row.createCell(18);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompContactPerson());
 						// Company start date
-						cell = row.createCell(20);
+						cell = row.createCell(19);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompName());
 						// Company note
-						cell = row.createCell(21);
+						cell = row.createCell(20);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompNote());
 					}
@@ -244,7 +245,7 @@ public class ExportFileService {
 
 	private void mergeCell(XSSFSheet sheet, int startData, int numOfItems) {
 		for (int i = 0; i < numOfItems; i++) {
-			for (int j = 0; j <= 12; j++) {
+			for (int j = 0; j < 12; j++) {
 				CellRangeAddress cellRangeAddress = new CellRangeAddress(startData, startData + 1, j, j);
 				sheet.addMergedRegion(cellRangeAddress);
 			}

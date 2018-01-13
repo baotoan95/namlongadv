@@ -1,10 +1,6 @@
 package net.namlongadv.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +12,6 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -65,17 +60,7 @@ public class UserController {
 
 	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })
 	public String user(@ModelAttribute("user") User user, BindingResult bindingResult, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
-		request.setCharacterEncoding("utf-8");
-		System.setProperty("file.encoding","UTF-8");
 		model.addAttribute("roles", roleRepository.findAll());
-		
-		CharsetDecoder d= Charset.forName("UTF-8").newDecoder();
-		ByteBuffer in2 =ByteBuffer.wrap(user.getName().getBytes());
-		try {
-			log.debug("Full name: {}", d.decode(in2).toString());
-		} catch (CharacterCodingException e) {
-			e.printStackTrace();
-		}
 
 		User prevUser = userRepository.findByUsername(user.getUsername());
 		// If id not null == add action
@@ -118,7 +103,7 @@ public class UserController {
 
 		log.debug("Check locked user");
 		user.setAccountNonLocked(user.isAccountNonLocked());
-
+		
 		User userAdded = userRepository.save(user);
 		if (userAdded == null) {
 			log.error("Fail to add the user");
