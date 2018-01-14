@@ -57,10 +57,17 @@
 						<div class="box-body">
 							<div class="form-group">
 								<label for="code" class="col-md-3 control-label">Mã</label>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<form:input readonly="true" type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
 								</div>
+								<c:if test="${not empty advertDto.advertisement.updatedDate }">
+								<label for="updatedDate" class="col-md-3 control-label">Cập nhật ngày</label>
+								<div class="col-md-3">
+									<form:input readonly="true" type="text" path="advertisement.updatedDate"
+										class="form-control" id="updatedDate" placeholder="Ngày cập nhật" />
+								</div>
+								</c:if>
 							</div>
 							<div class="form-group">
 								<label for="title" class="col-md-3 control-label">Tiêu đề</label>
@@ -435,10 +442,16 @@
 	
 	function updateCode() {
 		var codeComponent = $('#code');
-		var code = codeComponent.val().split("-")[0];
+		var codeParts = codeComponent.val().split("-");
+		var code = codeParts[0];
+		if(codeParts && codeParts.length === 2) {
+			code = codeParts[1];
+		}
 		var provinceCode = $('#province').val();
 		if(provinceCode) {
-			codeComponent.val(code + "-" + provinceCode);
+			codeComponent.val(provinceCode + "-" + code);
+		} else {
+			codeComponent.val(code);
 		}
 	}
 </script>

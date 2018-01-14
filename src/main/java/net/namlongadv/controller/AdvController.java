@@ -136,8 +136,9 @@ public class AdvController {
 			log.debug(sCreatedBy);
 			log.debug(sContactPerson);
 			
-			rs = advertisementRepository.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, roles,
+			rs = advertisementService.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, roles,
 					new PageRequest(page.intValue(), size.intValue()));
+			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=10";
 		}

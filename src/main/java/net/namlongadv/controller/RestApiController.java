@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.namlongadv.models.Advertisement;
-import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.services.AdvertisementService;
 
 @RestController
 public class RestApiController {
 	@Autowired
-	private AdvertisementRepository advertisementRepository;
+	private AdvertisementService advertisementService;
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -34,7 +34,7 @@ public class RestApiController {
 		List<String> roles = new ArrayList<>(); 
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 		
-		Page<Advertisement> rs = advertisementRepository.findByAddress(address, roles, new PageRequest(0, 20));
+		Page<Advertisement> rs = advertisementService.findByAddress(address, roles, new PageRequest(0, 20));
 		List<String> addresses = new ArrayList<>();
 		
 		rs.getContent().stream().forEach(adv -> {

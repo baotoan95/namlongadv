@@ -44,7 +44,7 @@ table tr th {
 									<input id="address" type="text" name="address" value="${address }" class="form-control" placeholder="Địa chỉ"/>
 								</div>
 								<div class="col-md-3">
-								    <input type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
+								    <input readonly type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
 								</div>
 							</div>
 						</div>
@@ -84,7 +84,7 @@ table tr th {
 								<th style="width: 20%;">Tiêu đề</th>
 								<th style="width: 20%;">Địa chỉ</th>
 								<th style="width: 20px;"></th>
-								<th style="width: 13%;">Người liên hệ</th>
+								<th style="width: 13%;">Liên hệ</th>
 								<th style="width: 10%;">SĐT</th>
 								<th style="width: 50%;">Hình ảnh</th>
 								<th style="width: 5%;"></th>
@@ -210,7 +210,7 @@ table tr th {
 								</tr>
 								<tr>
 									<td>TTCTQC</td>
-									<td>${adv.advCompContactPerson }</td>
+									<td>${adv.advCompName }</td>
 									<td>${adv.advCompPhone }</td>
 								</tr>
 							</c:forEach>
