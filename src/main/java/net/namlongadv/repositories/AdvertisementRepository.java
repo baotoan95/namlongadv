@@ -14,9 +14,13 @@ import net.namlongadv.models.Advertisement;
 
 public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID> {
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "concat(upper(adv.houseNo), ', ', upper(adv.street), ', ', upper(adv.ward), ', ', upper(adv.district), ', ', upper(adv.province)) "
-			+ "like concat('%',upper(:address),'%')")
+			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address%")
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles, Pageable pageable);
+	
+	@Query("select adv from Advertisement adv where "
+			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) "
+			+ "like :address")
+	public Page<Advertisement> findExactlyByAddress(@Param("address") String address, Pageable pageable);
 
 	public List<Advertisement> findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqual(Date milestone1,
 			Date milestone2);

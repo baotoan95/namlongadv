@@ -52,7 +52,7 @@ table tr th {
 						<div class="footer">
 							<div class="box-footer">
 								<input type="submit" class="btn btn-info" value="Lọc">
-								<input type="reset" class="btn btn-danger" value="Đặt lại">
+								<input type="button" id="reset-filter" class="btn btn-danger" value="Đặt lại">
 							</div>
 						</div>
 					</form>
@@ -273,14 +273,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	$('input[type=reset]').click(function(e) {
-		$('input[name=code]').val('');
-		$('input[name=address]').val('');
-		$('input[name=createdBy]').val('');
-		$('input[name=daterange]').val('');
-		$('input[name=contactPerson]').val('');
-	});
-	
 	// Address
 	$("#address").autocomplete({
 		source: "${pageContext.request.contextPath}/location",
@@ -290,12 +282,24 @@ $(document).ready(function() {
 	    }
 	});
 	
+	// Init default date filter
 	var daterange = '${daterange}'.split(" - ");
 	if(daterange.length < 2) {
 		var today = new Date();
-		daterange[0] = "01/01/2017";
+		daterange[0] = "1/1/2017";
 		daterange[1] = (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
 	}
+	
+	// Reset filter value
+	$('#reset-filter').click(function(e) {
+		$('input[name=code]').val('');
+		$('input[name=address]').val('');
+		$('input[name=createdBy]').val('');
+		$('input[name=daterange]').val(new Date(daterange[0]).toLocaleDateString() + " - " + new Date(daterange[1]).toLocaleDateString());
+		$('input[name=contactPerson]').val('');
+	});
+	
+	// Init datepicker
 	$('input[name="daterange"]').daterangepicker({
 		 opens: "left",
 		 startDate: daterange[0],

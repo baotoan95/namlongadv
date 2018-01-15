@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.common.Constants;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.repositories.AdvertisementRepository;
 
@@ -23,41 +24,37 @@ public class AdvertisementService {
 
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles,
 			Pageable pageable) {
-		roles = searchPermission(roles);
-		return advertisementRepository.findByAddress(address, roles, pageable);
+		return advertisementRepository.findByAddress(address, searchPermission(roles), pageable);
 	}
 
 	public Page<Advertisement> findByUpdatedDate(@Param("start") Date start, @Param("end") Date end,
 			@Param("roles") List<String> roles, Pageable pageable) {
-		roles = searchPermission(roles);
-		return advertisementRepository.findByUpdatedDate(start, end, roles, pageable);
+		return advertisementRepository.findByUpdatedDate(start, end, searchPermission(roles), pageable);
 	}
 
 	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable) {
-		roles = searchPermission(roles);
-		return advertisementRepository.search(code, address, username, from, to, contactName, roles, pageable);
+		return advertisementRepository.search(code, address, username, from, to, contactName, searchPermission(roles), pageable);
 	}
 
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable) {
-		roles = searchPermission(roles);
-		return advertisementRepository.findByRoles(roles, pageable);
+		return advertisementRepository.findByRoles(searchPermission(roles), pageable);
 	}
 
 	private List<String> searchPermission(List<String> roles) {
 		List<String> result = new ArrayList<>();
 		if (roles != null && !roles.isEmpty()) {
 			String role = roles.get(0);
-			if (role.equals("ROLE_ADMIN") || role.equals("ROLE_BUSINESS") || role.equals("ROLE_ACCOUNTANT")) {
+			if (role.equals(Constants.USER_ROLE.ADMIN) || role.equals(Constants.USER_ROLE.BUSINESS) || role.equals(Constants.USER_ROLE.ACCOUNTANT)) {
 
-				result.add("ROLE_ADMIN");
-				result.add("ROLE_BUSINESS");
-				result.add("ROLE_ACCOUNTANT");
-				result.add("ROLE_SURVEYOR");
+				result.add(Constants.USER_ROLE.ADMIN);
+				result.add(Constants.USER_ROLE.BUSINESS);
+				result.add(Constants.USER_ROLE.ACCOUNTANT);
+				result.add(Constants.USER_ROLE.SURVEYOR);
 			} else {
 
-				result.add("ROLE_SURVEYOR");
+				result.add(Constants.USER_ROLE.SURVEYOR);
 			}
 		}
 		return result;

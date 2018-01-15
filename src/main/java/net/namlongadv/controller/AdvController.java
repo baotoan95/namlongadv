@@ -212,21 +212,34 @@ public class AdvController {
 		if (advert.getCode().trim().length() == 0) {
 			advert.setCode(StringUtils.randomCode());
 		}
+		
+		// Set province
+		if(advert.getProvinceCode() != null && advert.getProvinceCode().length() > 0) {
+			advert.setProvince(provinceRepository.findOne(advert.getProvinceCode()).getName());
+		} else {
+			advert.setProvince("");
+		}
+		
 		// Validation address
-		String fullAddress = StringUtils.standardize(advert.getHouseNo() + ", " + advert.getStreet() + ", "
-				+ advert.getWard() + ", " + advert.getDistrict() + ", " + advert.getProvince());
+		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", "
+				+ advert.getWard() + ", " + advert.getDistrict() + ", " + advert.getProvince();
 		String fullExAddress = null;
 		if (prevAdvertisement != null) {
-			fullExAddress = StringUtils.standardize(prevAdvertisement.getHouseNo() + ", "
+			fullExAddress = prevAdvertisement.getHouseNo() + ", "
 					+ prevAdvertisement.getStreet() + ", " + prevAdvertisement.getWard() + ", "
-					+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince());
+					+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince();
 		}
-		List<Advertisement> advs = advertisementRepository.findByAddress(fullAddress, roles, new PageRequest(0, 1))
+		log.debug("Search address: " + fullAddress);
+		List<Advertisement> advs = advertisementRepository.findExactlyByAddress(fullAddress.toLowerCase(), new PageRequest(0, 1))
 				.getContent();
-		log.debug(advs.size() + "");
-		if (advs.size() > 0 && fullAddress.length() > 8
-				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
+		log.debug("Search address result: {}", advs.size());
+		
+		log.debug("Full address: {}", fullAddress);
+		log.debug("Full ex address: {}", fullExAddress);
+		// Address conflict
+		if (!advs.isEmpty() && fullAddress.length() > 8 && (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
 			model.addAttribute("advertDto", advertDto);
+			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>" + "<a href='" + baseUrl + "/adv/"
 					+ advs.get(0).getId() + "'>Bấm vào đây để xem chi tiết</a>";
 			model.addAttribute("errorMsg", errorMsg);
@@ -273,16 +286,12 @@ public class AdvController {
 		advert.setAdvImages(advImages);
 		advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
 		
-		// Set province
-		if(advert.getProvinceCode() != null && advert.getProvinceCode().length() > 0) {
-			advert.setProvince(provinceRepository.findOne(advert.getProvinceCode()).getName());
-		}
-		
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);
 		if (advertisement == null) {
 			model.addAttribute("adv", advert);
+			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 			model.addAttribute("errorMsg", "There is an error occur, please contact IT department to support.");
 			return "adv";
 		}

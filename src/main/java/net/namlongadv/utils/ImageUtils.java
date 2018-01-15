@@ -33,7 +33,7 @@ public class ImageUtils {
 		}
 
 		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(FileUtils.getExtensions(file.getPath()));
-		ImageWriter writer = (ImageWriter) iter.next();
+		ImageWriter writer = iter.next();
 		ImageWriteParam iwp = writer.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 
