@@ -14,13 +14,11 @@ import net.namlongadv.models.Advertisement;
 
 public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID> {
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address%")
+			+ "upper(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address%")
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles, Pageable pageable);
 	
-	@Query("select adv from Advertisement adv where "
-			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) "
-			+ "like :address")
-	public Page<Advertisement> findExactlyByAddress(@Param("address") String address, Pageable pageable);
+	public Page<Advertisement> findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(String houseNo,
+			String street, String ward, String district, String province, Pageable pageable);
 
 	public List<Advertisement> findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqual(Date milestone1,
 			Date milestone2);
@@ -28,20 +26,23 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
 			+ "adv.updatedDate between :start and :end")
 	public Page<Advertisement> findByUpdatedDate(@Param("start") Date start, @Param("end") Date end,
-			@Param("roles") List<String> roles,Pageable pageable);
+			@Param("roles") List<String> roles, Pageable pageable);
 
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "lower(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address% " 
-			+ "and (lower(adv.code) like %:code%)"
-			+ "and (lower(adv.createdBy.username) like %:username%) "
+			+ "upper(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like upper(concat('%',:address,'%')) " 
+			+ "and (upper(adv.code) like upper(concat('%',:code,'%'))) "
+			+ "and (upper(adv.createdBy.username) like upper(concat('%',:username,'%'))) "
 			+ "and (adv.updatedDate between :fromDate and :toDate) "
-			+ "and (lower(adv.advCompName) like %:contactName% "
-			+ "or lower(adv.ownerContactPerson) like %:contactName%)")
+			+ "and (upper(adv.advCompName) like upper(concat('%',:contactName,'%')) "
+			+ "or upper(adv.ownerContactPerson) like upper(concat('%',:contactName,'%'))) order by adv.updatedDate")
 	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable);
 	
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);
+	
+	@Query("select adv from Advertisement adv where adv.code like concat('%','-',:code)")
+	public Advertisement checkCode(@Param("code") String code);
 
 }

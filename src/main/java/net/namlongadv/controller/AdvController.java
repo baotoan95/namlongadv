@@ -115,19 +115,19 @@ public class AdvController {
 			String sCreatedBy = "";
 			String sContactPerson = "";
 			if (code.isPresent() && code.get().length() > 0) {
-				sCode = code.get().trim().toLowerCase();
+				sCode = code.get().trim();
 				model.put("code", code.get().trim());
 			}
 			if (address.isPresent() && address.get().length() > 0) {
-				sAddress = address.get().trim().toLowerCase();
+				sAddress = address.get().trim();
 				model.put("address", address.get().trim());
 			}
 			if (createdBy.isPresent() && createdBy.get().length() > 0) {
-				sCreatedBy = createdBy.get().trim().toLowerCase();
+				sCreatedBy = createdBy.get().trim();
 				model.put("createdBy", createdBy.get().trim());
 			}
 			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
-				sContactPerson = contactPerson.get().trim().toLowerCase();
+				sContactPerson = contactPerson.get().trim();
 				model.put("contactPerson", contactPerson.get().trim());
 			}
 
@@ -136,7 +136,7 @@ public class AdvController {
 			log.debug(sCreatedBy);
 			log.debug(sContactPerson);
 			
-			rs = advertisementService.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, roles,
+			rs = advertisementService.search(sCode.toUpperCase(), sAddress.toUpperCase(), sCreatedBy.toUpperCase(), from, to, sContactPerson.toUpperCase(), roles,
 					new PageRequest(page.intValue(), size.intValue()));
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
@@ -181,7 +181,14 @@ public class AdvController {
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Generate code
-		advDto.getAdvertisement().setCode(StringUtils.randomCode());
+		String code = null;
+		while(true) {
+			code = StringUtils.randomCode();
+			if(advertisementRepository.checkCode(code) == null) {
+				advDto.getAdvertisement().setCode(code);
+				break;
+			}
+		}
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "adv";
@@ -195,7 +202,7 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-
+		
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
 
@@ -220,6 +227,13 @@ public class AdvController {
 			advert.setProvince("");
 		}
 		
+		// Standardize
+		advert.setHouseNo(StringUtils.standardize(advert.getHouseNo()));
+		advert.setWard(StringUtils.standardize(advert.getWard()));
+		advert.setDistrict(StringUtils.standardize(advert.getDistrict()));
+		advert.setProvince(StringUtils.standardize(advert.getProvince()));
+		advert.setStreet(StringUtils.standardize(advert.getStreet()));
+		
 		// Validation address
 		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", "
 				+ advert.getWard() + ", " + advert.getDistrict() + ", " + advert.getProvince();
@@ -230,7 +244,8 @@ public class AdvController {
 					+ prevAdvertisement.getDistrict() + ", " + prevAdvertisement.getProvince();
 		}
 		log.debug("Search address: " + fullAddress);
-		List<Advertisement> advs = advertisementRepository.findExactlyByAddress(fullAddress.toLowerCase(), new PageRequest(0, 1))
+		List<Advertisement> advs = advertisementRepository.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(advert.getHouseNo(),
+				advert.getStreet(), advert.getWard(), advert.getDistrict(), advert.getProvince(), new PageRequest(0, 1))
 				.getContent();
 		log.debug("Search address result: {}", advs.size());
 		
@@ -276,15 +291,14 @@ public class AdvController {
 					advImages.add(image);
 				}
 			});
-			
-			advert.setUpdatedDate(new Date());
+			advert.setCreatedBy(prevAdvertisement.getCreatedBy());
 		} else {
 			advert.setCreatedDate(new Date());
-			advert.setUpdatedDate(new Date());
+			advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
 		}
 
 		advert.setAdvImages(advImages);
-		advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
+		advert.setUpdatedDate(new Date());
 		
 		// Save
 		log.info("Saving an advert");

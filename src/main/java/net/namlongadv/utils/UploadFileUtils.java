@@ -25,30 +25,35 @@ public class UploadFileUtils {
 		File dir = new File(PathContants.UPLOAD_PATH);
 		log.debug("Uploading {} images", files.size());
 
+		File file = null;
+		String pathUploaded = null;
+		File serverFile = null;
+		File containFolder = null;
+		String pathFile = null;
+
 		try {
 			for (MultipartFile mpf : files) {
 				if (mpf.getSize() > 0) {
 					log.info("Uploading: " + mpf.getOriginalFilename());
-					String pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime()
-					        + mpf.getOriginalFilename();
-					File containFolder = new File(dir.getAbsolutePath());
+					pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime()
+							+ mpf.getOriginalFilename();
+					containFolder = new File(dir.getAbsolutePath());
 					containFolder.mkdirs();
 
 					// Resize
 					if (mpf.getSize() > reduce) {
 						log.debug("Reducing size of image");
-						File file = FileUtils.convertMultipartToFile(mpf);
+						file = FileUtils.convertMultipartToFile(mpf);
 						try {
-							String pathUploaded = ImageUtils.reduceImageFileSize(reduce, file, pathFile);
+							pathUploaded = ImageUtils.reduceImageFileSize(reduce, file, pathFile);
 							log.debug("Saved to storage: {}", pathUploaded);
 							pathFilesUploaded.add(pathUploaded);
 						} catch (Exception e) {
-							e.printStackTrace();
 							log.error(e.getMessage());
 						}
 					// Normal case
 					} else {
-						File serverFile = new File(pathFile);
+						serverFile = new File(pathFile);
 						serverFile.createNewFile();
 						log.debug("Upload to " + pathFile);
 						if (mpf.getBytes().length > 0) {
@@ -60,7 +65,6 @@ public class UploadFileUtils {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
 			log.error("Error: " + e.getMessage());
 		}
 		return pathFilesUploaded;

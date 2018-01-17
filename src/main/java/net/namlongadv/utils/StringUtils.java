@@ -11,6 +11,6 @@ public class StringUtils {
 	
 	public static String randomCode() {
 		String code = String.valueOf(new Date().getTime());
-		return code.substring(6, code.length());
+		return code.substring(9, code.length());
 	}
 }

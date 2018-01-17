@@ -6,7 +6,7 @@
 	
 <footer class="main-footer">
 	<div class="pull-right hidden-xs">
-		<b>Version</b> 1.0.0
+		<b>Version</b> 1.1.3
 	</div>
 	<strong>Copyright &copy; 2018 <a href="#">NamLongAdv</a>.</strong> All rights reserved.
 </footer>

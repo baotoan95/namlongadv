@@ -22,6 +22,13 @@ public class ImageUtils {
 	private static Graphics2D graphics2d;
 	private static File output;
 	
+	private static FileInputStream inputStream;
+	private static IIOImage IOImage;
+	private static FileImageOutputStream fOutput;
+	private static ImageWriter writer;
+	private static ImageWriteParam iwp;
+	private static File fileOut;
+	
 	public static String reduceImageFileSize(int size, File file, String out) throws Exception {
 		float quality = 1.0f;
 		long fileSize = file.length();
@@ -33,13 +40,13 @@ public class ImageUtils {
 		}
 
 		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(FileUtils.getExtensions(file.getPath()));
-		ImageWriter writer = iter.next();
-		ImageWriteParam iwp = writer.getDefaultWriteParam();
+		writer = iter.next();
+		iwp = writer.getDefaultWriteParam();
 		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 
-		FileInputStream inputStream = new FileInputStream(file);
-		BufferedImage originalImage = ImageIO.read(inputStream);
-		IIOImage image = new IIOImage(originalImage, null, null);
+		inputStream = new FileInputStream(file);
+		originalImage = ImageIO.read(inputStream);
+		IOImage = new IIOImage(originalImage, null, null);
 
 		float percent = 0.1f;
 		while (fileSize > size) {
@@ -49,14 +56,14 @@ public class ImageUtils {
 
 			quality -= percent;
 
-			File fileOut = new File(out);
+			fileOut = new File(out);
 			if (fileOut.exists()) {
 				fileOut.delete();
 			}
-			FileImageOutputStream output = new FileImageOutputStream(fileOut);
-			writer.setOutput(output);
+			fOutput = new FileImageOutputStream(fileOut);
+			writer.setOutput(fOutput);
 			iwp.setCompressionQuality(quality);
-			writer.write(null, image, iwp);
+			writer.write(null, IOImage, iwp);
 
 			fileOut2 = new File(out);
 			long newFileSize = fileOut2.length();
@@ -65,7 +72,7 @@ public class ImageUtils {
 			} else {
 				fileSize = newFileSize;
 			}
-			output.close();
+			fOutput.close();
 		}
 
 		writer.dispose();

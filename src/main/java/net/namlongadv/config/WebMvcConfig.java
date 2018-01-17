@@ -23,11 +23,9 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/resources/**")
-		.addResourceLocations("/resources/")
-		.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-		.resourceChain(false)
-        .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/")
+				.setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).resourceChain(false)
+				.addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
 	}
 
 	@Bean

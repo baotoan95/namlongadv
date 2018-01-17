@@ -73,4 +73,5 @@ public class Advertisement {
 	private Boolean trash = false;
 	@Transient
 	private boolean allowEdit = true;
+	private Date publishedDate;
 }

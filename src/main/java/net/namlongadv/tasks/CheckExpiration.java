@@ -49,7 +49,7 @@ public class CheckExpiration {
 					stringBuilder.append(
 									"<tr>" + 
 							"			<td rowspan=\"2\" style=\"border: 1px solid #ddd; padding: 8px;\">"+ index +"</td>" + 
-							"			<td rowspan=\"2\" style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getTitle() +"</td>" + 
+							"			<td rowspan=\"2\" style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getTitle() +" (<a href='"+ baseUrl +"/adv/"+ adv.getId() +"'>view</a>)</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">Thông tin chủ nhà</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getOwnerContactPerson() +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\"></td>" + 
@@ -69,7 +69,7 @@ public class CheckExpiration {
 				stringBuilder.append("<br/>Please take a moment to look over these.<br/><br/>");
 				stringBuilder.append("Thank you and best regards!<br/>");
 				stringBuilder.append("<b>NamLong-Management App</b><br/><br/><i>(This is an automated email, please do not reply to this email)</i>");
-				mailService.sendEmail(new String[] {"linh.do@namlongadvertising.com", "duongtran@namlongadvertising.com"}, stringBuilder.toString(), "Expiration alert - NamLongManagement App");
+				mailService.sendEmail(new String[] {}, stringBuilder.toString(), "Expiration alert - NamLongManagement App");
 //				"linh.do@namlongadvertising.com", "duongtran@namlongadvertising.com"
 			} catch (Exception e) {
 				log.error("Can't send a mail: " + e.getMessage());

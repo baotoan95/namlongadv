@@ -182,6 +182,16 @@
 										id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
 								</div>
 							</div>
+							<c:if test="${not empty advertDto.advertisement.updatedDate }">
+							<div class="form-group">
+								<label for="createdBy"
+									class="col-md-3 control-label">Người tạo</label>
+								<div class="col-md-9">
+									<input value="${advertDto.advertisement.createdBy.name }"
+										type="text" readonly class="form-control" id="createdBy" />
+								</div>
+							</div>
+							</c:if>
 							<div class="form-group">
 								<label for="describe" class="col-md-2 control-label">Mô tả</label>
 								<div class="col-md-10">
@@ -359,6 +369,11 @@
 								<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="btn btn-default">Huỷ</a>
 							</c:if>
 							<button type="submit" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
+							<c:if test="${not empty advertDto.advertisement.id }">
+								<button style="margin-right: 5px;" 
+									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
+									class="btn btn-info pull-right">Xuất Bản</button>
+							</c:if>
 						</div>
 						<!-- /.box-footer -->
 					</div>
@@ -433,7 +448,7 @@
 			$('input').removeAttr('disabled');
 			$('textarea').removeAttr('disabled');
 		} else {
-			$('input[type=text], input[type=number], input[type=date], input[type=file]').attr('disabled', true);
+			$('input[type=text], input[type=number], input[type=date], input[type=file], select').attr('disabled', true);
 			$('textarea').attr('disabled', true);
 		}
 		
@@ -454,6 +469,27 @@
 			codeComponent.val(code);
 		}
 	}
+	
+// 	function publish() {
+// 		var location = $('#coordinates').val().split(", ");
+// 		var lat = location[0];
+// 		lng = location[1];
+// 		$.ajax({
+// 			method: "POST",
+// 			url: "http://billboardquangcao.com/api.php/firerox_jv_article",
+// 			data: {
+// 				"title": $('#title').val(),
+// 				"price": $('#price').val(),
+// 				"description": $('#description').val(),
+// 				"published": 0,
+// 				"ordering": 0,
+// 				"lat": lat,
+// 				"long": lng
+// 			}
+// 		}).done(function( msg ) {
+// 			alert( "Data Saved: " + msg );
+// 		});
+// 	}
 </script>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyCf3QMz3TbdiJvz7goQinnfwLoQcStQqLg"></script>
