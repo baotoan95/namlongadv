@@ -35,11 +35,13 @@
 
 <section class="content">
 	<div class="row">
-		<form:form modelAttribute="advertDto"
+		<form:form modelAttribute="advertDto" id="formData"
 			action="${pageContext.request.contextPath }/adv?${_csrf.parameterName }=${_csrf.token}"
 			method="${advertDto.advertisement.id == null ? 'post' : 'put' }"
 			enctype="multipart/form-data">
 			<form:hidden path="advertisement.id" />
+			<form:hidden path="advertisement.publishedId" id="publishedId" />
+			
 			<input type="hidden" id="allowEdit" value="${advertDto.advertisement.allowEdit }">
 			<div class="col-md-9">
 				<div class="box box-info">
@@ -94,7 +96,7 @@
 							<div class="form-group">
 								<label for="ward" class="col-md-3 control-label">Phường</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control" path="advertisement.ward"
+									<form:input cssClass="form-control" path="advertisement.ward" id="ward"
 										placeholder="Nhập tên phường/xã" />
 								</div>
 							</div>
@@ -102,7 +104,7 @@
 								<label for="district" class="col-md-3 control-label">Quận</label>
 								<div class="col-md-9">
 									<form:input cssClass="form-control"
-										path="advertisement.district"
+										path="advertisement.district" id="district"
 										placeholder="Nhập tên quận/huyện" />
 								</div>
 							</div>
@@ -112,7 +114,7 @@
 									<form:select id="province" onchange="updateCode()" cssClass="form-control select2" path="advertisement.provinceCode">
 										<form:option value="">Chọn tỉnh</form:option>
 										<c:forEach items="${provinces }" var="province">
-										<form:option value="${province.code }">${province.name }</form:option>
+										<form:option name="${province.name }" value="${province.code }">${province.name }</form:option>
 										</c:forEach>
 									</form:select>
 								</div>
@@ -134,17 +136,17 @@
 							</div>
 							</security:authorize>
 							<div class="form-group">
-								<label for="size" class="col-md-3 control-label">Kích thước</label>
+								<label for="heightSize" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-4">
 									<form:input path="advertisement.heightSize" type="text"
-										class="form-control" id="size" placeholder="Chiều cao (m)" />
+										class="form-control" id="heightSize" placeholder="Chiều cao (m)" />
 								</div>
 								<div class="col-md-1" style="text-align: center;">
 									<label class="control-label">x</label>
 								</div>
 								<div class="col-md-4">
 									<form:input path="advertisement.widthSize" type="text"
-										class="form-control" id="size" placeholder="Chiều rộng (m)" />
+										class="form-control" id="widthSize" placeholder="Chiều rộng (m)" />
 								</div>								
 							</div>
 							<div class="form-group">
@@ -158,7 +160,7 @@
 								<label for="flow" class="col-md-3 control-label">Lưu lượng</label>
 								<div class="col-md-9">
 									<form:input type="number" path="advertisement.flow" class="form-control"
-										id="views" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
+										id="flow" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -180,6 +182,13 @@
 								<div class="col-md-9">
 									<form:input path="advertisement.lightSystem" class="form-control"
 										id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="type" class="col-md-3 control-label">Loại hình</label>
+								<div class="col-md-9">
+									<form:input path="advertisement.type" class="form-control"
+										id="type" style="resize: none;" placeholder="Nhập loại hình" />
 								</div>
 							</div>
 							<c:if test="${not empty advertDto.advertisement.updatedDate }">
@@ -371,8 +380,15 @@
 							<button type="submit" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 							<c:if test="${not empty advertDto.advertisement.id }">
 								<button style="margin-right: 5px;" 
+									onclick="publish()" 
 									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
 									class="btn btn-info pull-right">Xuất Bản</button>
+							</c:if>
+							<c:if test="${advertDto.advertisement.publishedId > 0 }">
+								<button style="margin-right: 5px;" 
+									onclick="unpublish()" 
+									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
+									class="btn btn-info pull-right">Huỷ Xuất Bản</button>
 							</c:if>
 						</div>
 						<!-- /.box-footer -->
@@ -470,26 +486,110 @@
 		}
 	}
 	
-// 	function publish() {
-// 		var location = $('#coordinates').val().split(", ");
-// 		var lat = location[0];
-// 		lng = location[1];
-// 		$.ajax({
-// 			method: "POST",
-// 			url: "http://billboardquangcao.com/api.php/firerox_jv_article",
-// 			data: {
-// 				"title": $('#title').val(),
-// 				"price": $('#price').val(),
-// 				"description": $('#description').val(),
-// 				"published": 0,
-// 				"ordering": 0,
-// 				"lat": lat,
-// 				"long": lng
-// 			}
-// 		}).done(function( msg ) {
-// 			alert( "Data Saved: " + msg );
-// 		});
-// 	}
+	function publish() {
+		// Init data
+		var location = $('#coordinates').val().split(", ");
+		var lat = location[0], lng = location[1];
+		
+		var province = document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
+		
+		var detail = "<p>Vị trí: " + $('#houseNo').val() + " " + $('#street').val() 
+			+ " " + $('#ward').val() + " " + $('#district').val() 
+			+ " " + province + "</p>";
+		detail += "<p>Loại hình: " + $('#type').val() + "</p>";
+		detail += "<p>Tầm nhìn: " + $('#views').val() + "</p>";
+		detail += "<p>Kích thước: " + $('#widthSize').val() + " x " + $('#heightSize').val() + "</p>";
+		detail += "<p>Mật độ: " + $('#flow').val() + " người/ngày</p>";
+		detail += "<p>Hình thức thực hiện: " + $('#implForm').val() + "</p>";
+		detail += "<p>Hệ thống chiếu sáng: " + $('#lightSystem').val() + "</p>";
+		detail += "<p>Tình trạng: Đang chào bán</p>";
+		detail += "<p>Đơn giá: Liên hệ để biết giá</p>";
+		
+		var published = "<p>Vị trí: " + $('#houseNo').val() + " " + $('#street').val() 
+		+ " " + $('#ward').val() + " " + $('#district').val() 
+		+ " " + province + "</p>";
+		published += "<p>Loại hình: " + $('#type').val() + "</p>";
+		
+		var data = {
+				"title": $('#title').val(),
+				"price": $('#price').val(),
+				"description": $('#describe').val(),
+				"published": 0,
+				"ordering": 0,
+				"lat": lat,
+				"long": lng,
+				"detail": detail
+			}
+		
+		var images = $('#preview img');
+		if(images.length > 0) {
+			data['images'] = "http://namlongadv.ddns.net:7070/" + images[0].getAttribute('src');
+			for(var i = 1; i < images.length; i++) {
+				data['image' + i] = "http://namlongadv.ddns.net:7070/" + images[i].getAttribute('src');
+			}
+		}
+		
+		var publishedId = $('#publishedId').val();
+		if(publishedId === undefined || publishedId < 0 || publishedId === '') {
+			publishedId = 0;
+		}
+		console.log("PublishedId: " + publishedId);
+		// Validate if it existed
+			$.ajax({
+				method: "GET",
+				url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+			}).done(function(msg) {
+				console.log(msg);
+				// Update if it existed
+				$.ajax({
+		 			method: "PUT",
+		 			url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+		 			data: data
+		 		}).done(function(msg) {
+		 			if(msg === 1) {
+			 			alert("Xuất bản thành công!!!");
+			 			$('#publishedId').attr("value", publishedId);
+			 			$('#formData').submit();
+		 			} else {
+		 				alert("An error occurred. Please contact IT department to get support.")
+		 			}
+		 		});
+			}).error(function(e) {
+				// Create if it does not existed
+				if(e.status === 404) {
+			 		$.ajax({
+			 			method: "POST",
+			 			url: "http://billboardquangcao.com/api.php/firerox_jv_article",
+			 			data: data
+			 		}).done(function(msg) {
+			 			alert("Xuất bản thành công!!!");
+			 			$('#publishedId').attr("value", msg);
+			 			$('#formData').submit();
+			 		});
+				} else {
+					alert("An error occurred. Please contact IT department to get support.")
+				}
+			});
+	}
+	
+	function unpublish() {
+		var publishedId = $('#publishedId').val();
+		if(publishedId !== undefined && publishedId > 0 && publishedId !== '') {
+			var conf = confirm("Bạn có chắc muốn huỷ xuất bản?");
+			if(conf) {
+				$.ajax({
+		 			method: "DELETE",
+		 			url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+		 		}).done(function(msg) {
+		 			alert("Huỷ xuất bản thành công!!!");
+		 			$('#publishedId').attr("value", 0);
+		 			$('#formData').submit();
+		 		});
+			}
+		} else {
+			alert("Chưa được xuất bản!!!");
+		}
+	}
 </script>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyCf3QMz3TbdiJvz7goQinnfwLoQcStQqLg"></script>

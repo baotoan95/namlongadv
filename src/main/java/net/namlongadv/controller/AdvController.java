@@ -205,6 +205,14 @@ public class AdvController {
 		
 		session.setAttribute(pageIndex, "adv");
 		log.debug("Save adv");
+		
+		// Update if it publish to billboardquangcao.com
+		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
+		if(advertDto.getAdvertisement().getPublishedId() != null && advertDto.getAdvertisement().getPublishedId() > 0) {
+			advertDto.getAdvertisement().setPublishedDate(new Date());
+		} else {
+			advertDto.getAdvertisement().setPublishedDate(null);
+		}
 
 		// Check existed
 		Advertisement advert = advertDto.getAdvertisement();

@@ -74,4 +74,6 @@ public class Advertisement {
 	@Transient
 	private boolean allowEdit = true;
 	private Date publishedDate;
+	private Integer publishedId;
+	private String type;
 }
