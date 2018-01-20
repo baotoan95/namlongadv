@@ -26,7 +26,8 @@
 	height: 20px;
 	text-align: right;
 	font-weight: bold;
-	width: 100%;
+	display: inline-block;
+	float: right;
 }
 .close:hover {
 	color: red;
@@ -377,7 +378,10 @@
 							<c:if test="${advertDto.advertisement.allowEdit }">
 								<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="btn btn-default">Huỷ</a>
 							</c:if>
-							<button type="submit" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
+							<button type="button" onclick="submitData()" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
+							
+							<security:authorize
+								access="hasAnyRole('ROLE_ADMIN')">
 							<c:if test="${not empty advertDto.advertisement.id }">
 								<button style="margin-right: 5px;" 
 									onclick="publish()" 
@@ -390,6 +394,7 @@
 									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
 									class="btn btn-info pull-right">Huỷ Xuất Bản</button>
 							</c:if>
+							</security:authorize>
 						</div>
 						<!-- /.box-footer -->
 					</div>
@@ -414,14 +419,14 @@
 							<img class="img-thumbnail"
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="${advImage.name }"></img>
-							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg" name="files[<%= i %>]" class="form-control"/>
+							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files[<%= i %>]" class="form-control"/>
 						</div>
 				<%
 						} else {
 				%>
 						<div class="preview-item">
 							<img class="img-thumbnail" src="" alt="${advImage.name }"></img>
-							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg" name="files[<%= i %>]" class="form-control"/>
+							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files[<%= i %>]" class="form-control"/>
 						</div>
 				<%
 						}
@@ -436,14 +441,21 @@
 
 						    reader.onload = function(e) {
 						    	$(input).prev().attr('src', e.target.result);
+						    	if($(input).parent().find('.close').length === 0) { 
+						    		$(input).parent().prepend('<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>');
+						    	}
+								$(input).parent().find('input[type=hidden]').remove();
 						    }
 						    reader.readAsDataURL(input.files[0]);
 						}
-						deleteImage(input);
 					}
 					
 					function deleteImage(element) {
 						$(element).parent().find('input[type=hidden]').remove();
+						
+						$(element).parent().find('input[type=file]').wrap('<form>').closest('form').get(0).reset();
+						$(element).parent().find('input[type=file]').unwrap();
+						
 						$(element).parent().find('img').removeAttr('src');
 						$(element).parent().find('img').removeAttr('alt');
 						$(element).parent().find('.close').remove();
@@ -456,6 +468,31 @@
 </section>
 
 <script>
+	function submitData() {
+		var code = $('#code').val();
+		var title = $('#title').val();
+		
+		// Get auto code
+		if(code.length > 4) {
+			var autoCode = code.split('-')[1];
+		} else {
+			var autoCode = code;
+		}
+		
+		var titleParts = title.split(' - ');
+		if(titleParts.length > 1) {
+			var lastPart = titleParts[titleParts.length - 1];
+			if(lastPart.lastIndexOf(autoCode) !== -1) {
+				$('#title').val(title.replace(' - ' + lastPart, ' - ' + code));
+			} else {
+				$('#title').val(title + ' - ' + code);	
+			}
+		} else {
+			$('#title').val(title + ' - ' + code);
+		}
+		$('#formData').submit();
+	}
+
 	$(document).ready(function() {
 		$(".select2").select2();
 		
@@ -523,9 +560,9 @@
 		
 		var images = $('#preview img');
 		if(images.length > 0) {
-			data['images'] = "http://namlongadv.ddns.net:7070/" + images[0].getAttribute('src');
+			data['images'] = "http://namlongadv.ddns.net:7070" + images[0].getAttribute('src');
 			for(var i = 1; i < images.length; i++) {
-				data['image' + i] = "http://namlongadv.ddns.net:7070/" + images[i].getAttribute('src');
+				data['image' + i] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
 			}
 		}
 		
@@ -533,7 +570,6 @@
 		if(publishedId === undefined || publishedId < 0 || publishedId === '') {
 			publishedId = 0;
 		}
-		console.log("PublishedId: " + publishedId);
 		// Validate if it existed
 			$.ajax({
 				method: "GET",

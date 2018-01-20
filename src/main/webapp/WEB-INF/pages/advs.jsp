@@ -28,7 +28,8 @@ table tr th {
 				</div>
 				<div id="collapseOne" class="panel-collapse collapse ${isSearch ? 'in' : '' }"
 					role="tabpanel" aria-labelledby="headingOne" aria-expanded="${isSearch }">
-					<form action="${pageContext.request.contextPath }/adv/search" method="get">
+					<form id="filter-form" action="${pageContext.request.contextPath }/adv/search" method="get">
+						<input type="hidden" name="size" value="${sessionScope.pageSize }"/>
 						<div class="box-body">
 							<div class="row">
 								<div class="col-md-2 ui-widget">
@@ -61,6 +62,18 @@ table tr th {
 		</div>
 	</div>
 	<div class="row">
+		<div class="col-md-12" style="margin-bottom: 5px;">
+			<security:authorize
+				access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
+				<button id="exportExcel" id="exportExcel" class="btn btn-info pull-right">Xuất Excel</button>
+			</security:authorize>
+			<security:authorize
+				access="hasAnyRole('ROLE_ADMIN', 'ROLE_BUSINESS')">
+				<button id="exportPowerpoint" id="exportPowerpoint" class="btn btn-info pull-right" style="margin-right: 5px;">Xuất Powerpoint</button>
+			</security:authorize>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
 				<form:form id="exportForm" enctype="multipart/form-data"
@@ -69,6 +82,19 @@ table tr th {
 				<input type="hidden" name="csrf" value="${_csrf.token}"/>
 				<div class="box-header">
 					<h3 class="box-title">Data</h3>
+					
+					<div class="pull-right">
+						Hiển thị
+						<select id="page-size" onchange="pageSizeChanged()">
+							<option value="10" ${sessionScope.pageSize == 10 ? 'selected' : ''}>10</option>
+							<option value="25" ${sessionScope.pageSize == 25 ? 'selected' : ''}>25</option>
+							<option value="50" ${sessionScope.pageSize == 50 ? 'selected' : ''}>50</option>
+							<option value="100" ${sessionScope.pageSize == 100 ? 'selected' : ''}>100</option>
+							<option value="500" ${sessionScope.pageSize == 500 ? 'selected' : ''}>500</option>
+							<option value="1000" ${sessionScope.pageSize == 1000 ? 'selected' : ''}>1000</option>
+						</select>
+						mục
+					</div>
 				</div>
 				<!-- /.box-header -->
 				<div class="box-body" style="overflow: auto;">
@@ -222,16 +248,6 @@ table tr th {
 				<!-- /.box-body -->
 
 				<div class="box-footer clearfix">
-					<security:authorize
-						access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
-						<button id="exportExcel" id="exportExcel" class="btn btn-info">Xuất Excel</button>
-					</security:authorize>
-					<security:authorize
-						access="hasAnyRole('ROLE_ADMIN', 'ROLE_BUSINESS')">
-						<button id="exportPowerpoint" id="exportPowerpoint" class="btn btn-info">Xuất
-							Powerpoint</button>
-					</security:authorize>
-
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:if test="${page.number > 0 }">
 							<li class=""><a
@@ -356,4 +372,9 @@ $(document).ready(function() {
 		$('#checkAll')[0].checked = true;
 	});
 })
+
+function pageSizeChanged() {
+	$('input[name=size]').val($('#page-size').val());
+	$('form[id=filter-form]').submit();
+}
 </script>

@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -41,8 +42,10 @@ public class ExportFileController {
 
 	@RequestMapping(value = "excel", method = RequestMethod.POST)
 	public void exportExcel(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, 
-			HttpServletResponse response, HttpServletRequest request) throws UnsupportedEncodingException {
-		request.setCharacterEncoding("utf-8");
+			HttpServletResponse response, HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
 		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
 		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advertWrapperDto.getAdvs());
@@ -59,7 +62,12 @@ public class ExportFileController {
 	}
 	
 	@RequestMapping(value = "powerpoint", method = RequestMethod.POST)
-	public void exportPowerpoint(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, HttpServletResponse response) {
+	public void exportPowerpoint(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, 
+			HttpServletResponse response, HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
+		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
 		XMLSlideShow presentation = exportFileService.exportPowerpoint(advertWrapperDto.getAdvs());
 

@@ -6,7 +6,7 @@
 	
 <header class="main-header">
 	<!-- Logo -->
-	<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="logo"> <!-- mini logo for sidebar mini 50x50 pixels -->
+	<a href="${pageContext.request.contextPath }/adv/view?page=0&size=${sessionScope.pageSize }" class="logo"> <!-- mini logo for sidebar mini 50x50 pixels -->
 		<span class="logo-mini"><b>NL</b></span> <!-- logo for regular state and mobile devices -->
 		<span class="logo-lg"><b>NamLong</b>Adv</span>
 	</a>

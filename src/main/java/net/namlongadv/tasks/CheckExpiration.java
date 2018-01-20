@@ -70,7 +70,7 @@ public class CheckExpiration {
 				stringBuilder.append("Thank you and best regards!<br/>");
 				stringBuilder.append("<b>NamLong-Management App</b><br/><br/><i>(This is an automated email, please do not reply to this email)</i>");
 				mailService.sendEmail(new String[] {"linh.do@namlongadvertising.com", "duongtran@namlongadvertising.com"}, stringBuilder.toString(), "Expiration alert - NamLongManagement App");
-//				"linh.do@namlongadvertising.com", "duongtran@namlongadvertising.com"
+				// "linh.do@namlongadvertising.com", "duongtran@namlongadvertising.com"
 			} catch (Exception e) {
 				log.error("Can't send a mail: " + e.getMessage());
 			}

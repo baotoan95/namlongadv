@@ -45,6 +45,10 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String user(ModelMap model, HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
+		
 		log.debug("Getting add user page");
 		session.setAttribute(pageIndex, "user");
 
@@ -59,7 +63,12 @@ public class UserController {
 	}
 
 	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })
-	public String user(@ModelAttribute("user") User user, BindingResult bindingResult, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
+	public String user(@ModelAttribute("user") User user, BindingResult bindingResult, 
+			ModelMap model, HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
+		
 		model.addAttribute("roles", roleRepository.findAll());
 
 		User prevUser = userRepository.findByUsername(user.getUsername());
@@ -116,7 +125,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-	public String user(@PathVariable("userId") UUID userId, ModelMap model) {
+	public String user(@PathVariable("userId") UUID userId, ModelMap model, HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
 		log.debug("Getting " + userId + "'s info");
 		User user = userRepository.findOne(userId);
 		if (user == null) {
@@ -129,7 +141,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
-	public String user(@PathVariable("userId") UUID userId) {
+	public String user(@PathVariable("userId") UUID userId, HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
 		userRepository.delete(userId);
 		return "redirect:/user/view?page=0&size=10";
 	}
@@ -138,6 +153,9 @@ public class UserController {
 	public String users(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, ModelMap model,
 			HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
 		log.debug("Getting users page");
 		session.setAttribute(pageIndex, "users");
 		model.addAttribute("page", userRepository.findAll(new PageRequest(page, size)));

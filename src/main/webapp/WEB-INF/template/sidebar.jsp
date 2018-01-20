@@ -26,7 +26,7 @@
 			<li class="header">MAIN NAVIGATION ${sessionScope.PAGE_INDEX }</li>
 			
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'advs' ? 'active' : '' }"><a
-				href="${pageContext.request.contextPath }/adv/view?page=0&size=10">
+				href="${pageContext.request.contextPath }/adv/view?page=0&size=${sessionScope.pageSize }">
 				<i class="fa fa-table"></i> <span>Danh sách quảng cáo</span>
 			</a></li>
 			<li class="treeview ${sessionScope.PAGE_INDEX == 'adv' ? 'active' : '' }"><a

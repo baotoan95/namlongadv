@@ -1,5 +1,7 @@
 package net.namlongadv.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,7 +23,10 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
-	public String login(@RequestParam(value = "error", required = false) String error, ModelMap model) {
+	public String login(@RequestParam(value = "error", required = false) String error, ModelMap model, HttpSession session) {
+		if (session.getAttribute("pageSize") == null) {
+			session.setAttribute("pageSize", 10);
+		}
 		if(error != null) {
 			log.debug("Authentication fail");
 			model.addAttribute("errorMsg", "Sai tên đăng nhập hoặc mật khẩu");

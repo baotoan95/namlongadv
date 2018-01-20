@@ -11,13 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.common.Constants;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.repositories.AdvertisementRepository;
 
 @Service
-@Slf4j
 public class AdvertisementService {
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
@@ -80,7 +78,6 @@ public class AdvertisementService {
 			if (createdRoles.contains("ROLE_ADMIN") || !adv.getCreatedBy().getId().equals(userId)
 					&& (createdRoles.contains("ROLE_BUSINESS") || createdRoles.contains("ROLE_ACCOUNTANT"))) {
 				adv.setAllowEdit(false);
-				log.debug("Disable permission");
 			}
 
 			return adv;
