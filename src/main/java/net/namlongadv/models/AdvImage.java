@@ -28,16 +28,22 @@ public class AdvImage {
 	private String name;
 	private String url;
 	private String type;
+	private Boolean map;
 	@ManyToOne
 	@JoinColumn(name = "advertisement")
 	private Advertisement advertisement;
 	
-	public AdvImage(String name, String url, String type, Advertisement advertisement) {
+	public AdvImage(String name, String url, String type, Advertisement advertisement, boolean map) {
 		super();
 		this.name = name;
 		this.url = url;
 		this.type = type;
 		this.advertisement = advertisement;
+		this.map = map;
+	}
+	
+	public boolean isMap() {
+		return this.map == null ? false : this.map;
 	}
 	
 }

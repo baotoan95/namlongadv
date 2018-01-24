@@ -418,7 +418,7 @@
 							<input type="hidden" name="prevImages[<%= i %>]" value="<%= advImage.getId() %>"/>
 							<img class="img-thumbnail"
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
-		 						alt="${advImage.name }"></img>
+		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
 							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files[<%= i %>]" class="form-control"/>
 						</div>
 				<%
@@ -560,9 +560,15 @@
 		
 		var images = $('#preview img');
 		if(images.length > 0) {
+			// Avatar
 			data['images'] = "http://namlongadv.ddns.net:7070" + images[0].getAttribute('src');
+			// Other image
 			for(var i = 1; i < images.length; i++) {
-				data['image' + i] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+				if(images[i].getAttribute('name') === 'map') {
+					data['image3'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+				} else {
+					data['image' + i] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+				}
 			}
 		}
 		

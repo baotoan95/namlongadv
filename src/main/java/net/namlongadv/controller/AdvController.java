@@ -116,6 +116,9 @@ public class AdvController {
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
+			
+			log.debug("From: {}", from);
+			log.debug("To: {}", to);
 
 			String sCode = "";
 			String sAddress = "";
@@ -143,8 +146,12 @@ public class AdvController {
 			log.debug(sCreatedBy);
 			log.debug(sContactPerson);
 
-			rs = advertisementService.search(sCode.toUpperCase(), sAddress.toUpperCase(), sCreatedBy.toUpperCase(),
-					from, to, sContactPerson.toUpperCase(), roles, new PageRequest(page.intValue(), (int)session.getAttribute("pageSize")));
+			rs = advertisementService.search(sCode.toUpperCase(), 
+					StringUtils.convertStringIgnoreUtf8(sAddress), sCreatedBy.toUpperCase(),
+					from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles, 
+					new PageRequest(page.intValue(), 
+							(int)session.getAttribute("pageSize"), 
+							new Sort(Sort.Direction.DESC, "updatedDate")));
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
@@ -269,6 +276,7 @@ public class AdvController {
 		// Validation address
 		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
 				+ advert.getDistrict() + ", " + advert.getProvince();
+		advert.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
 		String fullExAddress = null;
 		if (prevAdvertisement != null) {
 			fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
@@ -301,15 +309,15 @@ public class AdvController {
 		List<String> pathFiles = new ArrayList<>();
 		if (advertDto.getFiles() != null) {
 			log.info("Preparing to upload files");
-			pathFiles = UploadFileUtils.uploadMultipleFile(advertDto.getFiles(), fileLimit);
+			pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit);
 			log.info("Upload successful");
 		}
 
 		// Add images to advertisement
 		List<AdvImage> advImages = new ArrayList<>();
 		for (String pathFile : pathFiles) {
-			String name = pathFile.substring(pathFile.lastIndexOf(File.separator), pathFile.length());
-			advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert));
+			String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
+			advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert, advertisementService.checkIsMap(name)));
 		}
 
 		// For update
@@ -335,10 +343,13 @@ public class AdvController {
 
 		advert.setAdvImages(advImages);
 		advert.setUpdatedDate(new Date());
-
+		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
+		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
+		
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);
+		
 		if (advertisement == null) {
 			model.addAttribute("adv", advert);
 			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)

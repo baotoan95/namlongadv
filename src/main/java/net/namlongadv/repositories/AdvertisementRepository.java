@@ -14,7 +14,7 @@ import net.namlongadv.models.Advertisement;
 
 public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID> {
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "upper(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like %:address%")
+			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%'))")
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles, Pageable pageable);
 	
 	public Page<Advertisement> findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(String houseNo,
@@ -29,12 +29,12 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 			@Param("roles") List<String> roles, Pageable pageable);
 
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "upper(concat(adv.houseNo, ', ', adv.street, ', ', adv.ward, ', ', adv.district, ', ', adv.province)) like upper(concat('%',:address,'%')) " 
+			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%')) " 
 			+ "and (upper(adv.code) like upper(concat('%',:code,'%'))) "
 			+ "and (upper(adv.createdBy.username) like upper(concat('%',:username,'%'))) "
 			+ "and (adv.updatedDate between :fromDate and :toDate) "
-			+ "and (upper(adv.advCompName) like upper(concat('%',:contactName,'%')) "
-			+ "or upper(adv.ownerContactPerson) like upper(concat('%',:contactName,'%'))) order by adv.updatedDate")
+			+ "and (upper(adv.advCompNameSearching) like upper(concat('%',:contactName,'%')) "
+			+ "or upper(adv.ownerContactPersonSearching) like upper(concat('%',:contactName,'%')))")
 	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable);

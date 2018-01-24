@@ -76,4 +76,7 @@ public class Advertisement {
 	private Date publishedDate;
 	private Integer publishedId;
 	private String type;
+	private String addressSearching;
+	private String advCompNameSearching;
+	private String ownerContactPersonSearching;
 }

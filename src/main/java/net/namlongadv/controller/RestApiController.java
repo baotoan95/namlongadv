@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.services.AdvertisementService;
+import net.namlongadv.utils.StringUtils;
 
 @RestController
 public class RestApiController {
@@ -34,7 +35,7 @@ public class RestApiController {
 		List<String> roles = new ArrayList<>(); 
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 		
-		Page<Advertisement> rs = advertisementService.findByAddress(address, roles, new PageRequest(0, 20));
+		Page<Advertisement> rs = advertisementService.findByAddress(StringUtils.convertStringIgnoreUtf8(address), roles, new PageRequest(0, 20));
 		List<String> addresses = new ArrayList<>();
 		
 		rs.getContent().stream().forEach(adv -> {

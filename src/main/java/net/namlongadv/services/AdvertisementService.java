@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import net.namlongadv.common.Constants;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.repositories.AdvertisementRepository;
+import net.namlongadv.utils.StringUtils;
 
 @Service
 public class AdvertisementService {
@@ -91,6 +92,11 @@ public class AdvertisementService {
 		}
 
 		return adv;
+	}
+	
+	public boolean checkIsMap(String str) {
+		str = StringUtils.convertStringIgnoreUtf8(str.substring(0, str.lastIndexOf(".")));
+		return str.lastIndexOf("map") == 13;
 	}
 
 }

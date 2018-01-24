@@ -20,7 +20,7 @@ public class UploadFileUtils {
 	 * @param files
 	 * @return list of path files
 	 */
-	public static List<String> uploadMultipleFile(List<MultipartFile> files, int reduce) {
+	public List<String> uploadMultipleFile(List<MultipartFile> files, int reduce) {
 		List<String> pathFilesUploaded = new ArrayList<>();
 		File dir = new File(PathContants.UPLOAD_PATH);
 		log.debug("Uploading {} images", files.size());

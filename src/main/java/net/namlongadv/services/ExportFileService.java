@@ -322,7 +322,10 @@ public class ExportFileService {
 
 				images = adv.getAdvImages();
 				if (images != null) {
-					images = images.stream().filter(image -> image.getId() != null).collect(Collectors.toList());
+					images = images.stream().filter(image -> image.getId() != null)
+							.sorted((a, b) -> Boolean.compare(a.isMap(), b.isMap()))
+							.collect(Collectors.toList());
+					
 					if (!images.isEmpty()) {
 						String imagePath = images.get(0).getUrl();
 						insertImage(imagePath, new Rectangle(305, 140, 400, 380), ppt, slide);

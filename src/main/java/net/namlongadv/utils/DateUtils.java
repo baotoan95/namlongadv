@@ -46,4 +46,15 @@ public class DateUtils {
 		}
 		return dateString;
 	}
+	
+	public static String convertDateToString(Date date, String pattern) {
+		String dateString = "";
+		SimpleDateFormat sdfr = new SimpleDateFormat(pattern);
+		try {
+			dateString = sdfr.format(date);
+		} catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
+		return dateString;
+	}
 }
