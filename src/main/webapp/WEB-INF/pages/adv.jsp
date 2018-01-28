@@ -419,24 +419,19 @@
 							<img class="img-thumbnail"
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
-							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files[<%= i %>]" class="form-control"/>
-						</div>
-				<%
-						} else {
-				%>
-						<div class="preview-item">
-							<img class="img-thumbnail" src="" alt="${advImage.name }"></img>
-							<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files[<%= i %>]" class="form-control"/>
+		 					<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
 						</div>
 				<%
 						}
 					}
 				%>
+					<div id="new-preview"></div>
+					<input type="file" multiple="multiple" onchange="previewImages(this, true)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
 				</div>
 
 				<script type="text/javascript">
-					function previewImages(input, isPrevImage) {
-						if (input.files && input.files[0]) {
+					function previewImages(input, isNew) {
+						if (input.files && input.files[0] && !isNew) {
 						    var reader = new FileReader();
 
 						    reader.onload = function(e) {
@@ -447,6 +442,21 @@
 								$(input).parent().find('input[type=hidden]').remove();
 						    }
 						    reader.readAsDataURL(input.files[0]);
+						} else {
+							$('#new-preview').empty();
+							for(var i = 0; i < input.files.length; i++) {
+								
+								var reader = new FileReader();
+
+							    reader.onload = function(e) {
+							    	$('#new-preview').append(
+							    		'<div class="preview-item">' +
+											'<img class="img-thumbnail" src="'+ e.target.result +'" alt="${advImage.name }"></img>' +
+										'</div>'
+									);
+							    }
+							    reader.readAsDataURL(input.files[i]);
+							}
 						}
 					}
 					

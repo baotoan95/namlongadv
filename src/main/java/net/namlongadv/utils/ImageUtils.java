@@ -85,6 +85,7 @@ public class ImageUtils {
 		int type = originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
 		// Create image object
+		log.debug("Image type: {}", type);
 		image = new BufferedImage(x, y, type);
 		graphics2d = image.createGraphics();
 

@@ -41,7 +41,7 @@ public class UploadFileUtils {
 					containFolder.mkdirs();
 
 					// Resize
-					if (mpf.getSize() > reduce) {
+					if (mpf.getSize() > reduce && mpf.getOriginalFilename().lastIndexOf("png") == -1) {
 						log.debug("Reducing size of image");
 						file = FileUtils.convertMultipartToFile(mpf);
 						try {

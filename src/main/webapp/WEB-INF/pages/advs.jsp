@@ -251,19 +251,19 @@ table tr th {
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:if test="${page.number > 0 }">
 							<li class=""><a
-								href="${pageContext.request.contextPath }/adv/view?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a></li>
 						</c:if>
 
 						<c:forEach begin="0"
 							end="${page.totalPages - 1 > 0 ? page.totalPages - 1 : 0 }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}"><a
-								href="${pageContext.request.contextPath }/adv/view?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
 						</c:forEach>
 
 						<c:if test="${page.number < page.totalPages - 1 }">
 							<li class=""><a
-								href="${pageContext.request.contextPath }/adv/view?page=${page.number + 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number + 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»</a></li>
 						</c:if>
 					</ul>
 				</div>

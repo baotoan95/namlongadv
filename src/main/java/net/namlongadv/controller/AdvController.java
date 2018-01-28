@@ -141,10 +141,13 @@ public class AdvController {
 				model.put("contactPerson", contactPerson.get().trim());
 			}
 
-			log.debug(sCode);
-			log.debug(sAddress);
-			log.debug(sCreatedBy);
-			log.debug(sContactPerson);
+			log.debug("Search function ============");
+			log.debug("sCode: {}", sCode);
+			log.debug("sAddress: {}", sAddress);
+			log.debug("sCreatedBy: {}", sCreatedBy);
+			log.debug("sContactPerson: {}", sContactPerson);
+			log.debug("Time: {} {}", from, to);
+			log.debug("============================");
 
 			rs = advertisementService.search(sCode.toUpperCase(), 
 					StringUtils.convertStringIgnoreUtf8(sAddress), sCreatedBy.toUpperCase(),
@@ -182,11 +185,9 @@ public class AdvController {
 			session.setAttribute("pageSize", size);
 		}
 
-		log.info("Getting advs page");
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		log.info("Roles: {}", roles);
 		Page<Advertisement> result = advertisementService.findByRoles(roles,
 				new PageRequest(page, (int)session.getAttribute("pageSize"), new Sort(Sort.Direction.DESC, "updatedDate")));
 		List<Advertisement> pageContent = advertisementService.setPermission(result.getContent(), roles,
@@ -202,7 +203,6 @@ public class AdvController {
 			session.setAttribute("pageSize", 10);
 		}
 		
-		log.debug("Getting adv page");
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Generate code
@@ -216,7 +216,8 @@ public class AdvController {
 		}
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",
-				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+				StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
+				.collect(Collectors.toList()));
 		return "adv";
 	}
 
@@ -234,7 +235,6 @@ public class AdvController {
 		}
 
 		session.setAttribute(pageIndex, "adv");
-		log.debug("Save adv");
 
 		// Update if it publish to billboardquangcao.com
 		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
@@ -283,16 +283,18 @@ public class AdvController {
 					+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
 					+ prevAdvertisement.getProvince();
 		}
-		log.debug("Search address: " + fullAddress);
 		List<Advertisement> advs = advertisementRepository
 				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
 						advert.getHouseNo(), advert.getStreet(), advert.getWard(), advert.getDistrict(),
 						advert.getProvince(), new PageRequest(0, 1))
 				.getContent();
+		
+		log.debug("Preparing to save adv ==============");
 		log.debug("Search address result: {}", advs.size());
-
 		log.debug("Full address: {}", fullAddress);
 		log.debug("Full ex address: {}", fullExAddress);
+		log.debug("====================================");
+		
 		// Address conflict
 		if (!advs.isEmpty() && fullAddress.length() > 8
 				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
@@ -384,7 +386,8 @@ public class AdvController {
 			AdvertisementDTO advertDto = new AdvertisementDTO();
 			advertDto.setAdvertisement(advertisement);
 			model.addAttribute("advertDto", advertDto);
-			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
+			model.addAttribute("provinces", StreamSupport
+					.stream(provinceRepository.findAll().spliterator(), false)
 					.collect(Collectors.toList()));
 			return "adv";
 		} else {
