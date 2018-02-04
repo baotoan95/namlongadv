@@ -10,6 +10,14 @@ table tr th {
 	text-align: center;
 	background: #99ddfc;
 }
+
+#province {
+	width: 150px;
+}
+
+.select2-selection {
+	border-radius: 0px !important;
+}
 </style>
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
@@ -46,6 +54,16 @@ table tr th {
 								</div>
 								<div class="col-md-3">
 								    <input readonly type="text" class="form-control" value="${daterange }" placeholder="Ngày tạo" name="daterange"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3" style="margin-top: 5px;">
+								    <select id="province" class="form-control select2 col-md-3" name="province">
+										<option value="">Chọn tỉnh</option>
+										<c:forEach items="${provinces }" var="province">
+										<option ${requestScope.province eq province.code ? 'selected' : '' } value="${province.code }">${province.name }</option>
+										</c:forEach>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -250,8 +268,9 @@ table tr th {
 				<div class="box-footer clearfix">
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:if test="${page.number > 0 }">
-							<li class=""><a
-								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a></li>
+							<li class="">
+								<a href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a>
+							</li>
 						</c:if>
 
 						<c:forEach begin="0"
@@ -281,6 +300,8 @@ table tr th {
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <script>
 $(document).ready(function() {
+	$(".select2").select2();
+	
 	$('.delete').click(function(e) {
 		e.preventDefault();
 		var answer = confirm("Bạn có chắc muốn xoá?");
@@ -313,6 +334,7 @@ $(document).ready(function() {
 		$('input[name=createdBy]').val('');
 		$('input[name=daterange]').val(new Date(daterange[0]).toLocaleDateString() + " - " + new Date(daterange[1]).toLocaleDateString());
 		$('input[name=contactPerson]').val('');
+		$('select[name=province]').val('').trigger('change');
 	});
 	
 	// Init datepicker

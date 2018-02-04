@@ -1,7 +1,9 @@
 package net.namlongadv.services;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
@@ -20,11 +23,14 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.xslf.usermodel.SlideLayout;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
@@ -268,11 +274,20 @@ public class ExportFileService {
 			XSLFTextParagraph paragraph = null;
 			XSLFTextRun textRun = null;
 			List<AdvImage> images = null;
+			XSLFPictureData bgRest = ppt.addPicture(new ClassPathResource("templates/bg02.png").getFile(), PictureType.EMF);
+			XSLFSlideMaster slideMaster = null;
+			XSLFSlideLayout slidelayout = null;
+			XSLFPictureShape ps = null;
+			Dimension dimension = ppt.getPageSize();
+			slideMaster = ppt.getSlideMasters().get(0);
+			slidelayout = slideMaster.getLayout(SlideLayout.BLANK);
+			ps = slidelayout.createPicture(bgRest);
+			ps.setAnchor(new Rectangle2D.Double(0, 0, dimension.getWidth(), dimension.getHeight()));
 			
 			for (int i = 0; i < advs.size(); i++) {
 				adv = advs.get(i);
-				slide = ppt.createSlide();
-
+				slide = ppt.createSlide(slidelayout);
+				
 				createProvinceHolder(slide, adv.getProvince());
 
 				textBox = slide.createTextBox();
@@ -332,11 +347,12 @@ public class ExportFileService {
 						images.remove(0);
 
 						for (AdvImage advImage : images) {
-							slide = ppt.createSlide();
+							slide = ppt.createSlide(slidelayout);
+							
 							createProvinceHolder(slide, adv.getProvince());
 
 							textBox = slide.createTextBox();
-							textBox.setAnchor(new Rectangle(0, 60, 700, 30));
+							textBox.setAnchor(new Rectangle(0, 80, 700, 30));
 							textBox.setTextAutofit(TextAutofit.NORMAL);
 							paragraph = textBox.addNewTextParagraph();
 							paragraph.setTextAlign(TextAlign.CENTER);
@@ -385,8 +401,8 @@ public class ExportFileService {
 	private void createProvinceHolder(XSLFSlide slide, String province) {
 		XSLFAutoShape cardRect = ((XSLFSlide) slide).createAutoShape();
 		cardRect.setShapeType(ShapeType.RECT);
-		cardRect.setFillColor(Color.ORANGE);
-		cardRect.setAnchor(new Rectangle(0, 0, 250, 50));
+//		cardRect.setFillColor(Color.ORANGE);
+		cardRect.setAnchor(new Rectangle(0, 0, 300, 50));
 		cardRect.setVerticalAlignment(org.apache.poi.sl.usermodel.VerticalAlignment.MIDDLE);
 		XSLFTextParagraph textParagraph = cardRect.addNewTextParagraph();
 		XSLFTextRun textRun = textParagraph.addNewTextRun();

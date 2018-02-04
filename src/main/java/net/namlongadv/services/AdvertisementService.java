@@ -34,7 +34,17 @@ public class AdvertisementService {
 	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable) {
-		return advertisementRepository.search(code, address, username, from, to, contactName, searchPermission(roles), pageable);
+		return advertisementRepository.search(code, address, username, from, to, contactName, searchPermission(roles),
+				pageable);
+
+	}
+
+	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
+			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
+			@Param("contactName") String contactName, String province_code, @Param("roles") List<String> roles,
+			Pageable pageable) {
+		return advertisementRepository.search(code, address, username, from, to, contactName, province_code,
+				searchPermission(roles), pageable);
 	}
 
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable) {
@@ -45,7 +55,8 @@ public class AdvertisementService {
 		List<String> result = new ArrayList<>();
 		if (roles != null && !roles.isEmpty()) {
 			String role = roles.get(0);
-			if (role.equals(Constants.USER_ROLE.ADMIN) || role.equals(Constants.USER_ROLE.BUSINESS) || role.equals(Constants.USER_ROLE.ACCOUNTANT)) {
+			if (role.equals(Constants.USER_ROLE.ADMIN) || role.equals(Constants.USER_ROLE.BUSINESS)
+					|| role.equals(Constants.USER_ROLE.ACCOUNTANT)) {
 
 				result.add(Constants.USER_ROLE.ADMIN);
 				result.add(Constants.USER_ROLE.BUSINESS);
@@ -93,7 +104,7 @@ public class AdvertisementService {
 
 		return adv;
 	}
-	
+
 	public boolean checkIsMap(String str) {
 		str = StringUtils.convertStringIgnoreUtf8(str.substring(0, str.lastIndexOf(".")));
 		return str.lastIndexOf("map") == 13;

@@ -39,6 +39,18 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
 			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable);
 	
+	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
+			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%')) " 
+			+ "and (upper(adv.code) like upper(concat('%',:code,'%'))) "
+			+ "and (upper(adv.createdBy.username) like upper(concat('%',:username,'%'))) "
+			+ "and (adv.updatedDate between :fromDate and :toDate) "
+			+ "and (upper(adv.advCompNameSearching) like upper(concat('%',:contactName,'%')) "
+			+ "or upper(adv.ownerContactPersonSearching) like upper(concat('%',:contactName,'%'))) "
+			+ "and adv.provinceCode = :province_code")
+	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
+			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
+			@Param("contactName") String contactName, @Param("province_code") String province_code, @Param("roles") List<String> roles, Pageable pageable);
+	
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);
 	

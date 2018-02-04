@@ -81,6 +81,9 @@ public class AdvController {
 		binder.registerCustomEditor(Date.class, orderDateEditor);
 	}
 
+	/*
+	 * Search
+	 */
 	@RequestMapping(value = "/search")
 	public String search(HttpSession session, @RequestParam(value = "code", required = false) Optional<String> code,
 			@RequestParam(value = "address", required = false) Optional<String> address,
@@ -88,7 +91,8 @@ public class AdvController {
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
 			@RequestParam(value = "createdBy", required = false) Optional<String> createdBy,
 			@RequestParam(value = "daterange", required = false) Optional<String> daterange,
-			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson, ModelMap model) {
+			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson,
+			@RequestParam(value = "province", required = false) Optional<String> province, ModelMap model) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
@@ -116,7 +120,7 @@ public class AdvController {
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
-			
+
 			log.debug("From: {}", from);
 			log.debug("To: {}", to);
 
@@ -149,12 +153,17 @@ public class AdvController {
 			log.debug("Time: {} {}", from, to);
 			log.debug("============================");
 
-			rs = advertisementService.search(sCode.toUpperCase(), 
-					StringUtils.convertStringIgnoreUtf8(sAddress), sCreatedBy.toUpperCase(),
-					from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles, 
-					new PageRequest(page.intValue(), 
-							(int)session.getAttribute("pageSize"), 
-							new Sort(Sort.Direction.DESC, "updatedDate")));
+			if (province.isPresent() && !province.get().isEmpty()) {
+				rs = advertisementService.search(sCode.toUpperCase(), StringUtils.convertStringIgnoreUtf8(sAddress),
+						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson),
+						province.get(), roles, new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
+								new Sort(Sort.Direction.DESC, "updatedDate")));
+				model.put("province", province.get());
+			} else {
+				rs = advertisementService.search(sCode.toUpperCase(), StringUtils.convertStringIgnoreUtf8(sAddress),
+						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles, new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
+								new Sort(Sort.Direction.DESC, "updatedDate")));
+			}
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
@@ -164,9 +173,14 @@ public class AdvController {
 				userDetails.getUserId());
 		model.addAttribute("pageContent", pageContent);
 		model.put("page", rs);
+		model.addAttribute("provinces",
+				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "advs";
 	}
 
+	/*
+	 * View
+	 */
 	@RequestMapping(value = { "/view" }, method = RequestMethod.GET)
 	public String advs(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, HttpSession session,
@@ -188,21 +202,26 @@ public class AdvController {
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		Page<Advertisement> result = advertisementService.findByRoles(roles,
-				new PageRequest(page, (int)session.getAttribute("pageSize"), new Sort(Sort.Direction.DESC, "updatedDate")));
+		Page<Advertisement> result = advertisementService.findByRoles(roles, new PageRequest(page,
+				(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.DESC, "updatedDate")));
 		List<Advertisement> pageContent = advertisementService.setPermission(result.getContent(), roles,
 				userDetails.getUserId());
 		model.addAttribute("pageContent", pageContent);
 		model.addAttribute("page", result);
+		model.addAttribute("provinces",
+				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "advs";
 	}
 
+	/*
+	 * Get add new page
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String adv(HttpSession session, ModelMap model) {
 		if (session.getAttribute("pageSize") == null) {
 			session.setAttribute("pageSize", 10);
 		}
-		
+
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Generate code
@@ -216,11 +235,13 @@ public class AdvController {
 		}
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",
-				StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
-				.collect(Collectors.toList()));
+				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "adv";
 	}
 
+	/*
+	 * Add/Update
+	 */
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
 	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
 		// Get user roles info
@@ -229,7 +250,7 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-		
+
 		if (session.getAttribute("pageSize") == null) {
 			session.setAttribute("pageSize", 10);
 		}
@@ -288,13 +309,13 @@ public class AdvController {
 						advert.getHouseNo(), advert.getStreet(), advert.getWard(), advert.getDistrict(),
 						advert.getProvince(), new PageRequest(0, 1))
 				.getContent();
-		
+
 		log.debug("Preparing to save adv ==============");
 		log.debug("Search address result: {}", advs.size());
 		log.debug("Full address: {}", fullAddress);
 		log.debug("Full ex address: {}", fullExAddress);
 		log.debug("====================================");
-		
+
 		// Address conflict
 		if (!advs.isEmpty() && fullAddress.length() > 8
 				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
@@ -319,7 +340,8 @@ public class AdvController {
 		List<AdvImage> advImages = new ArrayList<>();
 		for (String pathFile : pathFiles) {
 			String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
-			advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert, advertisementService.checkIsMap(name)));
+			advImages.add(
+					new AdvImage(name, pathFile, "Advertise_board", advert, advertisementService.checkIsMap(name)));
 		}
 
 		// For update
@@ -347,11 +369,11 @@ public class AdvController {
 		advert.setUpdatedDate(new Date());
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
-		
+
 		// Save
 		log.info("Saving an advert");
 		Advertisement advertisement = advertisementRepository.save(advert);
-		
+
 		if (advertisement == null) {
 			model.addAttribute("adv", advert);
 			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
@@ -364,6 +386,9 @@ public class AdvController {
 		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
 	}
 
+	/*
+	 * Get update page
+	 */
 	@RequestMapping(value = "/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
 		// Get user roles info
@@ -372,7 +397,7 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-		
+
 		if (session.getAttribute("pageSize") == null) {
 			session.setAttribute("pageSize", 10);
 		}
@@ -386,8 +411,7 @@ public class AdvController {
 			AdvertisementDTO advertDto = new AdvertisementDTO();
 			advertDto.setAdvertisement(advertisement);
 			model.addAttribute("advertDto", advertDto);
-			model.addAttribute("provinces", StreamSupport
-					.stream(provinceRepository.findAll().spliterator(), false)
+			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
 					.collect(Collectors.toList()));
 			return "adv";
 		} else {
@@ -395,6 +419,9 @@ public class AdvController {
 		}
 	}
 
+	/*
+	 * Delete
+	 */
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session) {
 		if (session.getAttribute("pageSize") == null) {
