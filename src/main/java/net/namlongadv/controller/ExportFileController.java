@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
+import net.namlongadv.models.Advertisement;
 import net.namlongadv.services.ExportFileService;
 
 @Controller
@@ -48,7 +51,8 @@ public class ExportFileController {
 		}
 		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
-		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advertWrapperDto.getAdvs());
+		List<Advertisement> advsNeedExport = advertWrapperDto.getAdvs().stream().filter(adv -> adv.getId() != null).collect(Collectors.toList());
+		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advsNeedExport);
 
 		if (workbook != null) {
 			response.setContentType("application/vnd.ms-excel");
@@ -69,7 +73,8 @@ public class ExportFileController {
 		}
 		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
-		XMLSlideShow presentation = exportFileService.exportPowerpoint(advertWrapperDto.getAdvs());
+		List<Advertisement> advsNeedExport = advertWrapperDto.getAdvs().stream().filter(adv -> adv.getId() != null).collect(Collectors.toList());
+		XMLSlideShow presentation = exportFileService.exportPowerpoint(advsNeedExport);
 
 		if (presentation != null) {
 			response.setContentType("application/vnd.ms-powerpoint");

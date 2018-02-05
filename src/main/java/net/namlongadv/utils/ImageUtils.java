@@ -74,7 +74,10 @@ public class ImageUtils {
 			}
 			fOutput.close();
 		}
-
+		
+		// Delete original file
+		file.delete();
+		
 		writer.dispose();
 		return fileOut2.getPath();
 	}

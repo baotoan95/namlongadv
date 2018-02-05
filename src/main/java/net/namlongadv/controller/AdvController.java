@@ -233,6 +233,10 @@ public class AdvController {
 				break;
 			}
 		}
+		// Set default values
+		advDto.getAdvertisement().setImplTime(30);
+		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
+		
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));

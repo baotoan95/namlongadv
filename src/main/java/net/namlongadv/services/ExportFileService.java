@@ -291,7 +291,7 @@ public class ExportFileService {
 				createProvinceHolder(slide, adv.getProvince());
 
 				textBox = slide.createTextBox();
-				textBox.setAnchor(new Rectangle(0, 100, 300, 500));
+				textBox.setAnchor(new Rectangle(0, 120, 300, 500));
 				text = "Vị trí: " + adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", "
 						+ adv.getDistrict() + ", " + adv.getProvince();
 				createListImage(text, textBox);
@@ -362,7 +362,7 @@ public class ExportFileService {
 							textRun.setFontColor(Color.blue);
 							textRun.setFontSize(20d);
 
-							insertImage(advImage.getUrl(), new Rectangle(110, 140, 500, 380), ppt, slide);
+							insertImage(advImage.getUrl(), new Rectangle(70, 140, 580, 390), ppt, slide);
 						}
 					}
 				}
@@ -401,10 +401,10 @@ public class ExportFileService {
 	private void createProvinceHolder(XSLFSlide slide, String province) {
 		XSLFAutoShape cardRect = ((XSLFSlide) slide).createAutoShape();
 		cardRect.setShapeType(ShapeType.RECT);
-//		cardRect.setFillColor(Color.ORANGE);
-		cardRect.setAnchor(new Rectangle(0, 0, 300, 50));
+		cardRect.setAnchor(new Rectangle(0, 0, 300, 47));
 		cardRect.setVerticalAlignment(org.apache.poi.sl.usermodel.VerticalAlignment.MIDDLE);
 		XSLFTextParagraph textParagraph = cardRect.addNewTextParagraph();
+		textParagraph.setTextAlign(TextAlign.CENTER);
 		XSLFTextRun textRun = textParagraph.addNewTextRun();
 		textRun.setText(province);
 		textRun.setFontColor(Color.RED);

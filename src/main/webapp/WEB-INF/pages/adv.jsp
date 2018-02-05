@@ -61,7 +61,7 @@
 							<div class="form-group">
 								<label for="code" class="col-md-3 control-label">Mã</label>
 								<div class="col-md-3">
-									<form:input readonly="true" type="text" path="advertisement.code"
+									<form:input readonly="true" maxlength="254" type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
@@ -75,14 +75,14 @@
 							<div class="form-group">
 								<label for="title" class="col-md-3 control-label">Tiêu đề</label>
 								<div class="col-md-9">
-									<form:input type="text" path="advertisement.title"
+									<form:input maxlength="254" type="text" path="advertisement.title"
 										class="form-control" id="title" placeholder="Nhập tiêu đề" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="houseNo" class="col-md-3 control-label">Số nhà</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.houseNo" type="text"
+									<form:input maxlength="254" path="advertisement.houseNo" type="text"
 										class="form-control" id="houseNo" placeholder="Nhập số nhà" />
 								</div>
 							</div>
@@ -90,21 +90,21 @@
 								<label for="street" class="col-md-3 control-label">Tên
 									đường</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.street" type="text"
+									<form:input maxlength="254" path="advertisement.street" type="text"
 										class="form-control" id="street" placeholder="Nhập tên đường" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="ward" class="col-md-3 control-label">Phường</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control" path="advertisement.ward" id="ward"
+									<form:input maxlength="254" cssClass="form-control" path="advertisement.ward" id="ward"
 										placeholder="Nhập tên phường/xã" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="district" class="col-md-3 control-label">Quận</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control"
+									<form:input maxlength="254" cssClass="form-control"
 										path="advertisement.district" id="district"
 										placeholder="Nhập tên quận/huyện" />
 								</div>
@@ -123,7 +123,7 @@
 							<div class="form-group">
 								<label for="map" class="col-md-3 control-label">Toạ độ</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.map" type="text" onchange="initialize()"
+									<form:input maxlength="254" path="advertisement.map" type="text" onchange="initialize()"
 										class="form-control" id="coordinates" name="coordinates" placeholder="" />
 								</div>
 							</div>
@@ -131,7 +131,7 @@
 							<div class="form-group">
 								<label for="price" class="col-md-3 control-label">Đơn giá</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.price" type="text"
+									<form:input maxlength="254" path="advertisement.price" type="text"
 										class="form-control" id="price" name="price" placeholder="Nhập đơn giá (USD/năm)" />
 								</div>
 							</div>
@@ -139,26 +139,26 @@
 							<div class="form-group">
 								<label for="heightSize" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-4">
-									<form:input path="advertisement.heightSize" type="text"
+									<form:input maxlength="254" path="advertisement.heightSize" type="text"
 										class="form-control" id="heightSize" placeholder="Chiều cao (m)" />
 								</div>
 								<div class="col-md-1" style="text-align: center;">
 									<label class="control-label">x</label>
 								</div>
 								<div class="col-md-4">
-									<form:input path="advertisement.widthSize" type="text"
+									<form:input maxlength="254" path="advertisement.widthSize" type="text"
 										class="form-control" id="widthSize" placeholder="Chiều rộng (m)" />
 								</div>								
 							</div>
 							<div class="form-group">
 								<label for="views" class="col-md-3 control-label">Tầm nhìn</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.views" class="form-control"
+									<form:input maxlength="254" path="advertisement.views" class="form-control"
 										id="views" style="resize: none;" placeholder="Nhập tầm nhìn" />
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="flow" class="col-md-3 control-label">Lưu lượng</label>
+								<label for="flow" maxlength="254" class="col-md-3 control-label">Lưu lượng</label>
 								<div class="col-md-9">
 									<form:input type="number" path="advertisement.flow" class="form-control"
 										id="flow" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
@@ -172,7 +172,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
+								<label for="implForm" maxlength="254" class="col-md-3 control-label">Hình thức thực hiện</label>
 								<div class="col-md-9">
 									<form:input path="advertisement.implForm" class="form-control"
 										id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
@@ -181,14 +181,14 @@
 							<div class="form-group">
 								<label for="lightSystem" class="col-md-3 control-label">Hệ thống chiếu sáng</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.lightSystem" class="form-control"
+									<form:input maxlength="254" path="advertisement.lightSystem" class="form-control"
 										id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="type" class="col-md-3 control-label">Loại hình</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.type" class="form-control"
+									<form:input maxlength="254" path="advertisement.type" class="form-control"
 										id="type" style="resize: none;" placeholder="Nhập loại hình" />
 								</div>
 							</div>
@@ -205,7 +205,7 @@
 							<div class="form-group">
 								<label for="describe" class="col-md-2 control-label">Mô tả</label>
 								<div class="col-md-10">
-									<form:textarea path="advertisement.describe" class="form-control"
+									<form:textarea maxlength="254" path="advertisement.describe" class="form-control"
 										id="describe" placeholder="Nhập mô tả" />
 								</div>
 							</div>
@@ -223,7 +223,7 @@
 												<div class="form-group">
 													<label for="ownerPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerPhone" type="text"
+														<form:input maxlength="254" path="advertisement.ownerPhone" type="text"
 															class="form-control" id="ownerPhone"
 															placeholder="Số điện thoại" />
 													</div>
@@ -231,14 +231,14 @@
 												<div class="form-group">
 													<label for="ownerEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerEmail" type="text"
+														<form:input maxlength="254" path="advertisement.ownerEmail" type="text"
 															class="form-control" id="ownerEmail" placeholder="Email" />
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerPrice" type="text"
+														<form:input maxlength="254" path="advertisement.ownerPrice" type="text"
 															class="form-control" id="ownerPrice"
 															placeholder="Giá thuê" />
 													</div>
@@ -247,7 +247,7 @@
 													<label for="ownerContactPerson"
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerContactPerson"
+														<form:input maxlength="254" path="advertisement.ownerContactPerson"
 															type="text" class="form-control" id="ownerContactPerson"
 															placeholder="Người liên hệ" />
 													</div>
@@ -271,7 +271,7 @@
 												<div class="form-group">
 													<label for="ownerNote" class="col-md-3 control-label">Ghi chú</label>
 													<div class="col-md-9">
-														<form:textarea path="advertisement.ownerNote" class="form-control"
+														<form:textarea maxlength="254" path="advertisement.ownerNote" class="form-control"
 															id="ownerNote" placeholder="Nhập ghi chú" />
 													</div>
 												</div>
@@ -293,7 +293,7 @@
 												<div class="form-group">
 													<label for="advCompName" class="col-md-3 control-label">Tên Cty</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompName" type="text"
+														<form:input maxlength="254" path="advertisement.advCompName" type="text"
 															class="form-control" id="advCompName"
 															placeholder="Tên công ty" />
 													</div>
@@ -301,7 +301,7 @@
 												<div class="form-group">
 													<label for="advCompPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompPhone" type="text"
+														<form:input maxlength="254" path="advertisement.advCompPhone" type="text"
 															class="form-control" id="advCompPhone"
 															placeholder="Số điện thoại" />
 													</div>
@@ -309,7 +309,7 @@
 												<div class="form-group">
 													<label for="advCompEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompEmail" type="text"
+														<form:input maxlength="254" path="advertisement.advCompEmail" type="text"
 															class="form-control" id="advCompEmail"
 															placeholder="Email" />
 													</div>
@@ -317,7 +317,7 @@
 												<div class="form-group">
 													<label for="advCompPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompPrice" type="text"
+														<form:input maxlength="254" path="advertisement.advCompPrice" type="text"
 															class="form-control" id="advCompPrice"
 															placeholder="Giá thuê" />
 													</div>
@@ -326,7 +326,7 @@
 													<label for="advCompContactPerson"
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompContactPerson"
+														<form:input maxlength="254" path="advertisement.advCompContactPerson"
 															type="text" class="form-control"
 															id="advCompContactPerson" placeholder="Người liên hệ" />
 													</div>
@@ -350,7 +350,7 @@
 												<div class="form-group">
 													<label for="advCompNote" class="col-md-3 control-label">Ghi chú</label>
 													<div class="col-md-9">
-														<form:textarea path="advertisement.advCompNote" class="form-control"
+														<form:textarea maxlength="254" path="advertisement.advCompNote" class="form-control"
 															id="advCompNote" placeholder="Nhập ghi chú" />
 													</div>
 												</div>
