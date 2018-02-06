@@ -275,22 +275,36 @@ table tr th {
 
 				<div class="box-footer clearfix">
 					<ul class="pagination pagination-sm no-margin pull-right">
+						<c:set var="currentPage" value="${page.number }"></c:set>
+						<c:set var="firstPrev" value="${page.number - 5 }"></c:set>
+						<c:set var="lastPost" value="${page.number + 5 }"></c:set>
+						
 						<c:if test="${page.number > 0 }">
 							<li class="">
-								<a href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a>
+								<a title="Trang đầu" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=0&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">««</a>
+							</li>
+						</c:if>
+						
+						<c:if test="${firstPrev > 0 }">
+							<li class="">
+								<a title="Trang trước" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a>
 							</li>
 						</c:if>
 
-						<c:forEach begin="0"
-							end="${page.totalPages - 1 > 0 ? page.totalPages - 1 : 0 }"
+						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}"><a
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
 						</c:forEach>
 
-						<c:if test="${page.number < page.totalPages - 1 }">
-							<li class=""><a
+						<c:if test="${lastPost < page.totalPages }">
+							<li class=""><a title="Trang tiếp theo"
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number + 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»</a></li>
+						</c:if>
+						
+						<c:if test="${page.number < page.totalPages }">
+							<li class=""><a title="Trang cuối"
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.totalPages }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»»</a></li>
 						</c:if>
 					</ul>
 				</div>
