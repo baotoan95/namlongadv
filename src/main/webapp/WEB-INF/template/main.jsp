@@ -135,6 +135,8 @@
 	<script src="<c:url value='/resources/dist/js/demo.js'/>"></script>
 	<!-- Lazy loading -->
 	<script src="<c:url value='/resources/dist/js/jquery.lazyload.js'/>"></script>
+	<!-- Moment -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script>
 	<!-- page script -->
 	<script>
 		$(function() {

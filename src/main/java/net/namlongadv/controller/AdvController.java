@@ -234,7 +234,7 @@ public class AdvController {
 			}
 		}
 		// Set default values
-		advDto.getAdvertisement().setImplTime(30);
+		advDto.getAdvertisement().setImplTime(20);
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
 		
 		model.addAttribute("advertDto", advDto);
@@ -248,6 +248,8 @@ public class AdvController {
 	 */
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
 	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
+		log.debug("=================Advertisement====================");
+		log.debug(advertDto.getAdvertisement().toString());
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();

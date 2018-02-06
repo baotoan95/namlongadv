@@ -32,6 +32,42 @@
 .close:hover {
 	color: red;
 }
+
+.select2-selection--single, .select2-selection__rendered {
+	margin-top: -7px !important;
+}
+.select2-selection__arrow {
+	top: -7px !important;
+}
+
+input[type=date] {
+    position: relative;
+    width: 100%;
+    height: 34px;
+    color: white;
+    border: 1px solid #ccc;
+}
+
+input[type=date]:before {
+    position: absolute;
+    left: 3px;
+    content: attr(data-date);
+    display: inline-block;
+    color: black;
+}
+
+input[type=date]::-webkit-datetime-edit, 
+input[type=date]::-webkit-inner-spin-button, 
+input[type=date]::-webkit-clear-button {
+    display: none;
+}
+
+input[type=date]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    color: black;
+    opacity: 1;
+}
 </style>
 
 <section class="content">
@@ -188,8 +224,21 @@
 							<div class="form-group">
 								<label for="type" class="col-md-3 control-label">Loại hình</label>
 								<div class="col-md-9">
-									<form:input maxlength="254" path="advertisement.type" class="form-control"
-										id="type" style="resize: none;" placeholder="Nhập loại hình" />
+									<form:select path="advertisement.type" cssClass="form-control" id="type">
+										<form:option value="">Chọn loại hình</form:option>
+										<form:option value="Trụ pano Quảng cáo">Trụ pano Quảng cáo</form:option>
+										<form:option value="Trụ pano Quảng cáo ngoài trời">Trụ pano Quảng cáo ngoài trời</form:option>
+										<form:option value="Trụ pano Quảng cáo ngoài trời 1 mặt">Trụ pano Quảng cáo ngoài trời 1 mặt</form:option>
+										<form:option value="Trụ pano Quảng cáo ngoài trời 2 mặt">Trụ pano Quảng cáo ngoài trời 2 mặt</form:option>
+										<form:option value="Trụ pano Quảng cáo ngoài trời 3 mặt">Trụ pano Quảng cáo ngoài trời 3 mặt</form:option>
+										<form:option value="Trụ pano Quảng cáo ngoài trời 4 mặt">Trụ pano Quảng cáo ngoài trời 4 mặt</form:option>
+										<form:option value="Billboard Quảng cáo">Billboard Quảng cáo</form:option>
+										<form:option value="Billboard Quảng cáo ngoài trời">Billboard Quảng cáo ngoài trời</form:option>
+										<form:option value="Billboard Quảng cáo ngoài trời 1 mặt">Billboard Quảng cáo ngoài trời 1 mặt</form:option>
+										<form:option value="Billboard Quảng cáo ngoài trời 2 mặt">Billboard Quảng cáo ngoài trời 2 mặt</form:option>
+										<form:option value="Billboard Quảng cáo ngoài trời 3 mặt">Billboard Quảng cáo ngoài trời 3 mặt</form:option>
+										<form:option value="Billboard Quảng cáo ngoài trời 4 mặt">Billboard Quảng cáo ngoài trời 4 mặt</form:option>
+									</form:select>
 								</div>
 							</div>
 							<c:if test="${not empty advertDto.advertisement.updatedDate }">
@@ -257,7 +306,7 @@
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
 														<form:input path="advertisement.ownerStartDate"
-															type="date" class="form-control" id="ownerStartDate" />
+															type="date" cssClass="form-control" data-date="" data-date-format="DD/MM/YYYY" id="ownerStartDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -265,7 +314,7 @@
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
 														<form:input path="advertisement.ownerEndDate"
-															type="date" class="form-control" id="ownerEndDate" />
+															type="date" class="form-control" data-date="" data-date-format="DD/MM/YYYY" id="ownerEndDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -336,7 +385,7 @@
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
 														<form:input path="advertisement.advCompStartDate"
-															type="date" class="form-control" id="advCompStartDate" />
+															type="date" data-date="" data-date-format="DD/MM/YYYY" id="advCompStartDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -344,7 +393,7 @@
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
 														<form:input path="advertisement.advCompEndDate"
-															type="date" class="form-control" id="advCompEndDate" />
+															type="date" class="form-control" data-date="" data-date-format="DD/MM/YYYY" id="advCompEndDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -516,6 +565,14 @@
 		}
 		
 		updateCode();
+		
+		$("input[type=date]").on("change", function() {
+		    this.setAttribute(
+		        "data-date",
+		        moment(this.value, "YYYY-MM-DD")
+		        .format( this.getAttribute("data-date-format") )
+		    )
+		}).trigger("change");
 	});
 	
 	function updateCode() {

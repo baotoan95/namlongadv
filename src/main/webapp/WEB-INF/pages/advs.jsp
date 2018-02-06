@@ -18,6 +18,14 @@ table tr th {
 .select2-selection {
 	border-radius: 0px !important;
 }
+
+.select2-selection--single, .select2-selection__rendered {
+	margin-top: -7px !important;
+	border-color: #d2d6de !important;
+}
+.select2-selection__arrow {
+	top: -7px !important;
+}
 </style>
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
@@ -57,7 +65,7 @@ table tr th {
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-3" style="margin-top: 5px;">
+								<div class="col-md-3" style="margin-top: 10px;">
 								    <select id="province" class="form-control select2 col-md-3" name="province">
 										<option value="">Chọn tỉnh</option>
 										<c:forEach items="${provinces }" var="province">
