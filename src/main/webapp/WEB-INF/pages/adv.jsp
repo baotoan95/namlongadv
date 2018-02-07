@@ -6,8 +6,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <style>
 #mapCanvas {
@@ -40,34 +40,35 @@
 	top: -7px !important;
 }
 
-input[type=date] {
-    position: relative;
-    width: 100%;
-    height: 34px;
-    color: white;
-    border: 1px solid #ccc;
-}
+/* input[type=date] { */
+/*     position: relative; */
+/*     width: 100%; */
+/*     height: 34px; */
+/*     color: white; */
+/*     border: 1px solid #ccc; */
+/* } */
 
-input[type=date]:before {
-    position: absolute;
-    left: 3px;
-    content: attr(data-date);
-    display: inline-block;
-    color: black;
-}
+/* input[type=date]:before { */
+/*     position: absolute; */
+/*     left: 3px; */
+/*     content: attr(data-date); */
+/*     display: inline-block; */
+/*     color: black; */
+/* } */
 
-input[type=date]::-webkit-datetime-edit, 
-input[type=date]::-webkit-inner-spin-button, 
-input[type=date]::-webkit-clear-button {
-    display: none;
-}
+/* input[type=date]::-webkit-datetime-edit,  */
+/* input[type=date]::-webkit-inner-spin-button,  */
+/* input[type=date]::-webkit-clear-button  */
+/* { */
+/*     display: none; */
+/* } */
 
-input[type=date]::-webkit-calendar-picker-indicator {
-    position: absolute;
-    right: 0;
-    color: black;
-    opacity: 1;
-}
+/* input[type=date]::-webkit-calendar-picker-indicator { */
+/*     position: absolute; */
+/*     right: 0; */
+/*     color: black; */
+/*     opacity: 1; */
+/* } */
 </style>
 
 <section class="content">
@@ -101,9 +102,10 @@ input[type=date]::-webkit-calendar-picker-indicator {
 										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
-								<label for="updatedDate" class="col-md-3 control-label">Cập nhật ngày</label>
+								<label for="updatedDate" class="col-md-3 control-label">Ngày cập nhật</label>
 								<div class="col-md-3">
-									<form:input readonly="true" type="text" path="advertisement.updatedDate"
+									<fmt:formatDate value="${advertDto.advertisement.updatedDate}" type="date" pattern="dd/MM/yyyy" var="updatedDate"/>
+									<form:input readonly="true" type="text" path="advertisement.updatedDate" value="${updatedDate }"
 										class="form-control" id="updatedDate" placeholder="Ngày cập nhật" />
 								</div>
 								</c:if>
@@ -194,9 +196,9 @@ input[type=date]::-webkit-calendar-picker-indicator {
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="flow" maxlength="254" class="col-md-3 control-label">Lưu lượng</label>
+								<label for="flow" class="col-md-3 control-label">Lưu lượng</label>
 								<div class="col-md-9">
-									<form:input type="number" path="advertisement.flow" class="form-control"
+									<form:input maxlength="254" type="number" path="advertisement.flow" class="form-control"
 										id="flow" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
 								</div>
 							</div>
@@ -208,9 +210,9 @@ input[type=date]::-webkit-calendar-picker-indicator {
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="implForm" maxlength="254" class="col-md-3 control-label">Hình thức thực hiện</label>
+								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.implForm" class="form-control"
+									<form:input maxlength="254" path="advertisement.implForm" class="form-control"
 										id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
 								</div>
 							</div>
@@ -305,16 +307,18 @@ input[type=date]::-webkit-calendar-picker-indicator {
 													<label for="ownerStartDate"
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerStartDate"
-															type="date" cssClass="form-control" data-date="" data-date-format="DD/MM/YYYY" id="ownerStartDate" />
+														<fmt:formatDate value="${advertDto.advertisement.ownerStartDate}" type="date" pattern="dd/MM/yyyy" var="ownerStartDate"/>
+														<form:input path="advertisement.ownerStartDate" value="${ownerStartDate }"
+															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerStartDate" />
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerEndDate"
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.ownerEndDate"
-															type="date" class="form-control" data-date="" data-date-format="DD/MM/YYYY" id="ownerEndDate" />
+														<fmt:formatDate value="${advertDto.advertisement.ownerEndDate}" type="date" pattern="dd/MM/yyyy" var="ownerEndDate"/>
+														<form:input path="advertisement.ownerEndDate" value="${ownerEndDate }"
+															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerEndDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -384,16 +388,18 @@ input[type=date]::-webkit-calendar-picker-indicator {
 													<label for="advCompStartDate"
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompStartDate"
-															type="date" data-date="" data-date-format="DD/MM/YYYY" id="advCompStartDate" />
+														<fmt:formatDate value="${advertDto.advertisement.advCompStartDate}" type="date" pattern="dd/MM/yyyy" var="advCompStartDate"/>
+														<form:input path="advertisement.advCompStartDate" value="${advCompStartDate }"
+															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompStartDate" />
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompEndDate"
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
-														<form:input path="advertisement.advCompEndDate"
-															type="date" class="form-control" data-date="" data-date-format="DD/MM/YYYY" id="advCompEndDate" />
+														<fmt:formatDate value="${advertDto.advertisement.advCompEndDate}" type="date" pattern="dd/MM/yyyy" var="advCompEndDate"/>
+														<form:input path="advertisement.advCompEndDate" value="${advCompEndDate }"
+															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompEndDate" />
 													</div>
 												</div>
 												<div class="form-group">
@@ -566,13 +572,9 @@ input[type=date]::-webkit-calendar-picker-indicator {
 		
 		updateCode();
 		
-		$("input[type=date]").on("change", function() {
-		    this.setAttribute(
-		        "data-date",
-		        moment(this.value, "YYYY-MM-DD")
-		        .format( this.getAttribute("data-date-format") )
-		    )
-		}).trigger("change");
+		$('.datepicker').datepicker({
+			format: 'dd/mm/yyyy'
+		});
 	});
 	
 	function updateCode() {
@@ -597,9 +599,9 @@ input[type=date]::-webkit-calendar-picker-indicator {
 		
 		var province = document.getElementById('province').options[document.getElementById('province').selectedIndex].text;
 		
-		var detail = "<p>Vị trí: " + $('#houseNo').val() + " " + $('#street').val() 
-			+ " " + $('#ward').val() + " " + $('#district').val() 
-			+ " " + province + "</p>";
+		var detail = "<p>Vị trí: " + $('#houseNo').val() + ", " + $('#street').val() 
+			+ ", " + $('#ward').val() + ", " + $('#district').val() 
+			+ ", " + province + "</p>";
 		detail += "<p>Loại hình: " + $('#type').val() + "</p>";
 		detail += "<p>Tầm nhìn: " + $('#views').val() + "</p>";
 		detail += "<p>Kích thước: " + $('#widthSize').val() + " x " + $('#heightSize').val() + "</p>";
@@ -609,9 +611,9 @@ input[type=date]::-webkit-calendar-picker-indicator {
 		detail += "<p>Tình trạng: Đang chào bán</p>";
 		detail += "<p>Đơn giá: Liên hệ để biết giá</p>";
 		
-		var published = "<p>Vị trí: " + $('#houseNo').val() + " " + $('#street').val() 
-		+ " " + $('#ward').val() + " " + $('#district').val() 
-		+ " " + province + "</p>";
+		var published = "<p>Vị trí: " + $('#houseNo').val() + ", " + $('#street').val() 
+		+ ", " + $('#ward').val() + ", " + $('#district').val() 
+		+ ", " + province + "</p>";
 		published += "<p>Loại hình: " + $('#type').val() + "</p>";
 		
 		var data = {

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -76,7 +78,7 @@ public class AdvController {
 
 	@InitBinder
 	public void bindingPreparation(WebDataBinder binder) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		CustomDateEditor orderDateEditor = new CustomDateEditor(dateFormat, true);
 		binder.registerCustomEditor(Date.class, orderDateEditor);
 	}
@@ -247,7 +249,15 @@ public class AdvController {
 	 * Add/Update
 	 */
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
-	public String adv(@ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
+	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, 
+			HttpSession session, ModelMap model, BindingResult result) {
+		if(result.hasErrors()) {
+			log.debug("=====Errors:");
+			result.getFieldErrors().forEach(error -> {
+				log.debug(error.getField());
+			});
+			log.debug("===========");
+		}
 		log.debug("=================Advertisement====================");
 		log.debug(advertDto.getAdvertisement().toString());
 		// Get user roles info

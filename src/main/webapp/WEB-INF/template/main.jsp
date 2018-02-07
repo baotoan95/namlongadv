@@ -35,6 +35,7 @@
 <!-- Theme style -->
 <link rel="stylesheet"
 	href="<c:url value='/resources/dist/css/AdminLTE.min.css'/>">
+<link rel="stylesheet" href="<c:url value='/resources/plugins/datepicker/datepicker3.css'/>">
 <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
 <link rel="stylesheet"
@@ -126,6 +127,8 @@
 	<!-- SlimScroll -->
 	<script
 		src="<c:url value='/resources/plugins/slimScroll/jquery.slimscroll.min.js'/>"></script>
+	<!-- bootstrap datepicker -->
+	<script src="<c:url value='/resources/plugins/datepicker/bootstrap-datepicker.js'/>"></script>
 	<!-- FastClick -->
 	<script
 		src="<c:url value='/resources/plugins/fastclick/fastclick.js'/>"></script>

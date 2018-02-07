@@ -38,10 +38,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .logoutUrl("/logout").logoutSuccessUrl("/login")
         .and().csrf()
         .and().rememberMe()
-        .tokenValiditySeconds(259200).rememberMeParameter("remember-me")
+        .rememberMeParameter("remember-me")
         .key("secret-namlongadv-btit95@123")
         .rememberMeCookieName("namlongadv-mgm@123")
-        .tokenRepository(persistentTokenRepository());
+        .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(259200);
     }
     
     @Bean
