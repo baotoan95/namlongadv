@@ -39,9 +39,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and().csrf()
         .and().rememberMe()
         .rememberMeParameter("remember-me")
-        .key("secret-namlongadv-btit95@123")
-        .rememberMeCookieName("namlongadv-mgm@123")
-        .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(259200);
+        .key("secret-namlongadv-btit95")
+        .rememberMeCookieName("namlongadv-btit95")
+        .userDetailsService(nLAdvUserDetailsService)
+        .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(5 * 86400);
+        
+        http.sessionManagement().invalidSessionUrl("/login");
     }
     
     @Bean

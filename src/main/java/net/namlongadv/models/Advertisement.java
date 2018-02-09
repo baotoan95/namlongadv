@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,17 +33,26 @@ public class Advertisement {
 	private UUID id;
 	private String code;
 	private String provinceCode;
+	@Column(columnDefinition="text")
 	private String title;
+	@Column(columnDefinition="text")
 	private String street;
+	@Column(columnDefinition="text")
 	private String houseNo;
+	@Column(columnDefinition="text")
 	private String ward;
+	@Column(columnDefinition="text")
 	private String district;
+	@Column(columnDefinition="text")
 	private String province;
 	private String widthSize;
 	private String heightSize;
 	private String map;
+	@Column(columnDefinition="text")
 	private String describe;
+	@Column(columnDefinition="text")
 	private String views;
+	@Column(columnDefinition="text")
 	private Integer flow;
 	private Integer implTime;
 	private String implForm;
@@ -53,6 +63,7 @@ public class Advertisement {
 	private String ownerContactPerson;
 	private Date ownerStartDate;
 	private Date ownerEndDate;
+	@Column(columnDefinition="text")
 	private String ownerNote;
 	private String advCompPhone;
 	private String advCompEmail;
@@ -61,6 +72,7 @@ public class Advertisement {
 	private String advCompName;
 	private Date advCompStartDate;
 	private Date advCompEndDate;
+	@Column(columnDefinition="text")
 	private String advCompNote;
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -76,7 +88,10 @@ public class Advertisement {
 	private Date publishedDate;
 	private Integer publishedId;
 	private String type;
+	@Column(columnDefinition="text")
 	private String addressSearching;
+	@Column(columnDefinition="text")
 	private String advCompNameSearching;
+	@Column(columnDefinition="text")
 	private String ownerContactPersonSearching;
 }
