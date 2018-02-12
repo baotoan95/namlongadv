@@ -103,11 +103,7 @@ public class AdvController {
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 
 		// Set page size
-		if (session.getAttribute("pageSize") == null || size < 0 || size > 1000 || size == 10) {
-			session.setAttribute("pageSize", 10);
-		} else {
-			session.setAttribute("pageSize", size);
-		}
+		setPageSize(size, session);
 
 		model.addAttribute("isSearch", true);
 
@@ -163,7 +159,8 @@ public class AdvController {
 				model.put("province", province.get());
 			} else {
 				rs = advertisementService.search(sCode.toUpperCase(), StringUtils.convertStringIgnoreUtf8(sAddress),
-						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles, new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
+						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles,
+						new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
 								new Sort(Sort.Direction.DESC, "updatedDate")));
 			}
 			log.debug("Search result: " + rs.getContent().size());
@@ -195,11 +192,7 @@ public class AdvController {
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 
 		// Set page size
-		if (session.getAttribute("pageSize") == null || size < 0 || size > 1000 || size == 10) {
-			session.setAttribute("pageSize", 10);
-		} else {
-			session.setAttribute("pageSize", size);
-		}
+		setPageSize(size, session);
 
 		session.setAttribute(pageIndex, "advs");
 
@@ -220,10 +213,6 @@ public class AdvController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String adv(HttpSession session, ModelMap model) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
-		}
-
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Generate code
@@ -238,7 +227,7 @@ public class AdvController {
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
-		
+
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
@@ -249,9 +238,9 @@ public class AdvController {
 	 * Add/Update
 	 */
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
-	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, 
-			HttpSession session, ModelMap model, BindingResult result) {
-		if(result.hasErrors()) {
+	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session,
+			ModelMap model, BindingResult result) {
+		if (result.hasErrors()) {
 			log.debug("=====Errors:");
 			result.getFieldErrors().forEach(error -> {
 				log.debug(error.getField());
@@ -266,10 +255,6 @@ public class AdvController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
-		}
 
 		session.setAttribute(pageIndex, "adv");
 
@@ -414,10 +399,6 @@ public class AdvController {
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
 
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
-		}
-
 		log.debug("Getting {}'s info", advId);
 		session.setAttribute(pageIndex, "advs");
 
@@ -440,11 +421,16 @@ public class AdvController {
 	 */
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
-		}
 		log.debug("Delete {}", advId);
 		advertisementRepository.delete(advId);
 		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
+	}
+
+	private void setPageSize(int pageSize, HttpSession session) {
+		if (session.getAttribute("pageSize") == null || pageSize <= 0 || pageSize > 10000 || pageSize == 10) {
+			session.setAttribute("pageSize", 10);
+		} else {
+			session.setAttribute("pageSize", pageSize);
+		}
 	}
 }

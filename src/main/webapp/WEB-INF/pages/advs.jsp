@@ -118,6 +118,8 @@ table tr th {
 							<option value="100" ${sessionScope.pageSize == 100 ? 'selected' : ''}>100</option>
 							<option value="500" ${sessionScope.pageSize == 500 ? 'selected' : ''}>500</option>
 							<option value="1000" ${sessionScope.pageSize == 1000 ? 'selected' : ''}>1000</option>
+							<option value="5000" ${sessionScope.pageSize == 5000 ? 'selected' : ''}>5000</option>
+							<option value="10000" ${sessionScope.pageSize == 10000 ? 'selected' : ''}>10000</option>
 						</select>
 						mục
 					</div>
@@ -291,7 +293,7 @@ table tr th {
 							</li>
 						</c:if>
 
-						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages }"
+						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages - 1 }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}"><a
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
@@ -302,9 +304,9 @@ table tr th {
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number + 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»</a></li>
 						</c:if>
 						
-						<c:if test="${page.number < page.totalPages }">
+						<c:if test="${page.number < page.totalPages - 1 }">
 							<li class=""><a title="Trang cuối"
-								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.totalPages }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»»</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.totalPages - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»»</a></li>
 						</c:if>
 					</ul>
 				</div>
