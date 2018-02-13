@@ -116,7 +116,7 @@ public class AdvController {
 			model.put("daterange", daterange.get());
 
 			String[] dates = daterange.get().trim().split(" - ");
-			Date from = DateUtils.decreaseDay(DateUtils.convertStringToDate(dates[0]), 1);
+			Date from = DateUtils.convertStringToDate(dates[0]);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
 
 			log.debug("From: {}", from);
