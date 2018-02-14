@@ -293,7 +293,7 @@ table tr th {
 							</li>
 						</c:if>
 
-						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages - 1 }"
+						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}"><a
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>

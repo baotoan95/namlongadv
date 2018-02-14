@@ -53,14 +53,14 @@ public class CheckExpiration {
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">Thông tin chủ nhà</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getOwnerContactPerson() +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\"></td>" + 
-							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getOwnerEndDate() != null ? DateUtils.convertDateToString(adv.getOwnerEndDate(), "dd/MM/yyyy") : "" +"</td>" + 
+							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ (adv.getOwnerEndDate() != null ? DateUtils.convertDateToString(adv.getOwnerEndDate(), "dd/MM/yyyy") : "") +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getOwnerNote() +"</td>" + 
 							"		</tr>" + 
 							"		<tr>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">Thông tin công ty</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getAdvCompContactPerson() +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">" + adv.getAdvCompNote() + "</td>" + 
-							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getAdvCompEndDate() != null ? DateUtils.convertDateToString(adv.getAdvCompEndDate(), "dd/MM/yyyy") : "" +"</td>" + 
+							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ (adv.getAdvCompEndDate() != null ? DateUtils.convertDateToString(adv.getAdvCompEndDate(), "dd/MM/yyyy") : "") +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getAdvCompNote() +"</td>" + 
 							"		</tr>");
 					index++;
