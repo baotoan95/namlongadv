@@ -59,7 +59,7 @@ public class CheckExpiration {
 							"		<tr>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">Thông tin công ty</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getAdvCompContactPerson() +"</td>" + 
-							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">" + adv.getAdvCompNote() + "</td>" + 
+							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">" + adv.getAdvCompName() + "</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ (adv.getAdvCompEndDate() != null ? DateUtils.convertDateToString(adv.getAdvCompEndDate(), "dd/MM/yyyy") : "") +"</td>" + 
 							"			<td style=\"border: 1px solid #ddd; padding: 8px;\">"+ adv.getAdvCompNote() +"</td>" + 
 							"		</tr>");
