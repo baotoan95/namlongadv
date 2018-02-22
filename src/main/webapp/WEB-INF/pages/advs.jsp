@@ -245,6 +245,7 @@ table tr th {
 										    </label>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
 										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
+										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].map" value="${advImage.map }"/>
 										  	</li>
 										  	</c:forEach>
 										</ul>
@@ -293,7 +294,7 @@ table tr th {
 							</li>
 						</c:if>
 
-						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : page.totalPages }"
+						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : (page.totalPages > 0 ? page.totalPages - 1 : 0) }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}"><a
 								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
