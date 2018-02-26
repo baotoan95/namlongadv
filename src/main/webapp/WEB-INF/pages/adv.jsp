@@ -156,7 +156,7 @@
 								<div class="col-md-4">
 									<form:input maxlength="254" path="advertisement.widthSize" type="text"
 										class="form-control" id="widthSize" placeholder="Chiều rộng (m)" />
-								</div>								
+								</div>
 							</div>
 							<div class="form-group">
 								<label for="views" class="col-md-3 control-label">Tầm nhìn</label>

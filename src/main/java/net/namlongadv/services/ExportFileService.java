@@ -151,7 +151,7 @@ public class ExportFileService {
 						// Size
 						cell = row.createCell(9);
 						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getWidthSize() + " x " + adv.getHeightSize());
+						cell.setCellValue(adv.getHeightSize() + " x " + adv.getWidthSize());
 						// Light system
 						cell = row.createCell(10);
 						cell.setCellStyle(cellStyle);
@@ -299,7 +299,7 @@ public class ExportFileService {
 				text = "Tầm nhìn: " + adv.getViews();
 				createListImage(text, textBox);
 
-				text = "Kích thước: " + adv.getWidthSize() + " x " + adv.getHeightSize();
+				text = "Kích thước: " + adv.getHeightSize() + " x " + adv.getWidthSize();
 				createListImage(text, textBox);
 
 				text = "Đơn giá: " + adv.getPrice() + " (USD/năm)";
