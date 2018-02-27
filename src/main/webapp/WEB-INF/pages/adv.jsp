@@ -599,14 +599,30 @@
 		
 		var images = $('#preview img');
 		if(images.length > 0) {
-			// Avatar
-			data['images'] = "http://namlongadv.ddns.net:7070" + images[0].getAttribute('src');
-			// Other image
-			for(var i = 1; i < images.length; i++) {
+			var avatarPos = -1;
+			var mapPos = -1;
+			// Find avatar and map
+			console.log(images.length)
+			for(var i = 0; i < images.length; i++) {
 				if(images[i].getAttribute('name') === 'map') {
+					// Map
 					data['image3'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+					mapPos = i;
 				} else {
-					data['image' + i] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+					// Avatar
+					data['images'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+					avatarPos = i;
+				}
+			}
+			// Others
+			var imageIndex = 2;
+			for(var i = 0; i < images.length; i++) {
+			 	if (i !== avatarPos && i !== mapPos) {
+			 		if(data['image3'] !== undefined && imageIndex === 3) {
+						imageIndex++;
+					}
+					data['image' + imageIndex] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+					imageIndex++;
 				}
 			}
 		}
@@ -620,7 +636,6 @@
 				method: "GET",
 				url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 			}).done(function(msg) {
-				console.log(msg);
 				// Update if it existed
 				$.ajax({
 		 			method: "PUT",
@@ -637,6 +652,7 @@
 		 		});
 			}).error(function(e) {
 				// Create if it does not existed
+				console.log(data);
 				if(e.status === 404) {
 			 		$.ajax({
 			 			method: "POST",
