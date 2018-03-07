@@ -210,6 +210,7 @@
 										<form:option value="Billboard Quảng cáo ngoài trời 2 mặt">Billboard Quảng cáo ngoài trời 2 mặt</form:option>
 										<form:option value="Billboard Quảng cáo ngoài trời 3 mặt">Billboard Quảng cáo ngoài trời 3 mặt</form:option>
 										<form:option value="Billboard Quảng cáo ngoài trời 4 mặt">Billboard Quảng cáo ngoài trời 4 mặt</form:option>
+										<form:option value="Billboard ốp tường">Billboard ốp tường</form:option>
 									</form:select>
 								</div>
 							</div>

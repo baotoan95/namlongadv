@@ -227,6 +227,8 @@ public class AdvController {
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
+		advDto.getAdvertisement().setHouseNo("Số ");
+		advDto.getAdvertisement().setStreet("Đường ");
 
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",

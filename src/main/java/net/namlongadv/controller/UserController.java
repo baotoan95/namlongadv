@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,8 +63,12 @@ public class UserController {
 	}
 
 	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })
-	public String user(@ModelAttribute("user") User user, BindingResult bindingResult, 
+	public String user(@Valid User user, BindingResult bindingResult, 
 			ModelMap model, HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
+		if(bindingResult.hasErrors()) {
+			model.addAttribute("roles", roleRepository.findAll());
+			return "user";
+		}
 		if (session.getAttribute("pageSize") == null) {
 			session.setAttribute("pageSize", 10);
 		}
@@ -86,12 +90,11 @@ public class UserController {
 		}
 
 		log.debug("Validation form");
+		if (user.getPassword().trim().length() <= 5) {
+			bindingResult.rejectValue("password", "error.password", "Mật khẩu phải lớn hơn hoặc bằng 6 ký tự");
+		}
 		if (user.getName().trim().length() == 0) {
 			bindingResult.rejectValue("name", "error.name", "Vui lòng nhập tên");
-		}
-		if (bindingResult.hasErrors()) {
-			log.debug("Form has errors " + bindingResult.getAllErrors());
-			return "user";
 		}
 
 		log.debug("Preparing to save a user");
