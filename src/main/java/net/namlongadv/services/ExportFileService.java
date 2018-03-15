@@ -348,7 +348,7 @@ public class ExportFileService {
 						for (AdvImage advImage : images) {
 							slide = ppt.createSlide(slidelayout);
 							
-							createProvinceHolder(slide, adv.getProvince());
+							createProvinceHolder(slide, adv.getProvince().toUpperCase());
 
 							textBox = slide.createTextBox();
 							textBox.setAnchor(new Rectangle(0, 80, 700, 30));
@@ -356,10 +356,10 @@ public class ExportFileService {
 							paragraph = textBox.addNewTextParagraph();
 							paragraph.setTextAlign(TextAlign.CENTER);
 							textRun = paragraph.addNewTextRun();
-							textRun.setText(adv.getTitle());
+							textRun.setText(adv.getTitle().toUpperCase());
 							textRun.setBold(true);
 							textRun.setFontColor(Color.blue);
-							textRun.setFontSize(20d);
+							textRun.setFontSize(25d);
 
 							insertImage(advImage.getUrl(), new Rectangle(70, 140, 580, 390), ppt, slide);
 						}
@@ -400,14 +400,14 @@ public class ExportFileService {
 	private void createProvinceHolder(XSLFSlide slide, String province) {
 		XSLFAutoShape cardRect = ((XSLFSlide) slide).createAutoShape();
 		cardRect.setShapeType(ShapeType.RECT);
-		cardRect.setAnchor(new Rectangle(0, 0, 300, 47));
+		cardRect.setAnchor(new Rectangle(0, 0, 350, 50));
 		cardRect.setVerticalAlignment(org.apache.poi.sl.usermodel.VerticalAlignment.MIDDLE);
 		XSLFTextParagraph textParagraph = cardRect.addNewTextParagraph();
 		textParagraph.setTextAlign(TextAlign.CENTER);
 		XSLFTextRun textRun = textParagraph.addNewTextRun();
-		textRun.setText(province);
+		textRun.setText(province.toUpperCase());
 		textRun.setFontColor(Color.RED);
-		textRun.setFontSize(25d);
+		textRun.setFontSize(27d);
 		textRun.setBold(true);
 	}
 }

@@ -104,14 +104,24 @@ table tr td {
 	font-size: 1rem;
 }
 
+.modal-dialog {
+    width: 60% !important;
+    margin: 30px auto;
+    text-align: center;
+}
 
+.modal-body {
+	background-color: transparent;
+	padding: 0px;
+}
 
-
-
-
-
-
-
+.sp-wrap {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+.sp-lightbox {
+	z-index: 9999 !important;
+}
 
 
 

@@ -94,13 +94,20 @@ public class AdvController {
 			@RequestParam(value = "createdBy", required = false) Optional<String> createdBy,
 			@RequestParam(value = "daterange", required = false) Optional<String> daterange,
 			@RequestParam(value = "contactPerson", required = false) Optional<String> contactPerson,
-			@RequestParam(value = "province", required = false) Optional<String> province, ModelMap model) {
+			@RequestParam(value = "houseNo", required = false) Optional<String> houseNo,
+			@RequestParam(value = "province", required = false) Optional<String> province,
+			@RequestParam(value = "ward", required = false) Optional<String> ward,
+			@RequestParam(value = "street", required = false) Optional<String> street,
+			@RequestParam(value = "district", required = false) Optional<String> district,
+			@RequestParam(value = "title", required = false) Optional<String> title, ModelMap model) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>();
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+		
+		StringBuilder queryString = new StringBuilder();
 
 		// Set page size
 		setPageSize(size, session);
@@ -114,6 +121,7 @@ public class AdvController {
 				daterange = Optional.of("01/01/2017 - " + DateUtils.convertDateToString(new Date()));
 			}
 			model.put("daterange", daterange.get());
+			queryString.append("&datarange=" + daterange.get());
 
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.convertStringToDate(dates[0]);
@@ -126,21 +134,62 @@ public class AdvController {
 			String sAddress = "";
 			String sCreatedBy = "";
 			String sContactPerson = "";
+			String sHouseNo = null;
+			String sStreet = null;
+			String sWard = null;
+			String sDistrict = null;
+			String sProvince = null;
+			String sTitle = "";
+
 			if (code.isPresent() && code.get().length() > 0) {
 				sCode = code.get().trim();
 				model.put("code", code.get().trim());
+				queryString.append("&code=" + code.get().trim());
 			}
 			if (address.isPresent() && address.get().length() > 0) {
 				sAddress = address.get().trim();
 				model.put("address", address.get().trim());
+				queryString.append("&address=" + address.get().trim());
 			}
 			if (createdBy.isPresent() && createdBy.get().length() > 0) {
 				sCreatedBy = createdBy.get().trim();
 				model.put("createdBy", createdBy.get().trim());
+				queryString.append("&createdBy=" + createdBy.get().trim());
 			}
 			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
 				sContactPerson = contactPerson.get().trim();
 				model.put("contactPerson", contactPerson.get().trim());
+				queryString.append("&contactPerson=" + contactPerson.get().trim());
+			}
+			if (houseNo.isPresent() && houseNo.get().length() > 0) {
+				sHouseNo = houseNo.get().trim();
+				model.put("houseNo", houseNo.get().trim());
+				queryString.append("&houseNo=" + houseNo.get().trim());
+			}
+			if (street.isPresent() && street.get().length() > 0) {
+				sStreet = street.get().trim();
+				model.put("street", street.get().trim());
+				queryString.append("&street=" + street.get().trim());
+			}
+			if (ward.isPresent() && ward.get().length() > 0) {
+				sWard = ward.get().trim();
+				model.put("ward", ward.get().trim());
+				queryString.append("&ward=" + ward.get().trim());
+			}
+			if (district.isPresent() && district.get().length() > 0) {
+				sDistrict = district.get().trim();
+				model.put("district", district.get().trim());
+				queryString.append("&district=" + district.get().trim());
+			}
+			if (province.isPresent() && province.get().length() > 0) {
+				sProvince = province.get().trim();
+				model.put("province", province.get().trim());
+				queryString.append("&province=" + province.get().trim());
+			}
+			if (title.isPresent() && title.get().length() > 0) {
+				sTitle = title.get().trim();
+				model.put("title", title.get().trim());
+				queryString.append("&title=" + title.get().trim());
 			}
 
 			log.debug("Search function ============");
@@ -149,20 +198,28 @@ public class AdvController {
 			log.debug("sCreatedBy: {}", sCreatedBy);
 			log.debug("sContactPerson: {}", sContactPerson);
 			log.debug("Time: {} {}", from, to);
+			log.debug("sHouseNo {}", sHouseNo);
+			log.debug("sStreet {}", sStreet);
+			log.debug("sWard {}", sWard);
+			log.debug("sDistrict {}", sDistrict);
+			log.debug("sProvince {}", sProvince);
 			log.debug("============================");
 
-			if (province.isPresent() && !province.get().isEmpty()) {
-				rs = advertisementService.search(sCode.toUpperCase(), StringUtils.convertStringIgnoreUtf8(sAddress),
-						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson),
-						province.get(), roles, new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
-								new Sort(Sort.Direction.DESC, "updatedDate")));
-				model.put("province", province.get());
-			} else {
-				rs = advertisementService.search(sCode.toUpperCase(), StringUtils.convertStringIgnoreUtf8(sAddress),
-						sCreatedBy.toUpperCase(), from, to, StringUtils.convertStringIgnoreUtf8(sContactPerson), roles,
-						new PageRequest(page.intValue(), (int) session.getAttribute("pageSize"),
-								new Sort(Sort.Direction.DESC, "updatedDate")));
-			}
+			sCode = sCode == null ? null : StringUtils.convertStringIgnoreUtf8(sCode).toUpperCase();
+			sAddress = sAddress == null ? null : StringUtils.convertStringIgnoreUtf8(sAddress).toLowerCase();
+			sCreatedBy = sCreatedBy == null ? null : StringUtils.convertStringIgnoreUtf8(sCreatedBy).toLowerCase();
+			sContactPerson = sContactPerson == null ? null : StringUtils.convertStringIgnoreUtf8(sContactPerson).toLowerCase();
+			sHouseNo = sHouseNo == null ? null : StringUtils.convertStringIgnoreUtf8(sHouseNo).toLowerCase();
+			sStreet = sStreet == null ? null : StringUtils.convertStringIgnoreUtf8(sStreet).toLowerCase();
+			sWard = sWard == null ? null : StringUtils.convertStringIgnoreUtf8(sWard).toLowerCase();
+			sDistrict = sDistrict == null ? null : StringUtils.convertStringIgnoreUtf8(sDistrict).toLowerCase();
+			sTitle = sTitle == null ? null : StringUtils.convertStringIgnoreUtf8(sTitle).toLowerCase();
+
+			rs = advertisementService.search(sCode, sAddress,
+					sCreatedBy, from, to, sContactPerson, sHouseNo,
+					sStreet, sWard, sDistrict, sTitle, sProvince, new PageRequest(page.intValue(),
+							(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.ASC, "addressSearching", "updatedDate")));
+			model.put("queryString", queryString);
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
 			return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
@@ -197,10 +254,11 @@ public class AdvController {
 		session.setAttribute(pageIndex, "advs");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		Page<Advertisement> result = advertisementService.findByRoles(roles, new PageRequest(page,
+		Page<Advertisement> result = advertisementService.findAll(new PageRequest(page,
 				(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.DESC, "updatedDate")));
 		List<Advertisement> pageContent = advertisementService.setPermission(result.getContent(), roles,
 				userDetails.getUserId());
+		
 		model.addAttribute("pageContent", pageContent);
 		model.addAttribute("page", result);
 		model.addAttribute("provinces",
@@ -229,6 +287,8 @@ public class AdvController {
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
 		advDto.getAdvertisement().setHouseNo("Số ");
 		advDto.getAdvertisement().setStreet("Đường ");
+		advDto.getAdvertisement().setWidthSize("m");
+		advDto.getAdvertisement().setHeightSize("m");
 
 		model.addAttribute("advertDto", advDto);
 		model.addAttribute("provinces",
@@ -296,11 +356,12 @@ public class AdvController {
 		advert.setDistrict(StringUtils.standardize(advert.getDistrict()));
 		advert.setProvince(StringUtils.standardize(advert.getProvince()));
 		advert.setStreet(StringUtils.standardize(advert.getStreet()));
+		advert.setTitle(StringUtils.standardize(advert.getTitle().toUpperCase()));
 
 		// Validation address
 		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
 				+ advert.getDistrict() + ", " + advert.getProvince();
-		advert.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
+
 		String fullExAddress = null;
 		if (prevAdvertisement != null) {
 			fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
@@ -310,8 +371,17 @@ public class AdvController {
 		List<Advertisement> advs = advertisementRepository
 				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
 						advert.getHouseNo(), advert.getStreet(), advert.getWard(), advert.getDistrict(),
-						advert.getProvince(), new PageRequest(0, 1))
+						advert.getProvince(), new PageRequest(0, 100))
 				.getContent();
+
+		// Ignore utf8 for searching
+		advert.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
+		advert.setHouseNoSearching(StringUtils.convertStringIgnoreUtf8(advert.getHouseNo()));
+		advert.setStreetSearching(StringUtils.convertStringIgnoreUtf8(advert.getStreet()));
+		advert.setWardSearching(StringUtils.convertStringIgnoreUtf8(advert.getWard()));
+		advert.setDistrictSearching(StringUtils.convertStringIgnoreUtf8(advert.getDistrict()));
+		advert.setProvinceSearching(StringUtils.convertStringIgnoreUtf8(advert.getProvince()));
+		advert.setTitleSearching(StringUtils.convertStringIgnoreUtf8(advert.getTitle()));
 
 		log.debug("Preparing to save adv ==============");
 		log.debug("Search address result: {}", advs.size());
@@ -321,12 +391,22 @@ public class AdvController {
 
 		// Address conflict
 		if (!advs.isEmpty() && fullAddress.length() > 8
-				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))) {
+				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))
+				&& !advertDto.isIgnoreError()) {
 			model.addAttribute("advertDto", advertDto);
 			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
 					.collect(Collectors.toList()));
-			String errorMsg = "Địa chỉ vừa nhập đã được đặt<br/>" + "<a href='" + baseUrl + "/adv/"
-					+ advs.get(0).getId() + "'>Bấm vào đây để xem chi tiết</a>";
+
+			// Prepare error message (address conflict)
+			StringBuilder errorMsg = new StringBuilder("=============<br/>Địa chỉ vừa nhập đã được đặt:<br/>");
+			Advertisement adv = null;
+			for (int i = 0; i < advs.size(); i++) {
+				adv = advs.get(i);
+				errorMsg.append(
+						(i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle() + "</a><br/>");
+			}
+			errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
+
 			model.addAttribute("errorMsg", errorMsg);
 			return "adv";
 		}
@@ -335,7 +415,16 @@ public class AdvController {
 		List<String> pathFiles = new ArrayList<>();
 		if (advertDto.getFiles() != null) {
 			log.info("Preparing to upload files");
-			pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit);
+			// Upload
+			pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit, false);
+			// Get map file
+			if (!advertDto.getMap().isEmpty()) {
+				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
+						fileLimit, true);
+				if (!fileNames.isEmpty()) {
+					pathFiles.add(fileNames.get(0));
+				}
+			}
 			log.info("Upload successful");
 		}
 

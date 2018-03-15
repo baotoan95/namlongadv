@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.utils.FileUtils;
 import net.namlongadv.utils.ImageUtils;
 
 @RestController
@@ -33,7 +34,8 @@ public class ResourceController {
 			
 			byte[] rs = new byte[(int)file.length()];
 			new FileInputStream(file).read(rs);
-			response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
+			response.setContentType("image/" + FileUtils.getExtensions(path));
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 			response.getOutputStream().write(rs);
 			response.getOutputStream().close();
 		} catch (IOException e) {

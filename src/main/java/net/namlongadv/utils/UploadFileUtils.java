@@ -20,7 +20,7 @@ public class UploadFileUtils {
 	 * @param files
 	 * @return list of path files
 	 */
-	public List<String> uploadMultipleFile(List<MultipartFile> files, int reduce) {
+	public List<String> uploadMultipleFile(List<MultipartFile> files, int reduce, boolean isMap) {
 		List<String> pathFilesUploaded = new ArrayList<>();
 		File dir = new File(PathContants.UPLOAD_PATH);
 		log.debug("Uploading {} images", files.size());
@@ -35,8 +35,13 @@ public class UploadFileUtils {
 			for (MultipartFile mpf : files) {
 				if (mpf.getSize() > 0) {
 					log.info("Uploading: " + mpf.getOriginalFilename());
-					pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime()
-							+ mpf.getOriginalFilename();
+					if (isMap) {
+						pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + "map."
+								+ FileUtils.getExtensions(mpf.getOriginalFilename());
+					} else {
+						pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + "NL."
+								+ FileUtils.getExtensions(mpf.getOriginalFilename());
+					}
 					containFolder = new File(dir.getAbsolutePath());
 					containFolder.mkdirs();
 
@@ -49,9 +54,15 @@ public class UploadFileUtils {
 							log.debug("Saved to storage: {}", pathUploaded);
 							pathFilesUploaded.add(pathUploaded);
 						} catch (Exception e) {
-							log.error(e.getMessage());
+							// Do not reduce if file type invalid
+							serverFile = new File(pathFile);
+							serverFile.createNewFile();
+							log.debug("Upload to " + pathFile);
+							org.apache.commons.io.FileUtils.copyFile(file, serverFile);
+							log.info(mpf.getOriginalFilename() + " uploaded! ");
+							pathFilesUploaded.add(serverFile.getPath());
 						}
-					// Normal case
+						// Normal case
 					} else {
 						serverFile = new File(pathFile);
 						serverFile.createNewFile();

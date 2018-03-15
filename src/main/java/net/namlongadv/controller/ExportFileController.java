@@ -37,10 +37,13 @@ public class ExportFileController {
 	
 	@InitBinder
 	public void bindingPreparation(WebDataBinder binder) {
+		binder.setAutoGrowCollectionLimit(10000);
+		
 		log.debug("Parse date");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		CustomDateEditor orderDateEditor = new CustomDateEditor(dateFormat, true);
 		binder.registerCustomEditor(Date.class, orderDateEditor);
+		
 	}
 
 	@RequestMapping(value = "excel", method = RequestMethod.POST)

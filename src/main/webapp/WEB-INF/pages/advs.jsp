@@ -2,8 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security"
-	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <style>
 table tr th {
@@ -65,8 +65,25 @@ table tr th {
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-md-3" style="margin-top: 10px;">
-								    <select id="province" class="form-control select2 col-md-3" name="province">
+								<div class="col-md-4" style="margin-top: 10px;">
+								    <input type="text" name="title" class="form-control" placeholder="Tiêu đề" value="${title }"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2 ui-widget" style="margin-top: 10px;">
+									<input type="text" name="houseNo" class="form-control" placeholder="Số nhà" value="${houseNo }"/>
+								</div>
+								<div class="col-md-3 ui-widget" style="margin-top: 10px;">
+									<input type="text" name="street" class="form-control" placeholder="Tên đường" value="${street }"/>
+								</div>
+								<div class="col-md-3 ui-widget" style="margin-top: 10px;">
+									<input type="text" name="ward" class="form-control" placeholder="Phường/Xã" value="${ward }"/>
+								</div>
+								<div class="col-md-2 ui-widget" style="margin-top: 10px;">
+									<input type="text" name="district" class="form-control" placeholder="Quận/Huyện" value="${district }"/>
+								</div>
+								<div class="col-md-2 ui-widget" style="margin-top: 20px;">
+									<select id="province" class="form-control select2 col-md-3" name="province">
 										<option value="">Chọn tỉnh</option>
 										<c:forEach items="${provinces }" var="province">
 										<option ${requestScope.province eq province.code ? 'selected' : '' } value="${province.code }">${province.name }</option>
@@ -135,12 +152,13 @@ table tr th {
 								</th>
 								<th style="width: 8px;">#</th>
 								<th style="width: 5%;">Mã</th>
-								<th style="width: 20%;">Tiêu đề</th>
-								<th style="width: 20%;">Địa chỉ</th>
+								<th style="width: 20%;">Tiêu Đề</th>
+								<th style="width: 20%;">Địa Chỉ</th>
+								<th style="width: 10%;">Kích Thước</th>
+								<th style="width: 5%;">Ngày Cập Nhật</th>
 								<th style="width: 20px;"></th>
-								<th style="width: 13%;">Liên hệ</th>
-								<th style="width: 10%;">SĐT</th>
-								<th style="width: 50%;">Hình ảnh</th>
+								<th style="width: 13%;">Liên Hệ</th>
+								<th style="width: 50%;">Hình Ảnh</th>
 								<th style="width: 5%;"></th>
 							</tr>
 						</thead>
@@ -222,30 +240,34 @@ table tr th {
 									<td rowspan="2">${loop.index + 1 }</td>
 									<td rowspan="2">${adv.code }</td>
 									<td rowspan="2">
-										<a href="${pageContext.request.contextPath }/adv/${adv.id }">
+										<c:if test="${adv.allowEdit }">
+											<a href="${pageContext.request.contextPath }/adv/${adv.id }">
+												${adv.title }
+											</a>
+										</c:if>
+										<c:if test="${!adv.allowEdit }">
 											${adv.title }
-										</a>
+										</c:if>
 									</td>
 									<td rowspan="2">${adv.houseNo }, ${adv.street }, ${adv.ward }, ${adv.district }, ${adv.province }</td>
+									<td rowspan="2">${adv.heightSize } x ${adv.widthSize } x ${adv.amount }</td>
+									<td rowspan="2"><fmt:formatDate pattern="dd/MM/yyyy" value="${adv.updatedDate }" /></td>
 									<td>TTCN</td>
 									<td>
 										${adv.ownerContactPerson }
-									</td>
-									<td>
-										${adv.ownerPhone }
 									</td>
 									<td rowspan="2" class="imageSelector">
 										<ul class="image-group">
 											<c:forEach items="${adv.advImages }" var="advImage" varStatus="i">
 										  	<li class="image-item">
-										  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
-										    <label for="cb${loop.index }-${i.index }">
-										    	<img class="image lazy" data-original="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" />
-										    	<button type="button" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button>
-										    </label>
-										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
-										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
-										  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].map" value="${advImage.map }"/>
+											  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
+											    <label for="cb${loop.index }-${i.index }">
+											    	<img class="image lazy" data-original="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" />
+											    	<button type="button" index="${i.index }" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button>
+											    </label>
+											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
+											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
+											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].map" value="${advImage.map }"/>
 										  	</li>
 										  	</c:forEach>
 										</ul>
@@ -256,7 +278,7 @@ table tr th {
 											href="${pageContext.request.contextPath }/adv/delete/${adv.id }">
 											<i class="fa fa-fw fa-trash"></i>
 										</a>
-										<br /> 
+										<br />
 										<a title="Xem" href="${pageContext.request.contextPath }/adv/${adv.id }">
 											<i class="fa fa-fw fa-edit"></i>
 										</a>
@@ -266,7 +288,6 @@ table tr th {
 								<tr>
 									<td>TTCTQC</td>
 									<td>${adv.advCompName }</td>
-									<td>${adv.advCompPhone }</td>
 								</tr>
 							</c:forEach>
 						</tbody>
@@ -284,30 +305,30 @@ table tr th {
 						
 						<c:if test="${page.number > 0 }">
 							<li class="">
-								<a title="Trang đầu" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=0&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">««</a>
+								<a title="Trang đầu" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=0&size=${page.size }${queryString }">««</a>
 							</li>
 						</c:if>
 						
 						<c:if test="${firstPrev > 0 }">
 							<li class="">
-								<a title="Trang trước" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">«</a>
+								<a title="Trang trước" href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number - 1 }&size=${page.size }${queryString }">«</a>
 							</li>
 						</c:if>
 
 						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : (page.totalPages > 0 ? page.totalPages - 1 : 0) }"
 							varStatus="loop">
-							<li class="${loop.index == page.number ? 'active' : ''}"><a
-								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">${loop.index }</a></li>
+							<li class="${loop.index == page.number ? 'active' : ''}">
+								<a href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }${queryString }">${loop.index }</a></li>
 						</c:forEach>
 
 						<c:if test="${lastPost < page.totalPages }">
 							<li class=""><a title="Trang tiếp theo"
-								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number + 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.number + 1 }&size=${page.size }${queryString }">»</a></li>
 						</c:if>
 						
 						<c:if test="${page.number < page.totalPages - 1 }">
 							<li class=""><a title="Trang cuối"
-								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.totalPages - 1 }&size=${page.size }&code=${code }&contactPerson=${contactPerson }&createdBy=${createdBy }&address=${address }&daterange=${daterange }">»»</a></li>
+								href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${page.totalPages - 1 }&size=${page.size }${queryString }">»»</a></li>
 						</c:if>
 					</ul>
 				</div>
@@ -348,8 +369,8 @@ $(document).ready(function() {
 	var daterange = '${daterange}'.split(" - ");
 	if(daterange.length < 2) {
 		var today = new Date();
-		daterange[0] = "1/1/2017";
-		daterange[1] = (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
+		daterange[0] = "01/01/2017";
+		daterange[1] = today.getDate() + "/" + (today.getMonth()+1) + "/" + today.getFullYear();
 	}
 	
 	// Reset filter value
@@ -357,8 +378,13 @@ $(document).ready(function() {
 		$('input[name=code]').val('');
 		$('input[name=address]').val('');
 		$('input[name=createdBy]').val('');
-		$('input[name=daterange]').val(new Date(daterange[0]).toLocaleDateString() + " - " + new Date(daterange[1]).toLocaleDateString());
+		$('input[name=daterange]').val(daterange[0] + " - " + daterange[1]);
 		$('input[name=contactPerson]').val('');
+		$('input[name=title]').val('');
+		$('input[name=houseNo]').val('');
+		$('input[name=street]').val('');
+		$('input[name=ward]').val('');
+		$('input[name=district]').val('');
 		$('select[name=province]').val('').trigger('change');
 	});
 	
@@ -366,7 +392,10 @@ $(document).ready(function() {
 	$('input[name="daterange"]').daterangepicker({
 		 opens: "left",
 		 startDate: daterange[0],
-		 endDate: daterange[1]
+		 endDate: daterange[1],
+		 locale: {
+			 format: 'DD/MM/YYYY'
+		 }
 	});
 	
 	// Get users for compobox

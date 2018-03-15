@@ -28,28 +28,32 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	public Page<Advertisement> findByUpdatedDate(@Param("start") Date start, @Param("end") Date end,
 			@Param("roles") List<String> roles, Pageable pageable);
 
-	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%')) " 
-			+ "and (upper(adv.code) like upper(concat('%',:code,'%'))) "
-			+ "and (upper(adv.createdBy.username) like upper(concat('%',:username,'%'))) "
+	@Query("select distinct adv from Advertisement adv where "
+			+ "(adv.code like concat('%',:code,'%')) "
+			+ "and (adv.addressSearching like concat('%',:address,'%')) " 
+			+ "and (adv.createdBy.username like concat('%',:username,'%')) "
 			+ "and (adv.updatedDate between :fromDate and :toDate) "
-			+ "and (upper(adv.advCompNameSearching) like upper(concat('%',:contactName,'%')) "
-			+ "or upper(adv.ownerContactPersonSearching) like upper(concat('%',:contactName,'%')))")
-	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
-			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
-			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable);
-	
-	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
-			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%')) " 
-			+ "and (upper(adv.code) like upper(concat('%',:code,'%'))) "
-			+ "and (upper(adv.createdBy.username) like upper(concat('%',:username,'%'))) "
-			+ "and (adv.updatedDate between :fromDate and :toDate) "
-			+ "and (upper(adv.advCompNameSearching) like upper(concat('%',:contactName,'%')) "
-			+ "or upper(adv.ownerContactPersonSearching) like upper(concat('%',:contactName,'%'))) "
-			+ "and adv.provinceCode = :province_code")
-	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
-			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
-			@Param("contactName") String contactName, @Param("province_code") String province_code, @Param("roles") List<String> roles, Pageable pageable);
+			+ "and (adv.advCompNameSearching like concat('%',:contactName,'%') "
+			+ "or adv.ownerContactPersonSearching like concat('%',:contactName,'%')) "
+			+ "and (:houseNo is null or adv.houseNoSearching = :houseNo) "
+			+ "and (:street is null or adv.streetSearching = :street) "
+			+ "and (:ward is null or adv.wardSearching = :ward) "
+			+ "and (:district is null or adv.districtSearching = :district) "
+			+ "and (:title is null or adv.titleSearching like concat('%',:title,'%')) "
+			+ "and (:provinceCode is null or adv.provinceCode = :provinceCode)")
+	public Page<Advertisement> search(
+			@Param("code") String code, 
+			@Param("address") String address,
+			@Param("username") String username, 
+			@Param("fromDate") Date from, 
+			@Param("toDate") Date to,
+			@Param("contactName") String contactName, 
+			@Param("houseNo") String houseNo,
+			@Param("street") String street,
+			@Param("ward") String ward,
+			@Param("district") String district,
+			@Param("title") String title,
+			@Param("provinceCode") String provinceCode, Pageable pageable);
 	
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);

@@ -42,7 +42,12 @@ public class ImageUtils {
 		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName(FileUtils.getExtensions(file.getPath()));
 		writer = iter.next();
 		iwp = writer.getDefaultWriteParam();
-		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		try {
+			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		} catch (Exception e) {
+			writer.dispose();
+			throw new Exception("File type invalid");
+		}
 
 		inputStream = new FileInputStream(file);
 		originalImage = ImageIO.read(inputStream);

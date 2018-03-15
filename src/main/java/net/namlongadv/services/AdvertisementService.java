@@ -31,20 +31,15 @@ public class AdvertisementService {
 		return advertisementRepository.findByUpdatedDate(start, end, searchPermission(roles), pageable);
 	}
 
-	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
-			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
-			@Param("contactName") String contactName, @Param("roles") List<String> roles, Pageable pageable) {
-		return advertisementRepository.search(code, address, username, from, to, contactName, searchPermission(roles),
-				pageable);
-
+	public Page<Advertisement> findAll(Pageable pageable) {
+		return advertisementRepository.findAll(pageable);
 	}
 
-	public Page<Advertisement> search(@Param("code") String code, @Param("address") String address,
-			@Param("username") String username, @Param("fromDate") Date from, @Param("toDate") Date to,
-			@Param("contactName") String contactName, String province_code, @Param("roles") List<String> roles,
-			Pageable pageable) {
-		return advertisementRepository.search(code, address, username, from, to, contactName, province_code,
-				searchPermission(roles), pageable);
+	public Page<Advertisement> search(String code, String address, String username, Date from, Date to,
+			String contactName, String houseNo, String street, String ward, String district, String provinceCode,
+			String title, Pageable pageable) {
+		return advertisementRepository.search(code, address, username, from, to, contactName, houseNo, street, ward, district,
+				provinceCode, title, pageable);
 	}
 
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable) {
@@ -81,26 +76,31 @@ public class AdvertisementService {
 		if (roles.contains("ROLE_ADMIN")) {
 			return adv;
 		}
-
-		if (roles.contains("ROLE_BUSINESS") || roles.contains("ROLE_ACCOUNTANT")) {
-			List<String> createdRoles = new ArrayList<>();
-			adv.getCreatedBy().getRoles().forEach(role -> {
-				createdRoles.add(role.getCode());
-			});
-			if (createdRoles.contains("ROLE_ADMIN") || !adv.getCreatedBy().getId().equals(userId)
-					&& (createdRoles.contains("ROLE_BUSINESS") || createdRoles.contains("ROLE_ACCOUNTANT"))) {
-				adv.setAllowEdit(false);
-			}
-
+		
+		if(!adv.getCreatedBy().getId().equals(userId)) {
+			adv.setAllowEdit(false);
 			return adv;
 		}
 
-		if (roles.contains("ROLE_SURVEYOR")) {
-			if (!adv.getCreatedBy().getId().equals(userId)) {
-				adv.setAllowEdit(false);
-			}
-			return adv;
-		}
+//		if (roles.contains("ROLE_BUSINESS") || roles.contains("ROLE_ACCOUNTANT")) {
+//			List<String> createdRoles = new ArrayList<>();
+//			adv.getCreatedBy().getRoles().forEach(role -> {
+//				createdRoles.add(role.getCode());
+//			});
+//			if (createdRoles.contains("ROLE_ADMIN") || !adv.getCreatedBy().getId().equals(userId)
+//					&& (createdRoles.contains("ROLE_BUSINESS") || createdRoles.contains("ROLE_ACCOUNTANT"))) {
+//				adv.setAllowEdit(false);
+//			}
+//
+//			return adv;
+//		}
+//
+//		if (roles.contains("ROLE_SURVEYOR")) {
+//			if (!adv.getCreatedBy().getId().equals(userId)) {
+//				adv.setAllowEdit(false);
+//			}
+//			return adv;
+//		}
 
 		return adv;
 	}

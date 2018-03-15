@@ -52,12 +52,11 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-<link rel="stylesheet"
-	href="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.css'/>">
-
+<link rel="stylesheet" href="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.css'/>">
 <!-- jQuery 2.2.3 -->
-<script
-	src="<c:url value='/resources/plugins/jQuery/jquery-2.2.3.min.js'/>"></script>
+<script src="<c:url value='/resources/plugins/jQuery/jquery-2.2.3.min.js'/>"></script>
+<!-- Smoothproduct -->
+<link rel="stylesheet" href="<c:url value='/resources/plugins/smoothproduct/css/smoothproducts.css'/>">
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -94,6 +93,7 @@
 	</div>
 	<!-- ./wrapper -->
 
+	<!-- The Modal -->
 	<div class="modal modal-success" id="modal-success" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -105,7 +105,9 @@
 					<h4 class="modal-title">Preview</h4>
 				</div>
 				<div class="modal-body">
-					<img id="image-preview"/>
+					<div class="sp-wrap">
+						<div class="sp-loading"><img src="images/sp-loading.gif" alt=""><br>LOADING IMAGES</div>
+					</div>
 				</div>
 			</div>
 			<!-- /.modal-content -->
@@ -113,25 +115,22 @@
 		<!-- /.modal-dialog -->
 	</div>
 
-	<script
-		src="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.min.js'/>"></script>
+	<script src="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.min.js'/>"></script>
 	<!-- Bootstrap 3.3.6 -->
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>
 	<!-- Select2 -->
 	<script src="<c:url value='/resources/plugins/select2/select2.full.min.js'/>"></script>
 	<!-- DataTables -->
-	<script
-		src="<c:url value='/resources/plugins/datatables/jquery.dataTables.min.js'/>"></script>
-	<script
-		src="<c:url value='/resources/plugins/datatables/dataTables.bootstrap.min.js'/>"></script>
+	<script src="<c:url value='/resources/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+	<script src="<c:url value='/resources/plugins/datatables/dataTables.bootstrap.min.js'/>"></script>
 	<!-- SlimScroll -->
-	<script
-		src="<c:url value='/resources/plugins/slimScroll/jquery.slimscroll.min.js'/>"></script>
+	<script src="<c:url value='/resources/plugins/slimScroll/jquery.slimscroll.min.js'/>"></script>
 	<!-- bootstrap datepicker -->
 	<script src="<c:url value='/resources/plugins/datepicker/bootstrap-datepicker.js'/>"></script>
 	<!-- FastClick -->
-	<script
-		src="<c:url value='/resources/plugins/fastclick/fastclick.js'/>"></script>
+	<script src="<c:url value='/resources/plugins/fastclick/fastclick.js'/>"></script>
+	<!-- Smoothproduct -->
+	<script src="<c:url value='/resources/plugins/smoothproduct/js/smoothproducts.js'/>"></script>
 	<!-- AdminLTE App -->
 	<script src="<c:url value='/resources/dist/js/app.min.js'/>"></script>
 	<!-- AdminLTE for demo purposes -->
@@ -158,9 +157,43 @@
 			});
 			
 			$(".btn-preview-image").click(function() {
-				$('#image-preview').attr('src', $(this).prev().attr('src'));
+				var imgs = $(this).parent().parent().parent().find('img');
+				$('.sp-wrap').empty();
+				imgs.each(function(index, element) {
+					$('.sp-wrap').append('<a href="' + $(element).attr('src') + '"><img src="'+ $(element).attr('src') +'" alt=""></a>')
+				});
+				$('.sp-wrap').smoothproducts();
+				
+				$('.sp-tb-active a').attr('class', '');
+				console.log(parseInt($(this).attr('index')))
+				$($('.sp-tb-active a')[parseInt($(this).attr('index'))]).attr('class', 'sp-current');
+				console.log($(this).prev().attr('src'));
+				$('.sp-large a').attr('href', $(this).prev().attr('src'));
+				$('.sp-large img').attr('src', $(this).prev().attr('src'));
 			});
+			
+			
 		});
+		
+// 		var currentSlide = 0;
+// 		showSlide(currentSlide);
+// 		function showSlide(isNext) {
+// 			var slides = $('.slide-item');
+// 			slides.css('display', 'none');
+			
+// 			if(isNext) {
+// 				currentSlide++;
+// 			} else {
+// 				currentSlide--;
+// 			}
+// 			if(currentSlide >= slides.length) {
+// 				currentSlide = 0;
+// 			} else if(currentSlide < 0) {
+// 				currentSlide = slides.length - 1;
+// 			}
+// 			$(slides[currentSlide]).css('display', 'block');
+// 		}
+		
 	</script>
 </body>
 </html>

@@ -25,4 +25,6 @@ public class AdvertisementDTO implements Serializable {
 	private Advertisement advertisement = new Advertisement();
 	private List<MultipartFile> files = new ArrayList<>();
 	private UUID[] prevImages = new UUID[6]; 
+	private MultipartFile map;
+	private boolean ignoreError = false;
 }

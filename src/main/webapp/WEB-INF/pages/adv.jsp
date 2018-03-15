@@ -69,7 +69,7 @@
 								<label for="code" class="col-md-3 control-label">Mã</label>
 								<div class="col-md-3">
 									<form:input readonly="true" maxlength="254" type="text" path="advertisement.code"
-										class="form-control" id="code" placeholder="Nhập mã (sẽ tự tạo nếu không nhập)" />
+										class="form-control" id="code" placeholder="Nhập mã (tự động tạo nếu không nhập)" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
 								<label for="updatedDate" class="col-md-3 control-label">Ngày cập nhật</label>
@@ -129,10 +129,10 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="map" class="col-md-3 control-label">Toạ độ</label>
+								<label for="coordinates" class="col-md-3 control-label">Toạ độ</label>
 								<div class="col-md-9">
 									<form:input maxlength="254" path="advertisement.map" type="text" onchange="initialize()"
-										class="form-control" id="coordinates" name="coordinates" placeholder="" />
+										class="form-control" id="coordinates" name="coordinates" placeholder="Nhập toạ độ (VD: 123.2334, 234.2343)" />
 								</div>
 							</div>
 							<security:authorize access="hasRole('ROLE_ADMIN')">
@@ -146,16 +146,23 @@
 							</security:authorize>
 							<div class="form-group">
 								<label for="heightSize" class="col-md-3 control-label">Kích thước</label>
-								<div class="col-md-4">
+								<div class="col-md-2">
 									<form:input maxlength="254" path="advertisement.heightSize" type="text"
-										class="form-control" id="heightSize" placeholder="Chiều cao (m)" />
+										class="form-control" id="heightSize" placeholder="Chiều cao" />
 								</div>
 								<div class="col-md-1" style="text-align: center;">
 									<label class="control-label">x</label>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-2">
 									<form:input maxlength="254" path="advertisement.widthSize" type="text"
-										class="form-control" id="widthSize" placeholder="Chiều rộng (m)" />
+										class="form-control" id="widthSize" placeholder="Chiều rộng" />
+								</div>
+								<div class="col-md-2" style="text-align: center;">
+									<label class="control-label">Số lượng</label>
+								</div>
+								<div class="col-md-2">
+									<form:input maxlength="254" path="advertisement.amount" type="text"
+										class="form-control" id="amount" placeholder="Số lượng" />
 								</div>
 							</div>
 							<div class="form-group">
@@ -398,11 +405,15 @@
 								<b>Closest matching address:</b>
 								<div id="address"></div>
 							</div>
+<%-- 							<iframe id="mapFrame" src="${advertDto.advertisement.map }" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe> --%>
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">
 							<c:if test="${advertDto.advertisement.allowEdit }">
 								<a href="${pageContext.request.contextPath }/adv/view?page=0&size=10" class="btn btn-default">Huỷ</a>
+							</c:if>
+							<c:if test="${not empty errorMsg }">
+								<input type="hidden" name="ignoreError" value="true"/>
 							</c:if>
 							<button type="button" onclick="submitData()" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 							
@@ -427,17 +438,17 @@
 				</div>
 			</div>
 
-			<div class="col-md-3">
+			<div class="col-md-3" id="images">
 				<div id="preview">
 				<%
 					AdvertisementDTO advertDto = (AdvertisementDTO) request.getAttribute("advertDto");
 					List<AdvImage> images = advertDto.getAdvertisement().getAdvImages();
 					int numOfImagesAvailable = images != null ? images.size() : 0;
-					int numOfImages = 6;
+					int mapIndex = -1;
 					AdvImage advImage = null;
-					for(int i = 0; i < numOfImages; i++) {
-						if(i < numOfImagesAvailable) {
-							advImage = images.get(i);
+					for(int i = 0; i < numOfImagesAvailable; i++) {
+						advImage = images.get(i);
+						if(!advImage.isMap()) {
 				%>
 						<div class="preview-item">
 							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
@@ -448,15 +459,43 @@
 		 					<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
 						</div>
 				<%
+						} else {
+							mapIndex = i;
 						}
 					}
 				%>
 					<div id="new-preview"></div>
 					<input type="file" multiple="multiple" onchange="previewImages(this, true)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
 				</div>
+				
+				<div id="imgMap">
+					<br/>
+					<b>Map</b>
+					<div id="imgMap-preview">
+					<%
+						if(mapIndex != -1) {
+							advImage = images.get(mapIndex);
+					%>
+						<div class="preview-item">
+							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							<input type="hidden" name="prevImages[<%= mapIndex %>]" value="<%= advImage.getId() %>"/>
+							<img class="img-thumbnail"
+		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
+		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
+		 					<input type="file" class="form-control" name="map" onchange="previewImages(this, false)">
+						</div>
+		 			<%
+						} else {
+					%>
+					</div>
+					<input type="file" class="form-control" name="map" onchange="previewImages(this, true, true)">
+					<%
+						}
+		 			%>
+				</div>
 
 				<script type="text/javascript">
-					function previewImages(input, isNew) {
+					function previewImages(input, isNew, isMap) {
 						if (input.files && input.files[0] && !isNew) {
 						    var reader = new FileReader();
 
@@ -469,15 +508,19 @@
 						    }
 						    reader.readAsDataURL(input.files[0]);
 						} else {
-							$('#new-preview').empty();
+							var previewElement = $('#new-preview');
+							if(isMap) {
+								previewElement = $('#imgMap-preview');
+							}
+							previewElement.empty();
+							
 							for(var i = 0; i < input.files.length; i++) {
-								
 								var reader = new FileReader();
 
 							    reader.onload = function(e) {
-							    	$('#new-preview').append(
+							    	previewElement.append(
 							    		'<div class="preview-item">' +
-											'<img class="img-thumbnail" src="'+ e.target.result +'" alt="${advImage.name }"></img>' +
+											'<img class="img-thumbnail" ' + (isMap ? 'name="map"' : '')  + ' src="'+ e.target.result +'" alt="${advImage.name }"></img>' +
 										'</div>'
 									);
 							    }
@@ -598,7 +641,7 @@
 				"detail": detail
 			}
 		
-		var images = $('#preview img');
+		var images = $('#images img');
 		if(images.length > 0) {
 			var avatarPos = -1;
 			var mapPos = -1;
@@ -619,12 +662,16 @@
 			var imageIndex = 2;
 			for(var i = 0; i < images.length; i++) {
 			 	if (i !== avatarPos && i !== mapPos) {
-			 		if(data['image3'] !== undefined && imageIndex === 3) {
+			 		if(imageIndex === 3) {
 						imageIndex++;
 					}
 					data['image' + imageIndex] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
 					imageIndex++;
 				}
+			}
+			
+			if(data['image3'] === undefined) {
+				data['image3'] = null;
 			}
 		}
 		
@@ -644,7 +691,7 @@
 		 			data: data
 		 		}).done(function(msg) {
 		 			if(msg === 1) {
-			 			alert("Xuất bản thành công!!!");
+			 			alert("Tái xuất bản thành công!!!");
 			 			$('#publishedId').attr("value", publishedId);
 			 			$('#formData').submit();
 		 			} else {

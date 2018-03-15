@@ -6,7 +6,7 @@
 	
 <footer class="main-footer">
 	<div class="pull-right hidden-xs">
-		<b>Version</b> 1.2.15
+		<b>Version</b> 1.8.30
 	</div>
-	<strong>Copyright &copy; 2018 <a href="#">NamLongAdv</a>.</strong> All rights reserved.
+	Copyright &copy; 2018 by <b>BTIT95</b>
 </footer>

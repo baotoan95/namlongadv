@@ -47,13 +47,14 @@ public class Advertisement {
 	private String province;
 	private String widthSize;
 	private String heightSize;
+	private String amount;
 	private String map;
 	@Column(columnDefinition="text")
 	private String describe;
 	@Column(columnDefinition="text")
 	private String views;
 	@Column(columnDefinition="text")
-	private Integer flow;
+	private String flow;
 	private Integer implTime;
 	private String implForm;
 	private String lightSystem;
@@ -94,4 +95,16 @@ public class Advertisement {
 	private String advCompNameSearching;
 	@Column(columnDefinition="text")
 	private String ownerContactPersonSearching;
+	@Column(columnDefinition="text")
+	private String houseNoSearching;
+	@Column(columnDefinition="text")
+	private String streetSearching;
+	@Column(columnDefinition="text")
+	private String wardSearching;
+	@Column(columnDefinition="text")
+	private String districtSearching;
+	@Column(columnDefinition="text")
+	private String provinceSearching;
+	@Column(columnDefinition="text")
+	private String titleSearching;
 }

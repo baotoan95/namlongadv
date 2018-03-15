@@ -34,6 +34,7 @@ public class RestApiController {
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		List<String> roles = new ArrayList<>(); 
 		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+		roles.add("ROLE_ADMIN");
 		
 		Page<Advertisement> rs = advertisementService.findByAddress(StringUtils.convertStringIgnoreUtf8(address), roles, new PageRequest(0, 20));
 		List<String> addresses = new ArrayList<>();

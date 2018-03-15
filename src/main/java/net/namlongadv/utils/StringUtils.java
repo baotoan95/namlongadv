@@ -4,6 +4,9 @@ import java.text.Normalizer;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class StringUtils {
 	public static String standardize(String str) {
         str = str.trim();
@@ -17,12 +20,13 @@ public class StringUtils {
 	}
 	
 	public static String convertStringIgnoreUtf8(String str) {
+		if(str == null) return null;
 		try {
 			String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
 			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 			return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll("đ", "d");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error: {}", e);
 		}
 		return "";
 	}

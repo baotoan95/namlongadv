@@ -21,7 +21,7 @@ public class DateUtils {
 	}
 
 	public static Date convertStringToDate(String date) throws ParseException {
-		return new SimpleDateFormat("MM/dd/yyyy").parse(date);
+		return new SimpleDateFormat("dd/MM/yyyy").parse(date);
 	}
 
 	public static Date increaseDay(Date date, int numOfDay) {
@@ -38,7 +38,7 @@ public class DateUtils {
 
 	public static String convertDateToString(Date date) {
 		String dateString = "";
-		SimpleDateFormat sdfr = new SimpleDateFormat("MM/dd/yyyy");
+		SimpleDateFormat sdfr = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			dateString = sdfr.format(date);
 		} catch (Exception ex) {

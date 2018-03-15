@@ -147,3 +147,8 @@ $(document).ready(function() {
 	$(this).defaultValue = today;
 })
 
+// Update map
+//function updateMap() {
+//	$('#mapFrame').attr('src', $('#map').val());
+//}
+
