@@ -618,7 +618,7 @@
 			+ ", " + province + "</p>";
 		detail += "<p>Loại hình: " + $('#type').val() + "</p>";
 		detail += "<p>Tầm nhìn: " + $('#views').val() + "</p>";
-		detail += "<p>Kích thước: " + $('#widthSize').val() + " x " + $('#heightSize').val() + "</p>";
+		detail += "<p>Kích thước: " + $('#heightSize').val() + " x " + $('#widthSize').val() + "</p>";
 		detail += "<p>Mật độ: " + $('#flow').val() + " người/ngày</p>";
 		detail += "<p>Hình thức thực hiện: " + $('#implForm').val() + "</p>";
 		detail += "<p>Hệ thống chiếu sáng: " + $('#lightSystem').val() + "</p>";
