@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -99,7 +100,8 @@ public class AdvController {
 			@RequestParam(value = "ward", required = false) Optional<String> ward,
 			@RequestParam(value = "street", required = false) Optional<String> street,
 			@RequestParam(value = "district", required = false) Optional<String> district,
-			@RequestParam(value = "title", required = false) Optional<String> title, ModelMap model) {
+			@RequestParam(value = "title", required = false) Optional<String> title, ModelMap model,
+			HttpServletRequest request) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
@@ -227,13 +229,30 @@ public class AdvController {
 
 		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(), roles,
 				userDetails.getUserId());
+//		Comparator<Advertisement> advertComparating = (adv1, adv2) -> {
+//			String houseNo1 = adv1.getHouseNoSearching();
+//			String houseNo2 = adv2.getHouseNoSearching();
+//			
+//			if(houseNo1.contains(" ") && houseNo2.contains(" ")) {
+//				int no1 = Integer.parseInt(houseNo1.substring(houseNo1.indexOf(" ") + 1, houseNo1.length()));
+//				int no2 = Integer.parseInt(houseNo2.substring(houseNo2.indexOf(" ") + 1, houseNo2.length()));
+//				if(no1 > no2) {
+//					return 1;
+//				} else if(no1 < no2) {
+//					return -1;
+//				}
+//			}
+//			return 0;
+//		};
+//		pageContent = pageContent.stream().sorted(advertComparating).collect(Collectors.toList());
 		model.addAttribute("pageContent", pageContent);
 		model.put("page", rs);
 		model.addAttribute("provinces",
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+		session.setAttribute("searchContent", request.getQueryString());
 		return "advs";
 	}
-
+	
 	/*
 	 * View
 	 */
@@ -252,6 +271,7 @@ public class AdvController {
 		setPageSize(size, session);
 
 		session.setAttribute(pageIndex, "advs");
+		session.removeAttribute("searchContent");
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
 		Page<Advertisement> result = advertisementService.findAll(new PageRequest(page,
@@ -300,7 +320,8 @@ public class AdvController {
 	 * Add/Update
 	 */
 	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
-	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session,
+	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, 
+			HttpSession session,
 			ModelMap model, BindingResult result) {
 		if (result.hasErrors()) {
 			log.debug("=====Errors:");
@@ -475,6 +496,11 @@ public class AdvController {
 		}
 		log.info("Save successful and redirect to view page");
 
+		String queryString = session.getAttribute("searchContent") != null ? session.getAttribute("searchContent").toString() : null;
+		log.debug("In search: {}", queryString);
+		if(queryString != null) {
+			return "redirect:/adv/search?" + session.getAttribute("searchContent");
+		}
 		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
 	}
 
@@ -482,7 +508,8 @@ public class AdvController {
 	 * Get update page
 	 */
 	@RequestMapping(value = "/{advId}", method = RequestMethod.GET)
-	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
+	public String adv(@PathVariable("advId") UUID advId,
+			HttpSession session, ModelMap model) {
 		// Get user roles info
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();

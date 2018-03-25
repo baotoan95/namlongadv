@@ -369,7 +369,7 @@ $(document).ready(function() {
 	var daterange = '${daterange}'.split(" - ");
 	if(daterange.length < 2) {
 		var today = new Date();
-		daterange[0] = "01/01/2017";
+		daterange[0] = "01/01/" + today.getFullYear();
 		daterange[1] = today.getDate() + "/" + (today.getMonth()+1) + "/" + today.getFullYear();
 	}
 	
