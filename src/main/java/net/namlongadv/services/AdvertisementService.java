@@ -109,5 +109,5 @@ public class AdvertisementService {
 		str = StringUtils.convertStringIgnoreUtf8(str.substring(0, str.lastIndexOf(".")));
 		return str.lastIndexOf("map") == 13;
 	}
-
+	
 }

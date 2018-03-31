@@ -49,6 +49,7 @@
 			enctype="multipart/form-data">
 			<form:hidden path="advertisement.id" />
 			<form:hidden path="advertisement.publishedId" id="publishedId" />
+			<form:hidden path="advertisement.createdDate" id="createdDate" />
 			
 			<input type="hidden" id="allowEdit" value="${advertDto.advertisement.allowEdit }">
 			<div class="col-md-9">
@@ -72,11 +73,12 @@
 										class="form-control" id="code" placeholder="Nhập mã (tự động tạo nếu không nhập)" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
-								<label for="updatedDate" class="col-md-3 control-label">Ngày cập nhật</label>
+								<label for="updatedDate" class="col-md-3 control-label">Ngày tạo</label>
 								<div class="col-md-3">
 									<fmt:formatDate value="${advertDto.advertisement.updatedDate}" type="date" pattern="dd/MM/yyyy" var="updatedDate"/>
-									<form:input readonly="true" type="text" path="advertisement.updatedDate" value="${updatedDate }"
-										class="form-control" id="updatedDate" placeholder="Ngày cập nhật" />
+									<fmt:formatDate value="${advertDto.advertisement.createdDate}" type="date" pattern="dd/MM/yyyy" var="createdDate"/>
+									<form:input title="Ngày cập nhật: ${updatedDate }" readonly="true" type="text" path="advertisement.updatedDate" value="${createdDate }"
+										class="form-control" id="createdDate" placeholder="Ngày cập nhật" />
 								</div>
 								</c:if>
 							</div>
@@ -451,9 +453,10 @@
 						if(!advImage.isMap()) {
 				%>
 						<div class="preview-item">
+							<input type="checkbox" onchange="addImageToPublish(this)" data="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>">
 							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
 							<input type="hidden" name="prevImages[<%= i %>]" value="<%= advImage.getId() %>"/>
-							<img class="img-thumbnail"
+							<img class="img-thumbnail" data=""
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
 		 					<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
@@ -479,16 +482,16 @@
 						<div class="preview-item">
 							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
 							<input type="hidden" name="prevImages[<%= mapIndex %>]" value="<%= advImage.getId() %>"/>
-							<img class="img-thumbnail"
+							<img class="img-thumbnail" id="mapImage"
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
-		 					<input type="file" class="form-control" name="map" onchange="previewImages(this, false)">
+		 					<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, false)">
 						</div>
 		 			<%
 						} else {
 					%>
 					</div>
-					<input type="file" class="form-control" name="map" onchange="previewImages(this, true, true)">
+					<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, true, true)">
 					<%
 						}
 		 			%>
@@ -496,13 +499,14 @@
 
 				<script type="text/javascript">
 					function previewImages(input, isNew, isMap) {
+						$(input).parent().find('input[type=checkbox]').remove();
 						if (input.files && input.files[0] && !isNew) {
 						    var reader = new FileReader();
 
 						    reader.onload = function(e) {
 						    	$(input).prev().attr('src', e.target.result);
 						    	if($(input).parent().find('.close').length === 0) { 
-						    		$(input).parent().prepend('<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>');
+						    		$(input).parent().prepend('<input type="checkbox" data><div class="close" title="Xoá" onclick="deleteImage(this)">X</div>');
 						    	}
 								$(input).parent().find('input[type=hidden]').remove();
 						    }
@@ -530,6 +534,7 @@
 					}
 					
 					function deleteImage(element) {
+						$(element).parent().find('input[type=checkbox]').remove();
 						$(element).parent().find('input[type=hidden]').remove();
 						
 						$(element).parent().find('input[type=file]').wrap('<form>').closest('form').get(0).reset();
@@ -606,6 +611,28 @@
 		}
 	}
 	
+	// Images to publish
+	var imageIndex = 1;
+	function addImageToPublish(element) {
+		if($(element).is(":checked")) {
+			if(imageIndex === 1) {
+				$(element).parent().find('img').attr('data', 'images');
+			} else {
+				if(imageIndex === 3) {
+					imageIndex++;
+				}
+				$(element).parent().find('img').attr('data', 'image' + imageIndex);
+			}
+			imageIndex++;
+		} else {
+			$(element).parent().find('img').removeAttr('data');
+			if(imageIndex === 4) {
+				imageIndex--;
+			}
+			imageIndex--;
+		}
+	}
+	
 	function publish() {
 		// Init data
 		var location = $('#coordinates').val().split(", ");
@@ -641,39 +668,55 @@
 				"detail": detail
 			}
 		
+		// Prepare images to publish
+		// Map
+		if($('#mapImage') !== undefined && $('#mapImage').attr('src') !== undefined) {
+			data['image3'] = "http://namlongadv.ddns.net:7070" + $('#mapImage').attr('src');
+		} else {
+			data['image3'] = null;
+		}
+		
 		var images = $('#images img');
 		if(images.length > 0) {
-			var avatarPos = -1;
-			var mapPos = -1;
-			// Find avatar and map
-			console.log(images.length)
 			for(var i = 0; i < images.length; i++) {
-				if(images[i].getAttribute('name') === 'map') {
-					// Map
-					data['image3'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-					mapPos = i;
-				} else {
-					// Avatar
-					data['images'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-					avatarPos = i;
+				if($(images[i]).attr('data') !== undefined && $(images[i]).attr('data') !== '') {
+					data[$(images[i]).attr('data')] = "http://namlongadv.ddns.net:7070" + $(images[i]).attr('src');
 				}
-			}
-			// Others
-			var imageIndex = 2;
-			for(var i = 0; i < images.length; i++) {
-			 	if (i !== avatarPos && i !== mapPos) {
-			 		if(imageIndex === 3) {
-						imageIndex++;
-					}
-					data['image' + imageIndex] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-					imageIndex++;
-				}
-			}
-			
-			if(data['image3'] === undefined) {
-				data['image3'] = null;
 			}
 		}
+		
+// 		if(images.length > 0) {
+// 			var avatarPos = -1;
+// 			var mapPos = -1;
+// 			// Find avatar and map
+// 			console.log(images.length)
+// 			for(var i = 0; i < images.length; i++) {
+// 				if(images[i].getAttribute('name') === 'map') {
+// 					// Map
+// 					data['image3'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+// 					mapPos = i;
+// 				} else {
+// 					// Avatar
+// 					data['images'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+// 					avatarPos = i;
+// 				}
+// 			}
+// 			// Others
+// 			var imageIndex = 2;
+// 			for(var i = 0; i < images.length; i++) {
+// 			 	if (i !== avatarPos && i !== mapPos) {
+// 			 		if(imageIndex === 3) {
+// 						imageIndex++;
+// 					}
+// 					data['image' + imageIndex] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
+// 					imageIndex++;
+// 				}
+// 			}
+			
+// 			if(data['image3'] === undefined) {
+// 				data['image3'] = null;
+// 			}
+// 		}
 		
 		var publishedId = $('#publishedId').val();
 		if(publishedId === undefined || publishedId < 0 || publishedId === '') {

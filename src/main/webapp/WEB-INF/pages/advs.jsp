@@ -155,7 +155,7 @@ table tr th {
 								<th style="width: 20%;">Tiêu Đề</th>
 								<th style="width: 20%;">Địa Chỉ</th>
 								<th style="width: 10%;">Kích Thước</th>
-								<th style="width: 5%;">Ngày Cập Nhật</th>
+								<th style="width: 5%;">Ngày Tạo</th>
 								<th style="width: 20px;"></th>
 								<th style="width: 13%;">Liên Hệ</th>
 								<th style="width: 50%;">Hình Ảnh</th>
@@ -251,7 +251,7 @@ table tr th {
 									</td>
 									<td rowspan="2">${adv.houseNo }, ${adv.street }, ${adv.ward }, ${adv.district }, ${adv.province }</td>
 									<td rowspan="2">${adv.heightSize } x ${adv.widthSize } x ${adv.amount }</td>
-									<td rowspan="2"><fmt:formatDate pattern="dd/MM/yyyy" value="${adv.updatedDate }" /></td>
+									<td rowspan="2" title="Ngày cập nhật: <fmt:formatDate pattern="dd/MM/yyyy" value="${adv.updatedDate }" />"><fmt:formatDate pattern="dd/MM/yyyy" value="${adv.createdDate }" /></td>
 									<td>TTCN</td>
 									<td>
 										${adv.ownerContactPerson }
@@ -369,7 +369,7 @@ $(document).ready(function() {
 	var daterange = '${daterange}'.split(" - ");
 	if(daterange.length < 2) {
 		var today = new Date();
-		daterange[0] = "01/01/" + today.getFullYear();
+		daterange[0] = "01/01/2017";
 		daterange[1] = today.getDate() + "/" + (today.getMonth()+1) + "/" + today.getFullYear();
 	}
 	

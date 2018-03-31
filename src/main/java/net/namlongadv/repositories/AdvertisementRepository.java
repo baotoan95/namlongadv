@@ -32,7 +32,7 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 			+ "(adv.code like concat('%',:code,'%')) "
 			+ "and (adv.addressSearching like concat('%',:address,'%')) " 
 			+ "and (adv.createdBy.username like concat('%',:username,'%')) "
-			+ "and (adv.updatedDate between :fromDate and :toDate) "
+			+ "and (adv.createdDate between :fromDate and :toDate) "
 			+ "and (adv.advCompNameSearching like concat('%',:contactName,'%') "
 			+ "or adv.ownerContactPersonSearching like concat('%',:contactName,'%')) "
 			+ "and (:houseNo is null or adv.houseNoSearching = :houseNo) "
@@ -60,5 +60,5 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	
 	@Query("select adv from Advertisement adv where adv.code like concat('%','-',:code)")
 	public Advertisement checkCode(@Param("code") String code);
-
+	
 }

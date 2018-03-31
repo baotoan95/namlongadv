@@ -9,4 +9,5 @@ import net.namlongadv.models.AdvImage;
 
 public interface AdvImageRepository extends CrudRepository<AdvImage, UUID> {
 	public List<AdvImage> findByAdvertisement_Id(UUID advId);
+	public int countByIdAndAdvertisement_IdNot(UUID imageId, UUID advId);
 }

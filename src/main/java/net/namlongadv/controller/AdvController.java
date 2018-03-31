@@ -229,22 +229,6 @@ public class AdvController {
 
 		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(), roles,
 				userDetails.getUserId());
-//		Comparator<Advertisement> advertComparating = (adv1, adv2) -> {
-//			String houseNo1 = adv1.getHouseNoSearching();
-//			String houseNo2 = adv2.getHouseNoSearching();
-//			
-//			if(houseNo1.contains(" ") && houseNo2.contains(" ")) {
-//				int no1 = Integer.parseInt(houseNo1.substring(houseNo1.indexOf(" ") + 1, houseNo1.length()));
-//				int no2 = Integer.parseInt(houseNo2.substring(houseNo2.indexOf(" ") + 1, houseNo2.length()));
-//				if(no1 > no2) {
-//					return 1;
-//				} else if(no1 < no2) {
-//					return -1;
-//				}
-//			}
-//			return 0;
-//		};
-//		pageContent = pageContent.stream().sorted(advertComparating).collect(Collectors.toList());
 		model.addAttribute("pageContent", pageContent);
 		model.put("page", rs);
 		model.addAttribute("provinces",
@@ -414,6 +398,10 @@ public class AdvController {
 		if (!advs.isEmpty() && fullAddress.length() > 8
 				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))
 				&& !advertDto.isIgnoreError()) {
+			if(prevAdvertisement != null) {
+				advertDto.getAdvertisement().setAdvImages(prevAdvertisement.getAdvImages());
+				advertDto.setAdvertisement(advertDto.getAdvertisement());
+			}
 			model.addAttribute("advertDto", advertDto);
 			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
 					.collect(Collectors.toList()));
@@ -426,8 +414,12 @@ public class AdvController {
 				errorMsg.append(
 						(i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle() + "</a><br/>");
 			}
-			errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
-
+			if(prevAdvertisement == null) {
+				errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
+			} else {
+				errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");
+			}
+			
 			model.addAttribute("errorMsg", errorMsg);
 			return "adv";
 		}
@@ -461,10 +453,14 @@ public class AdvController {
 		if (prevAdvertisement != null) {
 			// Delete previous files
 			List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
+			UUID prevAdvId = prevAdvertisement.getId();
 			oldAdvImages.forEach(image -> {
-				if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId())) {
+				int duplicated = advImageRepository.countByIdAndAdvertisement_IdNot(image.getId(), prevAdvId);
+				log.debug("Image duplicated: {}", duplicated);
+				if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId()) && duplicated == 0) {
 					try {
 						FileUtils.forceDelete(new File(image.getUrl()));
+						advImageRepository.delete(image.getId());
 					} catch (IOException e) {
 						// Do nothing
 					}
@@ -539,8 +535,12 @@ public class AdvController {
 	 */
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session) {
+		String queryString = session.getAttribute("searchContent") != null ? session.getAttribute("searchContent").toString() : null;
 		log.debug("Delete {}", advId);
 		advertisementRepository.delete(advId);
+		if(queryString != null) {
+			return "redirect:/adv/search?" + session.getAttribute("searchContent");
+		}
 		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
 	}
 
