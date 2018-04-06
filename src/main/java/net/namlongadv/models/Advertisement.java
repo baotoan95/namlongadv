@@ -18,9 +18,12 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 @Table(name = "advertisements")
 @Setter
 @Getter
@@ -78,6 +81,7 @@ public class Advertisement {
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
+	@JsonIgnore
 	private User createdBy;
 	private Date createdDate;
 	private Date updatedDate;
@@ -107,4 +111,5 @@ public class Advertisement {
 	private String provinceSearching;
 	@Column(columnDefinition="text")
 	private String titleSearching;
+	
 }

@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +56,7 @@ import net.namlongadv.services.AdvertisementService;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
+import net.namlongadv.utils.WindowsExplorerComparator;
 
 @Controller
 @Slf4j
@@ -71,7 +74,7 @@ public class AdvController {
 	private AdvertisementService advertisementService;
 	@Autowired
 	private ProvinceRepository provinceRepository;
-
+	
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
 	@Value("${namlongadv.base_url}")
@@ -220,7 +223,7 @@ public class AdvController {
 			rs = advertisementService.search(sCode, sAddress,
 					sCreatedBy, from, to, sContactPerson, sHouseNo,
 					sStreet, sWard, sDistrict, sTitle, sProvince, new PageRequest(page.intValue(),
-							(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.ASC, "addressSearching", "updatedDate")));
+							(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.ASC, "addressSearching")));
 			model.put("queryString", queryString);
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
@@ -229,7 +232,17 @@ public class AdvController {
 
 		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(), roles,
 				userDetails.getUserId());
-		model.addAttribute("pageContent", pageContent);
+		List<Advertisement> content = new ArrayList<>();
+		content.addAll(pageContent);
+		Collections.sort(content, new Comparator<Advertisement>() {
+			private final WindowsExplorerComparator windowsExplorerComparator = new WindowsExplorerComparator();
+			@Override
+			public int compare(Advertisement adv1, Advertisement adv2) {
+				return windowsExplorerComparator.compare(adv1.getAddressSearching(), adv2.getAddressSearching());
+			}
+		});
+		
+		model.addAttribute("pageContent", content);
 		model.put("page", rs);
 		model.addAttribute("provinces",
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));

@@ -105,7 +105,7 @@ table tr th {
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12" style="margin-bottom: 5px;">
+		<div class="col-md-12" style="margin-bottom: 5px;" id="exportation">
 			<security:authorize
 				access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
 				<button id="exportExcel" id="exportExcel" class="btn btn-info pull-right">Xuất Excel</button>
@@ -447,10 +447,43 @@ $(document).ready(function() {
 		}
 		$('#checkAll')[0].checked = true;
 	});
+	
 })
 
 function pageSizeChanged() {
 	$('input[name=size]').val($('#page-size').val());
 	$('form[id=filter-form]').submit();
 }
+
+$(function() {
+    var $sidebar = $('#exportation');
+    $window = $(window);
+    offset = $sidebar.offset();
+    topPadding = 0;
+    
+    $window.scroll(function() {
+        if ($window.scrollTop() > offset.top) {
+            $sidebar.css({
+                'top': '0px',
+                'position': 'fixed',
+                'right': '15px',
+                'z-index': '999',
+                'background': 'gray',
+                'padding': '5px',
+                'width': 'auto',
+                'border-radius': '0px 0px 5px 5px'
+            });
+        } else {
+            $sidebar.css({
+                'top': '',
+                'position': '',
+                'width': '100%',
+                'background': 'none',
+                'padding': 'none',
+                'padding-right': '15px',
+                'right': '',
+            });
+        }
+    });            
+});
 </script>
