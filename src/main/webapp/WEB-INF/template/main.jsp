@@ -105,7 +105,7 @@
 					<h4 class="modal-title">Preview</h4>
 				</div>
 				<div class="modal-body">
-					<div class="sp-wrap">
+					<div class="sp-wrap" style="max-width: none;">
 						<div class="sp-loading"><img src="images/sp-loading.gif" alt=""><br>LOADING IMAGES</div>
 					</div>
 				</div>
