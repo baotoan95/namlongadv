@@ -34,14 +34,18 @@ public class UploadFileUtils {
 		try {
 			for (MultipartFile mpf : files) {
 				if (mpf.getSize() > 0) {
-					log.info("Uploading: " + mpf.getOriginalFilename());
+					String originalFileName = mpf.getOriginalFilename();
+					String fileName = StringUtils.standardize(StringUtils.convertStringIgnoreUtf8(originalFileName.substring(0, originalFileName.lastIndexOf("."))));
+					fileName = fileName.replaceAll(" ", "-");
+					log.info("Uploading: " + originalFileName);
 					if (isMap) {
-						pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + "map."
+						pathFile = dir.getAbsolutePath() + File.separator + fileName + "-" + new Date().getTime() + "map."
 								+ FileUtils.getExtensions(mpf.getOriginalFilename());
 					} else {
-						pathFile = dir.getAbsolutePath() + File.separator + new Date().getTime() + "NL."
+						pathFile = dir.getAbsolutePath() + File.separator + fileName + "-" + new Date().getTime() + "NL."
 								+ FileUtils.getExtensions(mpf.getOriginalFilename());
 					}
+					log.info("Upload to " + pathFile);
 					containFolder = new File(dir.getAbsolutePath());
 					containFolder.mkdirs();
 
