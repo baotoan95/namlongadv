@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -234,13 +233,14 @@ public class AdvController {
 				userDetails.getUserId());
 		List<Advertisement> content = new ArrayList<>();
 		content.addAll(pageContent);
-		Collections.sort(content, new Comparator<Advertisement>() {
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+		content = content.stream().sorted(new Comparator<Advertisement>() {
 			private final WindowsExplorerComparator windowsExplorerComparator = new WindowsExplorerComparator();
 			@Override
 			public int compare(Advertisement adv1, Advertisement adv2) {
 				return windowsExplorerComparator.compare(adv1.getAddressSearching(), adv2.getAddressSearching());
 			}
-		});
+		}).collect(Collectors.toList());
 		
 		model.addAttribute("pageContent", content);
 		model.put("page", rs);

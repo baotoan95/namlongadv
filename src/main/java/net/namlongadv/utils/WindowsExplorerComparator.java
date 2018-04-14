@@ -1,65 +1,107 @@
 package net.namlongadv.utils;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class WindowsExplorerComparator implements Comparator<String> {
-	private static final Pattern splitPattern = Pattern.compile("\\d+|\\.|\\s");
+	int compareRight(String a, String b) {
+		int bias = 0, ia = 0, ib = 0;
 
-	@Override
-	public int compare(String str1, String str2) {
-		if(str1.isEmpty() || str2.isEmpty()) {
-			return 0;
-		}
-		Iterator<String> i1 = splitStringPreserveDelimiter(str1).iterator();
-		Iterator<String> i2 = splitStringPreserveDelimiter(str2).iterator();
-		while (true) {
-			// Till here all is equal.
-			if (!i1.hasNext() && !i2.hasNext()) {
-				return 1;
+		// The longest run of digits wins. That aside, the greatest
+		// value wins, but we can't know that it will until we've scanned
+		// both numbers to know that they have the same magnitude, so we
+		// remember it in BIAS.
+		for (;; ia++, ib++) {
+			char ca = charAt(a, ia);
+			char cb = charAt(b, ib);
+
+			if (!Character.isDigit(ca) && !Character.isDigit(cb)) {
+				return bias;
 			}
-			// first has no more parts -> comes first
-			if (!i1.hasNext() && i2.hasNext()) {
+			if (!Character.isDigit(ca)) {
 				return -1;
 			}
-			// first has more parts than i2 -> comes after
-			if (i1.hasNext() && !i2.hasNext()) {
-				return 0;
+			if (!Character.isDigit(cb)) {
+				return +1;
 			}
-			String data1 = i1.next();
-			String data2 = i2.next();
-			int result;
-			try {
-				// If both datas are numbers, then compare numbers
-				result = Long.compare(Long.valueOf(data1), Long.valueOf(data2));
-				// If numbers are equal than longer comes first
-				if (result == 0) {
-					result = -Integer.compare(data1.length(), data2.length());
+			if (ca == 0 && cb == 0) {
+				return bias;
+			}
+
+			if (bias == 0) {
+				if (ca < cb) {
+					bias = -1;
+				} else if (ca > cb) {
+					bias = +1;
 				}
-			} catch (NumberFormatException ex) {
-				// compare text case insensitive
-				result = data1.compareToIgnoreCase(data2);
-			}
-			if (result != 0) {
-				return result;
 			}
 		}
 	}
 
-	private List<String> splitStringPreserveDelimiter(String str) {
-		Matcher matcher = splitPattern.matcher(str);
-		List<String> list = new ArrayList<String>();
-		int pos = 0;
-		while (matcher.find()) {
-			list.add(str.substring(pos, matcher.start()));
-			list.add(matcher.group());
-			pos = matcher.end();
+	public int compare(String o1, String o2) {
+		String a = o1.toString();
+		String b = o2.toString();
+
+		int ia = 0, ib = 0;
+		int nza = 0, nzb = 0;
+		char ca, cb;
+
+		while (true) {
+			// Only count the number of zeroes leading the last number compared
+			nza = nzb = 0;
+
+			ca = charAt(a, ia);
+			cb = charAt(b, ib);
+
+			// skip over leading spaces or zeros
+			while (Character.isSpaceChar(ca) || ca == '0') {
+				if (ca == '0') {
+					nza++;
+				} else {
+					// Only count consecutive zeroes
+					nza = 0;
+				}
+
+				ca = charAt(a, ++ia);
+			}
+
+			while (Character.isSpaceChar(cb) || cb == '0') {
+				if (cb == '0') {
+					nzb++;
+				} else {
+					// Only count consecutive zeroes
+					nzb = 0;
+				}
+
+				cb = charAt(b, ++ib);
+			}
+
+			// Process run of digits
+			if (Character.isDigit(ca) && Character.isDigit(cb)) {
+				int bias = compareRight(a.substring(ia), b.substring(ib));
+				if (bias != 0) {
+					return bias;
+				}
+			}
+
+			if (ca == 0 && cb == 0) {
+				// The strings compare the same. Perhaps the caller
+				// will want to call strcmp to break the tie.
+				return nza - nzb;
+			}
+			if (ca < cb) {
+				return -1;
+			}
+			if (ca > cb) {
+				return +1;
+			}
+
+			++ia;
+			++ib;
 		}
-		list.add(str.substring(pos));
-		return list;
 	}
+
+	static char charAt(String s, int i) {
+		return i >= s.length() ? 0 : s.charAt(i);
+	}
+
 }
