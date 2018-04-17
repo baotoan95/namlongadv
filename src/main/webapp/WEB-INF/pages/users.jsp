@@ -51,15 +51,14 @@
 				<!-- /.box-body -->
 
 				<div class="box-footer clearfix">
-					<a href="${pageContext.request.contextPath }/user"
-						class="btn btn-info">Thêm mới</a>
+					<div class="pull-left">Hiển thị từ ${(page.number * 10) + 1} tới ${(page.number * 10) + page.content.size() } trong tổng ${page.totalElements } mục được tìm thấy</div>
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:if test="${page.number > 0 }">
 						<li class=""><a href="${pageContext.request.contextPath }/user/view?page=${page.number - 1 }&size=${page.size }">«</a></li>
 						</c:if>
 						
 						<c:forEach begin="0" end="${page.totalPages - 1 }" varStatus="loop">
-							<li class="${loop.index == page.number ? 'active' : ''}"><a href="${pageContext.request.contextPath }/user/view?page=${loop.index }&size=${page.size }">${loop.index }</a></li>
+							<li class="${loop.index == page.number ? 'active' : ''}"><a href="${pageContext.request.contextPath }/user/view?page=${loop.index }&size=${page.size }">${loop.index + 1 }</a></li>
 						</c:forEach>
 						
 						<c:if test="${page.number < page.totalPages - 1 }">

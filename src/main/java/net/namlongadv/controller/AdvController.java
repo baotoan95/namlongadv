@@ -438,28 +438,25 @@ public class AdvController {
 		}
 
 		// Upload files
-		List<String> pathFiles = new ArrayList<>();
+		List<AdvImage> advImages = new ArrayList<>();
 		if (advertDto.getFiles() != null) {
 			log.info("Preparing to upload files");
 			// Upload
-			pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit, false);
+			List<String> pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit, false);
+			for (String pathFile : pathFiles) {
+				String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
+				advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert, false));
+			}
 			// Get map file
 			if (!advertDto.getMap().isEmpty()) {
 				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
 						fileLimit, true);
 				if (!fileNames.isEmpty()) {
-					pathFiles.add(fileNames.get(0));
+					String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1, fileNames.get(0).length());
+					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board", advert, true));
 				}
 			}
 			log.info("Upload successful");
-		}
-
-		// Add images to advertisement
-		List<AdvImage> advImages = new ArrayList<>();
-		for (String pathFile : pathFiles) {
-			String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
-			advImages.add(
-					new AdvImage(name, pathFile, "Advertise_board", advert, advertisementService.checkIsMap(name)));
 		}
 
 		// For update

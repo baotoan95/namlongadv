@@ -237,7 +237,7 @@ table tr th {
 											<input type="hidden" name="advs[${loop.index }].price"
 											value="${adv.price }"/>
 									</td>
-									<td rowspan="2">${loop.index + 1 }</td>
+									<td rowspan="2">${(page.number * sessionScope.pageSize) + (loop.index + 1) }</td>
 									<td rowspan="2">${adv.code }</td>
 									<td rowspan="2">
 										<c:if test="${adv.allowEdit }">
@@ -298,6 +298,7 @@ table tr th {
 				<!-- /.box-body -->
 
 				<div class="box-footer clearfix">
+					<div class="pull-left">Hiển thị từ ${(page.number * sessionScope.pageSize) + 1} tới ${(page.number * sessionScope.pageSize) + page.content.size() } trong tổng ${page.totalElements } mục được tìm thấy</div>
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:set var="currentPage" value="${page.number }"></c:set>
 						<c:set var="firstPrev" value="${page.number - 5 }"></c:set>
@@ -318,7 +319,7 @@ table tr th {
 						<c:forEach begin="${firstPrev > 0 ? firstPrev : 0 }" end="${lastPost > 0 && lastPost < page.totalPages - 1 ? lastPost : (page.totalPages > 0 ? page.totalPages - 1 : 0) }"
 							varStatus="loop">
 							<li class="${loop.index == page.number ? 'active' : ''}">
-								<a href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }${queryString }">${loop.index }</a></li>
+								<a href="${pageContext.request.contextPath }/adv/${isSearch ? 'search' : 'view' }?page=${loop.index }&size=${page.size }${queryString }">${loop.index + 1}</a></li>
 						</c:forEach>
 
 						<c:if test="${lastPost < page.totalPages }">

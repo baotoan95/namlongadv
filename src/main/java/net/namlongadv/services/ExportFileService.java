@@ -69,6 +69,35 @@ public class ExportFileService {
 			XSSFRow row = null;
 			XSSFCell cell = null;
 			Advertisement adv = null;
+			
+			// Define background color for hidden cell
+			XSSFCellStyle hiddenBackground = workbook.createCellStyle();
+			hiddenBackground.setBorderBottom(BorderStyle.THIN);
+			hiddenBackground.setBorderTop(BorderStyle.THIN);
+			hiddenBackground.setBorderLeft(BorderStyle.THIN);
+			hiddenBackground.setBorderRight(BorderStyle.THIN);
+			hiddenBackground.setVerticalAlignment(VerticalAlignment.CENTER);
+			hiddenBackground.setFillForegroundColor(new XSSFColor(Color.RED));
+			hiddenBackground.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			Font fontA = workbook.createFont();
+			fontA.setFontName("Times New Roman");
+			fontA.setFontHeightInPoints((short) 13);
+			fontA.setColor(IndexedColors.BLACK.getIndex());
+			hiddenBackground.setFont(fontA);
+			
+			XSSFCellStyle showBackground = workbook.createCellStyle();
+			showBackground.setBorderBottom(BorderStyle.THIN);
+			showBackground.setBorderTop(BorderStyle.THIN);
+			showBackground.setBorderLeft(BorderStyle.THIN);
+			showBackground.setBorderRight(BorderStyle.THIN);
+			showBackground.setVerticalAlignment(VerticalAlignment.CENTER);
+			showBackground.setFillForegroundColor(new XSSFColor(Color.YELLOW));
+			showBackground.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			Font fontB = workbook.createFont();
+			fontB.setFontName("Times New Roman");
+			fontB.setFontHeightInPoints((short) 13);
+			fontB.setColor(IndexedColors.BLACK.getIndex());
+			showBackground.setFont(fontA);
 
 			XSSFCellStyle cellStyle = null;
 			Font font = null;
@@ -166,16 +195,25 @@ public class ExportFileService {
 						cell.setCellValue("Thông tin chủ nhà");
 						// Owner Phone
 						cell = row.createCell(13);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getOwnerPhone());
+						if(!adv.getOwnerPhone().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
 						// Owner Email
 						cell = row.createCell(14);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getOwnerEmail());
+						if(!adv.getOwnerEmail().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
 						// Owner Price
 						cell = row.createCell(15);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getOwnerPrice());
+						if(!adv.getPrice().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
 						// Owner start date
 						cell = row.createCell(16);
 						cell.setCellStyle(cellStyle);
@@ -202,35 +240,44 @@ public class ExportFileService {
 							cell = row.createCell(j);
 							cell.setCellStyle(cellStyle);
 						}
-						// Company start date
+						// Company
 						cell = row.createCell(12);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue("Thông tin CT quảng cáo");
-						// Company start date
+						// Company phone
 						cell = row.createCell(13);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getAdvCompPhone());
-						// Company start date
+						if(!adv.getAdvCompPhone().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
+						// Company email
 						cell = row.createCell(14);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getAdvCompEmail());
-						// Company start date
+						if(!adv.getAdvCompEmail().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
+						// Company price
 						cell = row.createCell(15);
-						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getAdvCompPrice());
+						if(!adv.getAdvCompPrice().isEmpty()) {
+							cell.setCellStyle(hiddenBackground);
+						} else {
+							cell.setCellStyle(showBackground);
+						}
 						// Company start date
 						cell = row.createCell(16);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getAdvCompStartDate()));
-						// Company start date
+						// Company end date
 						cell = row.createCell(17);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(DateUtils.convertDateToString(adv.getAdvCompEndDate()));
-						// Company start date
+						// Company contact person
 						cell = row.createCell(18);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompContactPerson());
-						// Company start date
+						// Company name
 						cell = row.createCell(19);
 						cell.setCellStyle(cellStyle);
 						cell.setCellValue(adv.getAdvCompName());
