@@ -425,13 +425,13 @@
 								<button style="margin-right: 5px;" 
 									onclick="publish()" 
 									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
-									class="btn btn-info pull-right">Xuất Bản</button>
-							</c:if>
-							<c:if test="${advertDto.advertisement.publishedId > 0 }">
-								<button style="margin-right: 5px;" 
-									onclick="unpublish()" 
-									type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
-									class="btn btn-info pull-right">Huỷ Xuất Bản</button>
+									class="btn btn-info pull-right">${advertDto.advertisement.publishedId > 0 ? 'Tái Xuất Bản' : 'Xuất Bản' }</button>
+								<c:if test="${advertDto.advertisement.publishedId > 0 }">
+									<button style="margin-right: 5px;" 
+										onclick="unpublish()" 
+										type="button" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } 
+										class="btn btn-info pull-right">Huỷ Xuất Bản</button>
+								</c:if>
 							</c:if>
 							</security:authorize>
 						</div>
@@ -725,12 +725,12 @@
 		// Validate if it existed
 			$.ajax({
 				method: "GET",
-				url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+				url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 			}).done(function(msg) {
 				// Update if it existed
 				$.ajax({
 		 			method: "PUT",
-		 			url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+		 			url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 		 			data: data
 		 		}).done(function(msg) {
 		 			if(msg === 1) {
@@ -747,7 +747,7 @@
 				if(e.status === 404) {
 			 		$.ajax({
 			 			method: "POST",
-			 			url: "http://billboardquangcao.com/api.php/firerox_jv_article",
+			 			url: "https://billboardquangcao.com/api.php/firerox_jv_article",
 			 			data: data
 			 		}).done(function(msg) {
 			 			alert("Xuất bản thành công!!!");
@@ -767,7 +767,7 @@
 			if(conf) {
 				$.ajax({
 		 			method: "DELETE",
-		 			url: "http://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
+		 			url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 		 		}).done(function(msg) {
 		 			alert("Huỷ xuất bản thành công!!!");
 		 			$('#publishedId').attr("value", 0);
