@@ -51,7 +51,7 @@ import net.namlongadv.utils.DateUtils;
 @Service
 @Slf4j
 public class ExportFileService {
-	public XSSFWorkbook exportAdvsToExcel(List<Advertisement> advs) {
+	public XSSFWorkbook exportAdvsToExcel(List<Advertisement> advs, boolean hideInfo) {
 		if (advs != null && !advs.isEmpty()) {
 			advs.removeIf(adv -> adv.getId() == null);
 		} else {
@@ -70,6 +70,11 @@ public class ExportFileService {
 			XSSFCell cell = null;
 			Advertisement adv = null;
 			
+			Font fontA = workbook.createFont();
+			fontA.setFontName("Times New Roman");
+			fontA.setFontHeightInPoints((short) 13);
+			fontA.setColor(IndexedColors.BLACK.getIndex());
+			
 			// Define background color for hidden cell
 			XSSFCellStyle hiddenBackground = workbook.createCellStyle();
 			hiddenBackground.setBorderBottom(BorderStyle.THIN);
@@ -79,10 +84,6 @@ public class ExportFileService {
 			hiddenBackground.setVerticalAlignment(VerticalAlignment.CENTER);
 			hiddenBackground.setFillForegroundColor(new XSSFColor(Color.RED));
 			hiddenBackground.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-			Font fontA = workbook.createFont();
-			fontA.setFontName("Times New Roman");
-			fontA.setFontHeightInPoints((short) 13);
-			fontA.setColor(IndexedColors.BLACK.getIndex());
 			hiddenBackground.setFont(fontA);
 			
 			XSSFCellStyle showBackground = workbook.createCellStyle();
@@ -93,11 +94,17 @@ public class ExportFileService {
 			showBackground.setVerticalAlignment(VerticalAlignment.CENTER);
 			showBackground.setFillForegroundColor(new XSSFColor(Color.YELLOW));
 			showBackground.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-			Font fontB = workbook.createFont();
-			fontB.setFontName("Times New Roman");
-			fontB.setFontHeightInPoints((short) 13);
-			fontB.setColor(IndexedColors.BLACK.getIndex());
 			showBackground.setFont(fontA);
+			
+			XSSFCellStyle normalBackground = workbook.createCellStyle();
+			normalBackground.setBorderBottom(BorderStyle.THIN);
+			normalBackground.setBorderTop(BorderStyle.THIN);
+			normalBackground.setBorderLeft(BorderStyle.THIN);
+			normalBackground.setBorderRight(BorderStyle.THIN);
+			normalBackground.setVerticalAlignment(VerticalAlignment.CENTER);
+			normalBackground.setFillForegroundColor(new XSSFColor(Color.WHITE));
+			normalBackground.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			normalBackground.setFont(fontA);
 
 			XSSFCellStyle cellStyle = null;
 			Font font = null;
@@ -195,24 +202,39 @@ public class ExportFileService {
 						cell.setCellValue("Thông tin chủ nhà");
 						// Owner Phone
 						cell = row.createCell(13);
-						if(!adv.getOwnerPhone().isEmpty()) {
+						if(!adv.getOwnerPhone().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getOwnerPhone());
 						}
 						// Owner Email
 						cell = row.createCell(14);
-						if(!adv.getOwnerEmail().isEmpty()) {
+						if(!adv.getOwnerEmail().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getOwnerEmail());
 						}
 						// Owner Price
 						cell = row.createCell(15);
-						if(!adv.getPrice().isEmpty()) {
+						if(!adv.getPrice().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getPrice());
 						}
 						// Owner start date
 						cell = row.createCell(16);
@@ -246,24 +268,39 @@ public class ExportFileService {
 						cell.setCellValue("Thông tin CT quảng cáo");
 						// Company phone
 						cell = row.createCell(13);
-						if(!adv.getAdvCompPhone().isEmpty()) {
+						if(!adv.getAdvCompPhone().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getAdvCompPhone());
 						}
 						// Company email
 						cell = row.createCell(14);
-						if(!adv.getAdvCompEmail().isEmpty()) {
+						if(!adv.getAdvCompEmail().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getAdvCompEmail());
 						}
 						// Company price
 						cell = row.createCell(15);
-						if(!adv.getAdvCompPrice().isEmpty()) {
+						if(!adv.getAdvCompPrice().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
-							cell.setCellStyle(showBackground);
+							if(hideInfo) {
+								cell.setCellStyle(showBackground);
+							} else {
+								cell.setCellStyle(cellStyle);
+							}
+							cell.setCellValue(adv.getAdvCompPrice());
 						}
 						// Company start date
 						cell = row.createCell(16);

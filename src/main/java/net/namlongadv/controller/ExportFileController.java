@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
@@ -48,6 +49,7 @@ public class ExportFileController {
 
 	@RequestMapping(value = "excel", method = RequestMethod.POST)
 	public void exportExcel(@ModelAttribute AdvertisementWrapperDTO advertWrapperDto, 
+			@RequestParam("hideInfo") boolean hideInfo,
 			HttpServletResponse response, HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
 		if (session.getAttribute("pageSize") == null) {
 			session.setAttribute("pageSize", 10);
@@ -55,7 +57,7 @@ public class ExportFileController {
 		
 		log.debug("Export size: " + advertWrapperDto.getAdvs().size());
 		List<Advertisement> advsNeedExport = advertWrapperDto.getAdvs().stream().filter(adv -> adv.getId() != null).collect(Collectors.toList());
-		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advsNeedExport);
+		XSSFWorkbook workbook = exportFileService.exportAdvsToExcel(advsNeedExport, hideInfo);
 
 		if (workbook != null) {
 			response.setContentType("application/vnd.ms-excel");

@@ -105,16 +105,19 @@ table tr th {
 		</div>
 	</div>
 	<div class="row">
+		<c:if test="${not empty page.content }">
 		<div class="col-md-12" style="margin-bottom: 5px;" id="exportation">
 			<security:authorize
 				access="hasAnyRole('ROLE_ADMIN', 'ROLE_ACCOUNTANT')">
-				<button id="exportExcel" id="exportExcel" class="btn btn-info pull-right">Xuất Excel</button>
+				<button id="exportExcel" data-toggle="modal" 
+					data-target="#export-method" class="btn btn-info pull-right">Xuất Excel</button>
 			</security:authorize>
 			<security:authorize
 				access="hasAnyRole('ROLE_ADMIN', 'ROLE_BUSINESS')">
-				<button id="exportPowerpoint" id="exportPowerpoint" class="btn btn-info pull-right" style="margin-right: 5px;">Xuất Powerpoint</button>
+				<button id="exportPowerpoint" class="btn btn-info pull-right" style="margin-right: 5px;">Xuất Powerpoint</button>
 			</security:authorize>
 		</div>
+		</c:if>
 	</div>
 	<div class="row">
 		<div class="col-md-12">
@@ -343,9 +346,39 @@ table tr th {
 	<!-- /.row -->
 </section>
 
+<div class="modal modal-default" id="export-method" style="display: none;">
+	<div class="modal-dialog" style="max-width: 400px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h4 class="modal-title">Phương Thức Xuất</h4>
+			</div>
+			<div class="modal-body" style="text-align: left; padding: 10px;">
+				Bạn có muốn dấu thông tin?
+			</div>
+			<div class="modal-footer">
+            	<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Đóng</button>
+            	<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="exportExcel(true)">Có</button>
+            	<button type="button" class="btn btn-success" data-dismiss="modal" onclick="exportExcel(false)">Không</button>
+            </div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <script>
+function exportExcel(hide) {
+	var token = $('input[name=csrf]').val();
+	$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel?_csrf=' + token + '&hideInfo=' + hide);
+	$('form[name=exportForm]').submit();
+}
+
 $(document).ready(function() {
 	$(".select2").select2();
 	
@@ -369,6 +402,10 @@ $(document).ready(function() {
 	// Init default date filter
 	var daterange = '${daterange}'.split(" - ");
 	if(daterange.length < 2) {
+		initDate();
+	}
+	
+	function initDate() {
 		var today = new Date();
 		daterange[0] = "01/01/2017";
 		daterange[1] = today.getDate() + "/" + (today.getMonth()+1) + "/" + today.getFullYear();
@@ -376,6 +413,7 @@ $(document).ready(function() {
 	
 	// Reset filter value
 	$('#reset-filter').click(function(e) {
+		initDate();
 		$('input[name=code]').val('');
 		$('input[name=address]').val('');
 		$('input[name=createdBy]').val('');
@@ -418,11 +456,6 @@ $(document).ready(function() {
     });
 	
 	// Export actions
-	$('#exportExcel').click(function(e) {
-		var token = $('input[name=csrf]').val();
-		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel?_csrf=' + token);
-		$('form[name=exportForm]').submit();
-	});
 	$('#exportPowerpoint').click(function(e) {
 		var token = $('input[name=csrf]').val();
 		$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/powerpoint?_csrf=' + token);

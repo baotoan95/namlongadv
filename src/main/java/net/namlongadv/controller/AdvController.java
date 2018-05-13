@@ -125,7 +125,7 @@ public class AdvController {
 				daterange = Optional.of("01/01/2017 - " + DateUtils.convertDateToString(new Date()));
 			}
 			model.put("daterange", daterange.get());
-			queryString.append("&datarange=" + daterange.get());
+			queryString.append("&daterange=" + daterange.get());
 
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.convertStringToDate(dates[0]);
@@ -291,14 +291,7 @@ public class AdvController {
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Generate code
-		String code = null;
-		while (true) {
-			code = StringUtils.randomCode();
-			if (advertisementRepository.checkCode(code) == null) {
-				advDto.getAdvertisement().setCode(code);
-				break;
-			}
-		}
+		advDto.getAdvertisement().setCode(generateCode());
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
@@ -311,6 +304,16 @@ public class AdvController {
 		model.addAttribute("provinces",
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
 		return "adv";
+	}
+	
+	private String generateCode() {
+		String code = "";
+		while (true) {
+			code = StringUtils.randomCode();
+			if (advertisementRepository.checkCode(code) == null) {
+				return code;
+			}
+		}
 	}
 
 	/*
@@ -358,7 +361,7 @@ public class AdvController {
 
 		// Validation code if not auto generate
 		if (advert.getCode().trim().length() == 0) {
-			advert.setCode(StringUtils.randomCode());
+			advert.setCode(generateCode());
 		}
 
 		// Set province
