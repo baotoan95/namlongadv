@@ -115,6 +115,7 @@ public class AdvController {
 
 		// Set page size
 		setPageSize(size, session);
+		session.setAttribute("currentPage", page);
 
 		model.addAttribute("isSearch", true);
 
@@ -266,6 +267,7 @@ public class AdvController {
 
 		// Set page size
 		setPageSize(size, session);
+		session.setAttribute("currentPage", page);
 
 		session.setAttribute(pageIndex, "advs");
 		session.removeAttribute("searchContent");
@@ -510,7 +512,9 @@ public class AdvController {
 		if(queryString != null) {
 			return "redirect:/adv/search?" + session.getAttribute("searchContent");
 		}
-		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
+		int page = session.getAttribute("currentPage") != null ? (int) session.getAttribute("currentPage") : 0;
+		
+		return "redirect:/adv/view?page=" + page + "&size=" + session.getAttribute("pageSize");
 	}
 
 	/*
