@@ -58,7 +58,7 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);
 	
-	@Query("select adv from Advertisement adv where adv.code like concat('%','-',:code)")
+	@Query("select adv from Advertisement adv where adv.code like concat('%',:code)")
 	public Advertisement checkCode(@Param("code") String code);
 	
 }
