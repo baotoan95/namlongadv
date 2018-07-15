@@ -41,7 +41,7 @@
 		</div>
 		<!-- /.login-logo -->
 		<div class="login-box-body">
-			<p class="login-box-msg">Sign in to start your session</p>
+			<p class="login-box-msg" style="text-transform: uppercase; font-weight: bold; font-size: 1em;">Đăng Nhập</p>
 			<c:if test="${errorMsg != null }">
 			<center class="error"><i>${errorMsg }</i></center><br/>
 			</c:if>
@@ -58,13 +58,13 @@
 				<div class="row">
 					<div class="col-xs-8">
 						<div class="checkbox icheck">
-							<label> <input type="checkbox" name="remember-me"> Remember me
+							<label> <input type="checkbox" name="remember-me"> Ghi nhớ tài khoản
 							</label>
 						</div>
 					</div>
 					<!-- /.col -->
 					<div class="col-xs-4">
-						<button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+						<button type="submit" class="btn btn-primary btn-block btn-flat">Đăng Nhập</button>
 					</div>
 					<!-- /.col -->
 				</div>

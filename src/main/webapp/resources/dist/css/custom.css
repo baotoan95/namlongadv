@@ -12,6 +12,11 @@ table tr td {
 	background-color: #f4f4f4;
 }
 
+table tr th {
+	text-align: center;
+	background: #99ddfc;
+}
+
 #image-preview {
 	width: 100%;
 	height: 100%;
@@ -105,9 +110,9 @@ table tr td {
 }
 
 .modal-dialog {
-    width: 60% !important;
-    margin: 30px auto;
-    text-align: center;
+	width: 60% !important;
+	margin: 30px auto;
+	text-align: center;
 }
 
 .modal-body {
@@ -119,12 +124,52 @@ table tr td {
 	width: 100% !important;
 	max-width: 100% !important;
 }
+
 .sp-lightbox {
 	z-index: 9999 !important;
 }
 
+.box {
+	box-shadow: 0 0 6px 3px #888;
+}
 
+.form-control[type=text],
+.form-control[type=password],
+.form-control[type=date],
+.form-control[type=email],
+.form-control[type=number] {
+	width: 100%;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	border-bottom: 1px solid #DDD;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, .39), 0 -1px 1px #FFF, 0 1px 0
+		#FFF;
+	outline: 0;
+	padding: 8px 6px;
+}
 
+.form-control[type=text]:focus, 
+.form-control[type=password]:focus,
+.form-control[type=email]:focus,
+.form-control[type=date]:focus,
+.form-control[type=number]:focus {
+	width: 100%;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	border-bottom: 1px solid #DDD;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, .39), 0 -1px 1px #FFF, 0 1px 0
+		#FFF;
+	outline: 0;
+	padding: 8px 6px;
+}
 
-
-
+textarea.form-control, textarea.form-control:focus {
+	width: 100%;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	border-bottom: 1px solid #DDD;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, .39), 0 -1px 1px #FFF, 0 1px 0
+		#FFF;
+	outline: 0;
+	padding: 8px 6px;
+}

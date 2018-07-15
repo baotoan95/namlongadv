@@ -14,7 +14,7 @@
 				<!-- /.box-header -->
 				<div class="box-body" style="overflow: auto;">
 					<table class="table table-bordered">
-						<tbody>
+						<thead>
 							<tr>
 								<th>Username</th>
 								<th>Tên</th>
@@ -22,8 +22,10 @@
 								<th>SĐT</th>
 								<th>Email</th>
 								<th>Quyền</th>
-								<th></th>
+								<th>#</th>
 							</tr>
+						</thead>
+						<tbody>
 							<c:forEach items="${page.content }" var="user">
 							<tr>
 								<td>${user.username }</td>

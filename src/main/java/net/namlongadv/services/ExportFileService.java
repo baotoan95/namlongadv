@@ -158,7 +158,7 @@ public class ExportFileService {
 						// Title
 						cell = row.createCell(2);
 						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getTitle());
+						cell.setCellValue(adv.getTitle() + " - " + adv.getCode());
 						log.debug("Title: {}", adv.getTitle());
 						// House no
 						cell = row.createCell(3);

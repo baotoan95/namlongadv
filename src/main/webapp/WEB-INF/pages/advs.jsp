@@ -6,19 +6,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <style>
-table tr th {
-	text-align: center;
-	background: #99ddfc;
-}
-
 #province {
 	width: 150px;
 }
-
 .select2-selection {
 	border-radius: 0px !important;
 }
-
 .select2-selection--single, .select2-selection__rendered {
 	margin-top: -7px !important;
 	border-color: #d2d6de !important;
@@ -127,7 +120,7 @@ table tr th {
 					method="post" modelAttribute="advertWrapper">
 				<input type="hidden" name="csrf" value="${_csrf.token}"/>
 				<div class="box-header">
-					<h3 class="box-title">Data</h3>
+					<h3 class="box-title">Danh Sách Điểm Quảng Cáo</h3>
 					
 					<div class="pull-right">
 						Hiển thị
@@ -276,15 +269,17 @@ table tr th {
 										</ul>
 									</td>
 									<td rowspan="2" class="action" style="text-align: center;">
-										<c:if test="${adv.allowEdit }">
-										<a class="delete" title="Xoá"
-											href="${pageContext.request.contextPath }/adv/delete/${adv.id }">
-											<i class="fa fa-fw fa-trash"></i>
-										</a>
+										<c:if test="${adv.allowDelete }">
+											<a class="delete" title="Xoá"
+												href="${pageContext.request.contextPath }/adv/delete/${adv.id }">
+												<i class="fa fa-fw fa-trash"></i>
+											</a>
 										<br />
-										<a title="Xem" href="${pageContext.request.contextPath }/adv/${adv.id }">
-											<i class="fa fa-fw fa-edit"></i>
-										</a>
+										</c:if>
+										<c:if test="${adv.allowEdit }">
+											<a title="Xem" href="${pageContext.request.contextPath }/adv/${adv.id }">
+												<i class="fa fa-fw fa-edit"></i>
+											</a>
 										</c:if>
 									</td>
 								</tr>
@@ -378,7 +373,6 @@ function exportExcel(hide) {
 	$('form[name=exportForm]').attr('action', '${pageContext.request.contextPath }/export/excel?_csrf=' + token + '&hideInfo=' + hide);
 	$('form[name=exportForm]').submit();
 }
-
 $(document).ready(function() {
 	$(".select2").select2();
 	
@@ -483,12 +477,10 @@ $(document).ready(function() {
 	});
 	
 })
-
 function pageSizeChanged() {
 	$('input[name=size]').val($('#page-size').val());
 	$('form[id=filter-form]').submit();
 }
-
 $(function() {
     var $sidebar = $('#exportation');
     $window = $(window);

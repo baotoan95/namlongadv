@@ -174,26 +174,10 @@
 			
 			
 		});
-		
-// 		var currentSlide = 0;
-// 		showSlide(currentSlide);
-// 		function showSlide(isNext) {
-// 			var slides = $('.slide-item');
-// 			slides.css('display', 'none');
-			
-// 			if(isNext) {
-// 				currentSlide++;
-// 			} else {
-// 				currentSlide--;
-// 			}
-// 			if(currentSlide >= slides.length) {
-// 				currentSlide = 0;
-// 			} else if(currentSlide < 0) {
-// 				currentSlide = slides.length - 1;
-// 			}
-// 			$(slides[currentSlide]).css('display', 'block');
-// 		}
-		
 	</script>
+	
+	<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap.min.js"></script>
+	<script src="<c:url value='/resources/dist/js/dataTables.rowsGroup.js'/>"></script>
 </body>
 </html>

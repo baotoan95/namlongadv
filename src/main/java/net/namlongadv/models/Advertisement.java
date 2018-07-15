@@ -88,8 +88,6 @@ public class Advertisement {
 	@OneToMany(mappedBy = "advertisement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AdvImage> advImages;
 	private Boolean trash = false;
-	@Transient
-	private boolean allowEdit = true;
 	private Date publishedDate;
 	private Integer publishedId;
 	private String type;
@@ -111,5 +109,8 @@ public class Advertisement {
 	private String provinceSearching;
 	@Column(columnDefinition="text")
 	private String titleSearching;
-	
+	@Transient
+	private boolean allowEdit = true;
+	@Transient
+	private boolean allowDelete = true;
 }

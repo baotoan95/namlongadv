@@ -78,7 +78,10 @@ public class AdvertisementService {
 		}
 		
 		if(!adv.getCreatedBy().getId().equals(userId)) {
-			adv.setAllowEdit(false);
+			adv.setAllowEdit(true);
+			if(!userId.equals(adv.getCreatedBy().getId())) {
+				adv.setAllowDelete(false);
+			}
 			return adv;
 		}
 

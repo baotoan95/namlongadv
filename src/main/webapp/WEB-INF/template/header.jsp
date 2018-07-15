@@ -48,7 +48,7 @@
 							<div class="pull-right">
 								<form:form action="${pageContext.request.contextPath}/logout" method="POST">
 									<input type="submit" class="btn btn-default btn-flat"
-										value="Sign out" />
+										value="Đăng Xuất" />
 								</form:form>
 							</div>
 						</li>

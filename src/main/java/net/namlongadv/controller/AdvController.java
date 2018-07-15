@@ -34,6 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -292,8 +293,6 @@ public class AdvController {
 	public String adv(HttpSession session, ModelMap model) {
 		session.setAttribute(pageIndex, "adv");
 		AdvertisementDTO advDto = new AdvertisementDTO();
-		// Generate code
-		advDto.getAdvertisement().setCode(generateCode());
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
 		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
@@ -308,11 +307,11 @@ public class AdvController {
 		return "adv";
 	}
 	
-	private String generateCode() {
+	private String generateCode(String provinceCode) {
 		String code = "";
 		while (true) {
-			code = StringUtils.randomCode();
-			if (advertisementRepository.checkCode(code) == null) {
+			code = provinceCode + "-" + StringUtils.randomCode();
+			if (advertisementRepository.findByCode(code) == null) {
 				return code;
 			}
 		}
@@ -359,11 +358,6 @@ public class AdvController {
 			prevAdvertisement = advertisementRepository.findOne(advert.getId());
 		} catch (Exception e) {
 			// Do nothing
-		}
-
-		// Validation code if not auto generate
-		if (advert.getCode().trim().length() == 0) {
-			advert.setCode(generateCode());
 		}
 
 		// Set province
@@ -484,9 +478,14 @@ public class AdvController {
 				}
 			});
 			advert.setCreatedBy(prevAdvertisement.getCreatedBy());
+			// Update code if it change
+			if(!prevAdvertisement.getProvinceCode().equals(advert.getProvinceCode())) {
+				advert.setCode(generateCode(advert.getProvinceCode()));
+			}
 		} else {
 			advert.setCreatedDate(new Date());
 			advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
+			advert.setCode(generateCode(advert.getProvinceCode()));
 		}
 
 		advert.setAdvImages(advImages);
@@ -567,5 +566,18 @@ public class AdvController {
 		} else {
 			session.setAttribute("pageSize", pageSize);
 		}
+	}
+	
+	@GetMapping("updateTitle")
+	public String updateTitle() {
+		advertisementRepository.findAll().forEach(adv -> {
+			try {
+			adv.setTitle(adv.getTitle().substring(0, adv.getTitle().lastIndexOf(" - ")));
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			advertisementRepository.save(adv);
+		});
+		return "index";
 	}
 }

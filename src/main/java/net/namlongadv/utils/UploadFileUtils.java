@@ -50,11 +50,11 @@ public class UploadFileUtils {
 					containFolder.mkdirs();
 
 					// Resize
-					if (mpf.getSize() > reduce && mpf.getOriginalFilename().lastIndexOf("png") == -1) {
+					if (mpf.getSize() > reduce && !FileUtils.getExtensions(mpf.getOriginalFilename()).equalsIgnoreCase("png")) {
 						log.debug("Reducing size of image");
 						file = FileUtils.convertMultipartToFile(mpf);
 						try {
-							pathUploaded = ImageUtils.reduceImageFileSize(reduce, file, pathFile);
+							pathUploaded = ImageUtils.reduceImageFileSize(file, pathFile);
 							log.debug("Saved to storage: {}", pathUploaded);
 							pathFilesUploaded.add(pathUploaded);
 						} catch (Exception e) {
@@ -66,8 +66,8 @@ public class UploadFileUtils {
 							log.info(mpf.getOriginalFilename() + " uploaded! ");
 							pathFilesUploaded.add(serverFile.getPath());
 						}
-						// Normal case
 					} else {
+						// Normal case
 						serverFile = new File(pathFile);
 						serverFile.createNewFile();
 						log.debug("Upload to " + pathFile);

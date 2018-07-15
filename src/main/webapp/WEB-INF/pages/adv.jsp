@@ -70,7 +70,7 @@
 								<label for="code" class="col-md-3 control-label">Mã</label>
 								<div class="col-md-3">
 									<form:input readonly="true" maxlength="254" type="text" path="advertisement.code"
-										class="form-control" id="code" placeholder="Nhập mã (tự động tạo nếu không nhập)" />
+										class="form-control" id="code" placeholder="Tự động tạo" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
 								<label for="updatedDate" class="col-md-3 control-label">Ngày tạo</label>
@@ -122,7 +122,7 @@
 							<div class="form-group">
 								<label for="province" class="col-md-3 control-label">Tỉnh</label>
 								<div class="col-md-9">
-									<form:select id="province" onchange="updateCode()" cssClass="form-control select2" path="advertisement.provinceCode">
+									<form:select id="province" cssClass="form-control select2" path="advertisement.provinceCode">
 										<form:option value="">Chọn tỉnh</form:option>
 										<c:forEach items="${provinces }" var="province">
 										<form:option name="${province.name }" value="${province.code }">${province.name }</form:option>
@@ -417,7 +417,7 @@
 							<c:if test="${not empty errorMsg }">
 								<input type="hidden" name="ignoreError" value="true"/>
 							</c:if>
-							<button type="button" onclick="submitData()" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
+							<button type="submit" ${!advertDto.advertisement.allowEdit ? 'disabled' : '' } class="btn btn-info pull-right">${advertDto.advertisement.id == null ? 'Thêm' : 'Cập Nhật' }</button>
 							
 							<security:authorize
 								access="hasAnyRole('ROLE_ADMIN')">
@@ -552,31 +552,6 @@
 </section>
 
 <script>
-	function submitData() {
-		var code = $('#code').val();
-		var title = $('#title').val();
-		
-		// Get auto code
-		if(code.length > 4) {
-			var autoCode = code.split('-')[1];
-		} else {
-			var autoCode = code;
-		}
-		
-		var titleParts = title.split(' - ');
-		if(titleParts.length > 1) {
-			var lastPart = titleParts[titleParts.length - 1];
-			if(lastPart.lastIndexOf(autoCode) !== -1) {
-				$('#title').val(title.replace(' - ' + lastPart, ' - ' + code));
-			} else {
-				$('#title').val(title + ' - ' + code);	
-			}
-		} else {
-			$('#title').val(title + ' - ' + code);
-		}
-		$('#formData').submit();
-	}
-
 	$(document).ready(function() {
 		$(".select2").select2();
 		
@@ -589,27 +564,10 @@
 			$('textarea').attr('disabled', true);
 		}
 		
-		updateCode();
-		
 		$('.datepicker').datepicker({
 			format: 'dd/mm/yyyy'
 		});
 	});
-	
-	function updateCode() {
-		var codeComponent = $('#code');
-		var codeParts = codeComponent.val().split("-");
-		var code = codeParts[0];
-		if(codeParts && codeParts.length === 2) {
-			code = codeParts[1];
-		}
-		var provinceCode = $('#province').val();
-		if(provinceCode) {
-			codeComponent.val(provinceCode + "-" + code);
-		} else {
-			codeComponent.val(code);
-		}
-	}
 	
 	// Images to publish
 	var imageIndex = 1;
@@ -651,6 +609,7 @@
 		detail += "<p>Hệ thống chiếu sáng: " + $('#lightSystem').val() + "</p>";
 		detail += "<p>Tình trạng: Đang chào bán</p>";
 		detail += "<p>Đơn giá: Liên hệ để biết giá</p>";
+		detail += "<br/><br/>" + $('#describe').val();
 		
 		var published = "<p>Vị trí: " + $('#houseNo').val() + ", " + $('#street').val() 
 		+ ", " + $('#ward').val() + ", " + $('#district').val() 
@@ -658,9 +617,9 @@
 		published += "<p>Loại hình: " + $('#type').val() + "</p>";
 		
 		var data = {
-				"title": $('#title').val(),
+				"title": $('#title').val() + " - " + $('#code').val(),
 				"price": $('#price').val(),
-				"description": $('#describe').val(),
+				"description": '',
 				"published": 0,
 				"ordering": 0,
 				"lat": lat,
@@ -684,39 +643,6 @@
 				}
 			}
 		}
-		
-// 		if(images.length > 0) {
-// 			var avatarPos = -1;
-// 			var mapPos = -1;
-// 			// Find avatar and map
-// 			console.log(images.length)
-// 			for(var i = 0; i < images.length; i++) {
-// 				if(images[i].getAttribute('name') === 'map') {
-// 					// Map
-// 					data['image3'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-// 					mapPos = i;
-// 				} else {
-// 					// Avatar
-// 					data['images'] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-// 					avatarPos = i;
-// 				}
-// 			}
-// 			// Others
-// 			var imageIndex = 2;
-// 			for(var i = 0; i < images.length; i++) {
-// 			 	if (i !== avatarPos && i !== mapPos) {
-// 			 		if(imageIndex === 3) {
-// 						imageIndex++;
-// 					}
-// 					data['image' + imageIndex] = "http://namlongadv.ddns.net:7070" + images[i].getAttribute('src');
-// 					imageIndex++;
-// 				}
-// 			}
-			
-// 			if(data['image3'] === undefined) {
-// 				data['image3'] = null;
-// 			}
-// 		}
 		
 		var publishedId = $('#publishedId').val();
 		if(publishedId === undefined || publishedId < 0 || publishedId === '') {

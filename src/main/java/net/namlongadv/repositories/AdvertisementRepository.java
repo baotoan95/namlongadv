@@ -20,7 +20,7 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	public Page<Advertisement> findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(String houseNo,
 			String street, String ward, String district, String province, Pageable pageable);
 
-	public List<Advertisement> findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqual(Date milestone1,
+	public List<Advertisement> findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqualOrderByAdvCompEndDateDescOwnerEndDateDesc(Date milestone1,
 			Date milestone2);
 
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
@@ -58,7 +58,7 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);
 	
-	@Query("select adv from Advertisement adv where adv.code like concat('%',:code)")
-	public Advertisement checkCode(@Param("code") String code);
+//	@Query("select adv from Advertisement adv where adv.code like concat('%',:code)")
+	public Advertisement findByCode(String code);
 	
 }
