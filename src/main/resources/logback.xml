@@ -29,7 +29,6 @@
         <maxFileSize>10MB</maxFileSize>
       </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
-
   </appender>
 
   <appender name="FILE-ERROR"

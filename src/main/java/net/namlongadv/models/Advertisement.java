@@ -113,4 +113,6 @@ public class Advertisement {
 	private boolean allowEdit = true;
 	@Transient
 	private boolean allowDelete = true;
+	@Transient
+	private boolean belongCurrentUser = false;
 }

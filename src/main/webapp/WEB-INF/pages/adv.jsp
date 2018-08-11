@@ -39,6 +39,10 @@
 .select2-selection__arrow {
 	top: -7px !important;
 }
+
+textarea {
+	resize: none;
+}
 </style>
 
 <section class="content">
@@ -85,126 +89,222 @@
 							<div class="form-group">
 								<label for="title" class="col-md-3 control-label">Tiêu đề</label>
 								<div class="col-md-9">
-									<form:input type="text" path="advertisement.title"
-										class="form-control" id="title" placeholder="Nhập tiêu đề" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.title }">
+										<form:input type="text" path="advertisement.title"
+											class="form-control" id="title" placeholder="Nhập tiêu đề" />				
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.title }">
+										<input type="text" class="form-control" id="title" placeholder="#####" readonly />
+										<form:hidden path="advertisement.title"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="houseNo" class="col-md-3 control-label">Số nhà</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.houseNo" type="text"
-										class="form-control" id="houseNo" placeholder="Nhập số nhà" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.houseNo || advertDto.advertisement.houseNo eq 'Số ' || advertDto.advertisement.houseNo eq 'Số' }">
+										<form:input path="advertisement.houseNo" type="text"
+											class="form-control" id="houseNo" placeholder="Nhập số nhà" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.houseNo && advertDto.advertisement.houseNo ne 'Số ' && advertDto.advertisement.houseNo ne 'Số' }">
+										<input type="text" class="form-control" id="houseNo" placeholder="#####" readonly />
+										<form:hidden path="advertisement.houseNo"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="street" class="col-md-3 control-label">Tên
-									đường</label>
+								<label for="street" class="col-md-3 control-label">Tên đường</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.street" type="text"
-										class="form-control" id="street" placeholder="Nhập tên đường" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.street || advertDto.advertisement.street eq 'Đường ' || advertDto.advertisement.street eq 'Đường'}">
+										<form:input path="advertisement.street" type="text"
+											class="form-control" id="street" placeholder="Nhập tên đường" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.street && advertDto.advertisement.street ne 'Đường ' && advertDto.advertisement.street ne 'Đường'}">
+										<input type="text" class="form-control" id="street" placeholder="#####" readonly />
+										<form:hidden path="advertisement.street"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="ward" class="col-md-3 control-label">Phường</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control" path="advertisement.ward" id="ward"
-										placeholder="Nhập tên phường/xã" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ward }">
+										<form:input cssClass="form-control" path="advertisement.ward" id="ward"
+											placeholder="Nhập tên phường/xã" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ward }">
+										<input type="text" class="form-control" id="ward" placeholder="#####" readonly />
+										<form:hidden path="advertisement.ward"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="district" class="col-md-3 control-label">Quận</label>
+								<label for="district" class="col-md-3 control-label">Quận ${ advertDto.advertisement.district }</label>
 								<div class="col-md-9">
-									<form:input cssClass="form-control"
-										path="advertisement.district" id="district"
-										placeholder="Nhập tên quận/huyện" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.district }">
+										<form:input cssClass="form-control"
+											path="advertisement.district" id="district"
+											placeholder="Nhập tên quận/huyện" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.district }">
+										<input type="text" class="form-control" id="district" placeholder="#####" readonly />
+										<form:hidden path="advertisement.district"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="province" class="col-md-3 control-label">Tỉnh</label>
 								<div class="col-md-9">
-									<form:select id="province" cssClass="form-control select2" path="advertisement.provinceCode">
-										<form:option value="">Chọn tỉnh</form:option>
-										<c:forEach items="${provinces }" var="province">
-										<form:option name="${province.name }" value="${province.code }">${province.name }</form:option>
-										</c:forEach>
-									</form:select>
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.provinceCode }">
+										<form:select id="province" cssClass="form-control select2" path="advertisement.provinceCode">
+											<form:option value="">Chọn tỉnh</form:option>
+											<c:forEach items="${provinces }" var="province">
+											<form:option name="${province.name }" value="${province.code }">${province.name }</form:option>
+											</c:forEach>
+										</form:select>
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.provinceCode }">
+										<input type="text" class="form-control" id="provinceCode" placeholder="#####" readonly />
+										<form:hidden path="advertisement.provinceCode"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="coordinates" class="col-md-3 control-label">Toạ độ</label>
 								<div class="col-md-9">
-									<form:input maxlength="254" path="advertisement.map" type="text" onchange="initialize()"
-										class="form-control" id="coordinates" name="coordinates" placeholder="Nhập toạ độ (VD: 123.2334, 234.2343)" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.map }">
+										<form:input maxlength="254" path="advertisement.map" type="text" onchange="initialize()"
+											class="form-control" id="coordinates" name="coordinates" placeholder="Nhập toạ độ (VD: 123.2334, 234.2343)" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.map }">
+										<input type="text" class="form-control" placeholder="#####" readonly />
+										<form:hidden path="advertisement.map"/>
+									</c:if>
 								</div>
 							</div>
 							<security:authorize access="hasRole('ROLE_ADMIN')">
 							<div class="form-group">
 								<label for="price" class="col-md-3 control-label">Đơn giá</label>
 								<div class="col-md-9">
-									<form:input maxlength="254" path="advertisement.price" type="text"
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.price }">
+										<form:input maxlength="254" path="advertisement.price" type="text"
 										class="form-control" id="price" name="price" placeholder="Nhập đơn giá (USD/năm)" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.price }">
+										<input type="text" class="form-control" id="price" placeholder="#####" readonly />
+										<form:hidden path="advertisement.map"/>
+									</c:if>
 								</div>
 							</div>
 							</security:authorize>
 							<div class="form-group">
 								<label for="heightSize" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-2">
-									<form:input maxlength="254" path="advertisement.heightSize" type="text"
-										class="form-control" id="heightSize" placeholder="Chiều cao" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.heightSize || advertDto.advertisement.heightSize eq ' m' || advertDto.advertisement.heightSize eq 'm' }">
+										<form:input maxlength="254" path="advertisement.heightSize" type="text"
+											class="form-control" id="heightSize" placeholder="Chiều cao" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.heightSize && advertDto.advertisement.heightSize ne ' m' && advertDto.advertisement.heightSize ne 'm' }">
+										<input type="text" class="form-control" id="heightSize" placeholder="#####" readonly />
+										<form:hidden path="advertisement.heightSize"/>
+									</c:if>
 								</div>
 								<div class="col-md-1" style="text-align: center;">
 									<label class="control-label">x</label>
 								</div>
 								<div class="col-md-2">
-									<form:input maxlength="254" path="advertisement.widthSize" type="text"
-										class="form-control" id="widthSize" placeholder="Chiều rộng" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.widthSize || advertDto.advertisement.widthSize eq 'm' || advertDto.advertisement.widthSize eq ' m' }">
+										<form:input maxlength="254" path="advertisement.widthSize" type="text"
+											class="form-control" id="widthSize" placeholder="Chiều rộng" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.widthSize && advertDto.advertisement.widthSize ne 'm' && advertDto.advertisement.widthSize ne ' m' }">
+										<input type="text" class="form-control" id="widthSize" placeholder="#####" readonly />
+										<form:hidden path="advertisement.widthSize"/>
+									</c:if>
 								</div>
 								<div class="col-md-2" style="text-align: center;">
 									<label class="control-label">Số lượng</label>
 								</div>
 								<div class="col-md-2">
-									<form:input maxlength="254" path="advertisement.amount" type="text"
-										class="form-control" id="amount" placeholder="Số lượng" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.amount }">
+										<form:input maxlength="254" path="advertisement.amount" type="text"
+											class="form-control" id="amount" placeholder="Số lượng" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.amount }">
+										<input type="text" class="form-control" id="amount" placeholder="#####" readonly />
+										<form:hidden path="advertisement.amount"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="views" class="col-md-3 control-label">Tầm nhìn</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.views" class="form-control"
-										id="views" style="resize: none;" placeholder="Nhập tầm nhìn" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.views }">
+										<form:input path="advertisement.views" class="form-control"
+											id="views" style="resize: none;" placeholder="Nhập tầm nhìn" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.views }">
+										<input type="text" class="form-control" id="views" placeholder="#####" readonly />
+										<form:hidden path="advertisement.views"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="flow" class="col-md-3 control-label">Lưu lượng</label>
 								<div class="col-md-9">
-									<form:input type="number" path="advertisement.flow" class="form-control"
-										id="flow" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.flow }">
+										<form:input type="number" path="advertisement.flow" class="form-control"
+											id="flow" style="resize: none;" placeholder="Nhập số lượng người/ngày" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.flow }">
+										<input type="text" class="form-control" id="flow" placeholder="#####" readonly />
+										<form:hidden path="advertisement.flow"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="implTime" class="col-md-3 control-label">Thời gian thực hiện</label>
 								<div class="col-md-9">
-									<form:input type="number" path="advertisement.implTime" class="form-control"
-										id="implTime" style="resize: none;" placeholder="Nhập số ngày thực hiện" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.implTime || advertDto.advertisement.implTime eq '20'}">
+										<form:input type="number" path="advertisement.implTime" class="form-control"
+											id="implTime" style="resize: none;" placeholder="Nhập số ngày thực hiện" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.implTime && advertDto.advertisement.implTime ne '20' }">
+										<input type="text" class="form-control" id="implTime" placeholder="#####" readonly />
+										<form:hidden path="advertisement.implTime"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
+								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện ${advertDto.advertisement.implForm }</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.implForm" class="form-control"
-										id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.implForm || advertDto.advertisement.implForm eq 'in bạt hiflex 720 DPI'}">
+										<form:input path="advertisement.implForm" class="form-control"
+											id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.implForm && advertDto.advertisement.implForm ne 'in bạt hiflex 720 DPI'}">
+										<input type="text" class="form-control" id="implForm" placeholder="#####" readonly />
+										<form:hidden path="advertisement.implForm"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="lightSystem" class="col-md-3 control-label">Hệ thống chiếu sáng</label>
 								<div class="col-md-9">
-									<form:input path="advertisement.lightSystem" class="form-control"
-										id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.lightSystem }">
+										<form:input path="advertisement.lightSystem" class="form-control"
+											id="lightSystem" style="resize: none;" placeholder="Nhập hệ thống chiếu sáng" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.lightSystem }">
+										<input type="text" class="form-control" id="lightSystem" placeholder="#####" readonly />
+										<form:hidden path="advertisement.lightSystem"/>
+									</c:if>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="type" class="col-md-3 control-label">Loại hình</label>
 								<div class="col-md-9">
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.type }">
 									<form:select path="advertisement.type" cssClass="form-control" id="type">
 										<form:option value="">Chọn loại hình</form:option>
 										<form:option value="Trụ pano Quảng cáo">Trụ pano Quảng cáo</form:option>
@@ -221,6 +321,11 @@
 										<form:option value="Billboard Quảng cáo ngoài trời 4 mặt">Billboard Quảng cáo ngoài trời 4 mặt</form:option>
 										<form:option value="Billboard ốp tường">Billboard ốp tường</form:option>
 									</form:select>
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.type }">
+										<input type="text" class="form-control" id="type" placeholder="#####" readonly />
+										<form:hidden path="advertisement.type"/>
+									</c:if>
 								</div>
 							</div>
 							<c:if test="${not empty advertDto.advertisement.updatedDate }">
@@ -236,8 +341,14 @@
 							<div class="form-group">
 								<label for="describe" class="col-md-2 control-label">Mô tả</label>
 								<div class="col-md-10">
-									<form:textarea path="advertisement.describe" class="form-control"
-										id="describe" placeholder="Nhập mô tả" />
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.describe }">
+										<form:textarea path="advertisement.describe" class="form-control"
+											id="describe" placeholder="Nhập mô tả" />
+									</c:if>
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.describe }">
+										<textarea class="form-control" id="describe" placeholder="#####" readonly></textarea>
+										<form:hidden path="advertisement.describe"/>
+									</c:if>
 								</div>
 							</div>
 
@@ -254,58 +365,100 @@
 												<div class="form-group">
 													<label for="ownerPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.ownerPhone" type="text"
-															class="form-control" id="ownerPhone"
-															placeholder="Số điện thoại" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerPhone }">
+															<form:input maxlength="254" path="advertisement.ownerPhone" type="text"
+																class="form-control" id="ownerPhone"
+																placeholder="Số điện thoại" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerPhone }">
+															<input type="text" class="form-control" id="ownerPhone" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerPhone"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.ownerEmail" type="text"
-															class="form-control" id="ownerEmail" placeholder="Email" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerEmail }">
+															<form:input maxlength="254" path="advertisement.ownerEmail" type="text"
+																class="form-control" id="ownerEmail" placeholder="Email" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerEmail }">
+															<input type="text" class="form-control" id="ownerEmail" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerEmail"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.ownerPrice" type="text"
-															class="form-control" id="ownerPrice"
-															placeholder="Giá thuê" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerPrice }">
+															<form:input maxlength="254" path="advertisement.ownerPrice" type="text"
+																class="form-control" id="ownerPrice"
+																placeholder="Giá thuê" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerPrice }">
+															<input type="text" class="form-control" id="ownerPrice" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerPrice"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerContactPerson"
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.ownerContactPerson"
-															type="text" class="form-control" id="ownerContactPerson"
-															placeholder="Người liên hệ" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerContactPerson }">
+															<form:input maxlength="254" path="advertisement.ownerContactPerson"
+																type="text" class="form-control" id="ownerContactPerson"
+																placeholder="Người liên hệ" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerContactPerson }">
+															<input type="text" class="form-control" id="ownerContactPerson" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerContactPerson"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerStartDate"
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
-														<fmt:formatDate value="${advertDto.advertisement.ownerStartDate}" type="date" pattern="dd/MM/yyyy" var="ownerStartDate"/>
-														<form:input path="advertisement.ownerStartDate" value="${ownerStartDate }"
-															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerStartDate" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerStartDate }">
+															<fmt:formatDate value="${advertDto.advertisement.ownerStartDate}" type="date" pattern="dd/MM/yyyy" var="ownerStartDate"/>
+															<form:input path="advertisement.ownerStartDate" value="${ownerStartDate }"
+																placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerStartDate" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerStartDate }">
+															<input type="text" class="form-control" id="ownerStartDate" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerStartDate"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerEndDate"
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
-														<fmt:formatDate value="${advertDto.advertisement.ownerEndDate}" type="date" pattern="dd/MM/yyyy" var="ownerEndDate"/>
-														<form:input path="advertisement.ownerEndDate" value="${ownerEndDate }"
-															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerEndDate" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerEndDate }">
+															<fmt:formatDate value="${advertDto.advertisement.ownerEndDate}" type="date" pattern="dd/MM/yyyy" var="ownerEndDate"/>
+															<form:input path="advertisement.ownerEndDate" value="${ownerEndDate }"
+																placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="ownerEndDate" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerEndDate }">
+															<input type="text" class="form-control" id="ownerEndDate" placeholder="#####" readonly />
+															<form:hidden path="advertisement.ownerEndDate"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="ownerNote" class="col-md-3 control-label">Ghi chú</label>
 													<div class="col-md-9">
-														<form:textarea path="advertisement.ownerNote" class="form-control"
-															id="ownerNote" placeholder="Nhập ghi chú" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerNote }">
+															<form:textarea path="advertisement.ownerNote" class="form-control"
+																id="ownerNote" placeholder="Nhập ghi chú" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerNote }">
+															<textarea class="form-control" id="ownerNote" placeholder="#####" readonly></textarea>
+															<form:hidden path="advertisement.ownerNote"/>
+														</c:if>
 													</div>
 												</div>
 											</div>
@@ -326,67 +479,115 @@
 												<div class="form-group">
 													<label for="advCompName" class="col-md-3 control-label">Tên Cty</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.advCompName" type="text"
-															class="form-control" id="advCompName"
-															placeholder="Tên công ty" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompName }">
+															<form:input maxlength="254" path="advertisement.advCompName" type="text"
+																class="form-control" id="advCompName"
+																placeholder="Tên công ty" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompName }">
+															<input type="text" class="form-control" id="advCompName" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompName"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.advCompPhone" type="text"
-															class="form-control" id="advCompPhone"
-															placeholder="Số điện thoại" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompPhone }">
+															<form:input maxlength="254" path="advertisement.advCompPhone" type="text"
+																class="form-control" id="advCompPhone"
+																placeholder="Số điện thoại" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompPhone }">
+															<input type="text" class="form-control" id="advCompPhone" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompPhone"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompEmail }">
 														<form:input maxlength="254" path="advertisement.advCompEmail" type="text"
 															class="form-control" id="advCompEmail"
 															placeholder="Email" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompEmail }">
+															<input type="text" class="form-control" id="advCompEmail" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompEmail"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.advCompPrice" type="text"
-															class="form-control" id="advCompPrice"
-															placeholder="Giá thuê" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompPrice }">
+															<form:input maxlength="254" path="advertisement.advCompPrice" type="text"
+																class="form-control" id="advCompPrice"
+																placeholder="Giá thuê" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompPrice }">
+															<input type="text" class="form-control" id="advCompPrice" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompPrice"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompContactPerson"
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
-														<form:input maxlength="254" path="advertisement.advCompContactPerson"
-															type="text" class="form-control"
-															id="advCompContactPerson" placeholder="Người liên hệ" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompContactPerson }">
+															<form:input maxlength="254" path="advertisement.advCompContactPerson"
+																type="text" class="form-control"
+																id="advCompContactPerson" placeholder="Người liên hệ" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompContactPerson }">
+															<input type="text" class="form-control" id="advCompContactPerson" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompContactPerson"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompStartDate"
 														class="col-md-3 control-label">Bắt đầu</label>
 													<div class="col-md-9">
-														<fmt:formatDate value="${advertDto.advertisement.advCompStartDate}" type="date" pattern="dd/MM/yyyy" var="advCompStartDate"/>
-														<form:input path="advertisement.advCompStartDate" value="${advCompStartDate }"
-															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompStartDate" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompEndDate }">
+															<fmt:formatDate value="${advertDto.advertisement.advCompStartDate}" type="date" pattern="dd/MM/yyyy" var="advCompStartDate"/>
+															<form:input path="advertisement.advCompStartDate" value="${advCompStartDate }"
+																placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompStartDate" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompEndDate }">
+															<input type="text" class="form-control" id="advCompStartDate" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompStartDate"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompEndDate"
 														class="col-md-3 control-label">Kết thúc</label>
 													<div class="col-md-9">
-														<fmt:formatDate value="${advertDto.advertisement.advCompEndDate}" type="date" pattern="dd/MM/yyyy" var="advCompEndDate"/>
-														<form:input path="advertisement.advCompEndDate" value="${advCompEndDate }"
-															placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompEndDate" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompEndDate }">
+															<fmt:formatDate value="${advertDto.advertisement.advCompEndDate}" type="date" pattern="dd/MM/yyyy" var="advCompEndDate"/>
+															<form:input path="advertisement.advCompEndDate" value="${advCompEndDate }"
+																placeholder="dd/mm/yyyy" cssClass="datepicker form-control" id="advCompEndDate" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompEndDate }">
+															<input type="text" class="form-control" id="advCompEndDate" placeholder="#####" readonly />
+															<form:hidden path="advertisement.advCompEndDate"/>
+														</c:if>
 													</div>
 												</div>
 												<div class="form-group">
 													<label for="advCompNote" class="col-md-3 control-label">Ghi chú</label>
 													<div class="col-md-9">
-														<form:textarea path="advertisement.advCompNote" class="form-control"
-															id="advCompNote" placeholder="Nhập ghi chú" />
+														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompNote }">
+															<form:textarea path="advertisement.advCompNote" class="form-control"
+																id="advCompNote" placeholder="Nhập ghi chú" />
+														</c:if>
+														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.advCompNote }">
+															<textarea class="form-control" id="advCompNote" placeholder="#####" readonly></textarea>
+															<form:hidden path="advertisement.advCompNote"/>
+														</c:if>
 													</div>
 												</div>
 											</div>
@@ -454,7 +655,9 @@
 				%>
 						<div class="preview-item">
 							<input type="checkbox" onchange="addImageToPublish(this)" data="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>">
-							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							<c:if test="${advertDto.advertisement.belongCurrentUser }">
+								<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							</c:if>
 							<input type="hidden" name="prevImages[<%= i %>]" value="<%= advImage.getId() %>"/>
 							<img class="img-thumbnail" data=""
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
@@ -480,12 +683,16 @@
 							advImage = images.get(mapIndex);
 					%>
 						<div class="preview-item">
-							<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							<c:if test="${advertDto.advertisement.belongCurrentUser }">
+								<div class="close" title="Xoá" onclick="deleteImage(this)">X</div>
+							</c:if>
 							<input type="hidden" name="prevImages[<%= mapIndex %>]" value="<%= advImage.getId() %>"/>
 							<img class="img-thumbnail" id="mapImage"
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
-		 					<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, false)">
+		 					<c:if test="${advertDto.advertisement.belongCurrentUser }">
+		 						<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, false)">
+		 					</c:if>
 						</div>
 		 			<%
 						} else {

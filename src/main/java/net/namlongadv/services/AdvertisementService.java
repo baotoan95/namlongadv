@@ -38,8 +38,8 @@ public class AdvertisementService {
 	public Page<Advertisement> search(String code, String address, String username, Date from, Date to,
 			String contactName, String houseNo, String street, String ward, String district, String provinceCode,
 			String title, Pageable pageable) {
-		return advertisementRepository.search(code, address, username, from, to, contactName, houseNo, street, ward, district,
-				provinceCode, title, pageable);
+		return advertisementRepository.search(code, address, username, from, to, contactName, houseNo, street, ward,
+				district, provinceCode, title, pageable);
 	}
 
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable) {
@@ -74,36 +74,37 @@ public class AdvertisementService {
 
 	public Advertisement setPermission(Advertisement adv, List<String> roles, UUID userId) {
 		if (roles.contains("ROLE_ADMIN")) {
-			return adv;
-		}
-		
-		if(!adv.getCreatedBy().getId().equals(userId)) {
-			adv.setAllowEdit(true);
-			if(!userId.equals(adv.getCreatedBy().getId())) {
-				adv.setAllowDelete(false);
-			}
+			adv.setBelongCurrentUser(true);
 			return adv;
 		}
 
-//		if (roles.contains("ROLE_BUSINESS") || roles.contains("ROLE_ACCOUNTANT")) {
-//			List<String> createdRoles = new ArrayList<>();
-//			adv.getCreatedBy().getRoles().forEach(role -> {
-//				createdRoles.add(role.getCode());
-//			});
-//			if (createdRoles.contains("ROLE_ADMIN") || !adv.getCreatedBy().getId().equals(userId)
-//					&& (createdRoles.contains("ROLE_BUSINESS") || createdRoles.contains("ROLE_ACCOUNTANT"))) {
-//				adv.setAllowEdit(false);
-//			}
-//
-//			return adv;
-//		}
-//
-//		if (roles.contains("ROLE_SURVEYOR")) {
-//			if (!adv.getCreatedBy().getId().equals(userId)) {
-//				adv.setAllowEdit(false);
-//			}
-//			return adv;
-//		}
+		if (!adv.getCreatedBy().getId().equals(userId)) {
+			adv.setAllowDelete(false);
+		} else {
+			adv.setBelongCurrentUser(true);
+		}
+
+		// if (roles.contains("ROLE_BUSINESS") || roles.contains("ROLE_ACCOUNTANT")) {
+		// List<String> createdRoles = new ArrayList<>();
+		// adv.getCreatedBy().getRoles().forEach(role -> {
+		// createdRoles.add(role.getCode());
+		// });
+		// if (createdRoles.contains("ROLE_ADMIN") ||
+		// !adv.getCreatedBy().getId().equals(userId)
+		// && (createdRoles.contains("ROLE_BUSINESS") ||
+		// createdRoles.contains("ROLE_ACCOUNTANT"))) {
+		// adv.setAllowEdit(false);
+		// }
+		//
+		// return adv;
+		// }
+		//
+		// if (roles.contains("ROLE_SURVEYOR")) {
+		// if (!adv.getCreatedBy().getId().equals(userId)) {
+		// adv.setAllowEdit(false);
+		// }
+		// return adv;
+		// }
 
 		return adv;
 	}
@@ -112,5 +113,5 @@ public class AdvertisementService {
 		str = StringUtils.convertStringIgnoreUtf8(str.substring(0, str.lastIndexOf(".")));
 		return str.lastIndexOf("map") == 13;
 	}
-	
+
 }
