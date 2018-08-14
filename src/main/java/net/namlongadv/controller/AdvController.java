@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -447,7 +448,7 @@ public class AdvController {
 				advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert, false));
 			}
 			// Get map file
-			if (!advertDto.getMap().isEmpty()) {
+			if (Objects.nonNull(advertDto.getMap()) && !advertDto.getMap().isEmpty()) {
 				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
 						fileLimit, true);
 				if (!fileNames.isEmpty()) {
