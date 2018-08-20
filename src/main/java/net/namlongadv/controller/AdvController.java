@@ -7,8 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -28,9 +26,6 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -39,29 +34,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.common.Constants;
+import net.namlongadv.common.Enums;
+import net.namlongadv.common.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
 import net.namlongadv.models.AdvImage;
 import net.namlongadv.models.Advertisement;
-import net.namlongadv.models.NLAdvUserDetails;
 import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.services.AdvertisementService;
+import net.namlongadv.utils.AuthenticationUtils;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
-import net.namlongadv.utils.UploadFileUtils;
-import net.namlongadv.utils.WindowsExplorerComparator;
 
 @Controller
 @Slf4j
-@RequestMapping("adv")
+@RequestMapping(PathContants.ADVERT)
 public class AdvController {
 	@Value("${namlongadv.session.name.page-index}")
 	private String pageIndex;
@@ -91,7 +88,7 @@ public class AdvController {
 	/*
 	 * Search
 	 */
-	@RequestMapping(value = "/search")
+	@GetMapping("/search")
 	public String search(HttpSession session, @RequestParam(value = "code", required = false) Optional<String> code,
 			@RequestParam(value = "address", required = false) Optional<String> address,
 			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
@@ -106,194 +103,86 @@ public class AdvController {
 			@RequestParam(value = "district", required = false) Optional<String> district,
 			@RequestParam(value = "title", required = false) Optional<String> title, ModelMap model,
 			HttpServletRequest request) {
-		// Get user roles info
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		List<String> roles = new ArrayList<>();
-		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-
-		StringBuilder queryString = new StringBuilder();
-
 		// Set page size
 		setPageSize(size, session);
-		session.setAttribute("currentPage", page);
-
+		session.setAttribute(Constants.SESSION_NAME.CURRENT_PAGE, page);
 		model.addAttribute("isSearch", true);
+
+		int pageSize = (int) session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
 
 		Page<Advertisement> rs = null;
 		try {
-			if (!daterange.isPresent() || (daterange.isPresent() && daterange.get().trim().length() == 0)) {
+			// ============ Set date range
+			if (!daterange.isPresent() || daterange.get().trim().length() == 0) {
 				log.debug("Filter with default date range");
 				daterange = Optional.of("01/01/2017 - " + DateUtils.convertDateToString(new Date()));
 			}
-			model.put("daterange", daterange.get());
-			queryString.append("&daterange=" + daterange.get());
-
 			String[] dates = daterange.get().trim().split(" - ");
 			Date from = DateUtils.convertStringToDate(dates[0]);
 			Date to = DateUtils.increaseDay(DateUtils.convertStringToDate(dates[1]), 1);
 
 			log.debug("From: {}", from);
 			log.debug("To: {}", to);
+			// ============ End set date range
 
-			String sCode = "";
-			String sAddress = "";
-			String sCreatedBy = "";
-			String sContactPerson = "";
-			String sHouseNo = null;
-			String sStreet = null;
-			String sWard = null;
-			String sDistrict = null;
-			String sProvince = null;
-			String sTitle = "";
-
-			if (code.isPresent() && code.get().length() > 0) {
-				sCode = code.get().trim();
-				model.put("code", code.get().trim());
-				queryString.append("&code=" + code.get().trim());
-			}
-			if (address.isPresent() && address.get().length() > 0) {
-				sAddress = address.get().trim();
-				model.put("address", address.get().trim());
-				queryString.append("&address=" + address.get().trim());
-			}
-			if (createdBy.isPresent() && createdBy.get().length() > 0) {
-				sCreatedBy = createdBy.get().trim();
-				model.put("createdBy", createdBy.get().trim());
-				queryString.append("&createdBy=" + createdBy.get().trim());
-			}
-			if (contactPerson.isPresent() && contactPerson.get().length() > 0) {
-				sContactPerson = contactPerson.get().trim();
-				model.put("contactPerson", contactPerson.get().trim());
-				queryString.append("&contactPerson=" + contactPerson.get().trim());
-			}
-			if (houseNo.isPresent() && houseNo.get().length() > 0) {
-				sHouseNo = houseNo.get().trim();
-				model.put("houseNo", houseNo.get().trim());
-				queryString.append("&houseNo=" + houseNo.get().trim());
-			}
-			if (street.isPresent() && street.get().length() > 0) {
-				sStreet = street.get().trim();
-				model.put("street", street.get().trim());
-				queryString.append("&street=" + street.get().trim());
-			}
-			if (ward.isPresent() && ward.get().length() > 0) {
-				sWard = ward.get().trim();
-				model.put("ward", ward.get().trim());
-				queryString.append("&ward=" + ward.get().trim());
-			}
-			if (district.isPresent() && district.get().length() > 0) {
-				sDistrict = district.get().trim();
-				model.put("district", district.get().trim());
-				queryString.append("&district=" + district.get().trim());
-			}
-			if (province.isPresent() && province.get().length() > 0) {
-				sProvince = province.get().trim();
-				model.put("province", province.get().trim());
-				queryString.append("&province=" + province.get().trim());
-			}
-			if (title.isPresent() && title.get().length() > 0) {
-				sTitle = title.get().trim();
-				model.put("title", title.get().trim());
-				queryString.append("&title=" + title.get().trim());
-			}
-
-			log.debug("Search function ============");
-			log.debug("sCode: {}", sCode);
-			log.debug("sAddress: {}", sAddress);
-			log.debug("sCreatedBy: {}", sCreatedBy);
-			log.debug("sContactPerson: {}", sContactPerson);
-			log.debug("Time: {} {}", from, to);
-			log.debug("sHouseNo {}", sHouseNo);
-			log.debug("sStreet {}", sStreet);
-			log.debug("sWard {}", sWard);
-			log.debug("sDistrict {}", sDistrict);
-			log.debug("sProvince {}", sProvince);
-			log.debug("============================");
-
-			sCode = sCode == null ? null : StringUtils.convertStringIgnoreUtf8(sCode).toUpperCase();
-			sAddress = sAddress == null ? null : StringUtils.convertStringIgnoreUtf8(sAddress).toLowerCase();
-			sCreatedBy = sCreatedBy == null ? null : StringUtils.convertStringIgnoreUtf8(sCreatedBy).toLowerCase();
-			sContactPerson = sContactPerson == null ? null
-					: StringUtils.convertStringIgnoreUtf8(sContactPerson).toLowerCase();
-			sHouseNo = sHouseNo == null ? null : StringUtils.convertStringIgnoreUtf8(sHouseNo).toLowerCase();
-			sStreet = sStreet == null ? null : StringUtils.convertStringIgnoreUtf8(sStreet).toLowerCase();
-			sWard = sWard == null ? null : StringUtils.convertStringIgnoreUtf8(sWard).toLowerCase();
-			sDistrict = sDistrict == null ? null : StringUtils.convertStringIgnoreUtf8(sDistrict).toLowerCase();
-			sTitle = sTitle == null ? null : StringUtils.convertStringIgnoreUtf8(sTitle).toLowerCase();
-
-			rs = advertisementService.search(sCode, sAddress, sCreatedBy, from, to, sContactPerson, sHouseNo, sStreet,
-					sWard, sDistrict, sTitle, sProvince, new PageRequest(page.intValue(),
-							(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.ASC, "addressSearching")));
-			model.put("queryString", queryString);
+			// Search
+			rs = advertisementService.search(code, address, createdBy, from, to, contactPerson, houseNo, street, ward,
+					district, title, province, page.intValue(), pageSize);
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
-			return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
+			return Constants.ADV_PAGE_REDIRECT + pageSize;
 		}
 
-		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(), roles,
-				userDetails.getUserId());
+		List<Advertisement> pageContent = advertisementService.setPermission(rs.getContent(),
+				AuthenticationUtils.getCurrentUserRoles(), AuthenticationUtils.getUserDetails().getUserId());
 		List<Advertisement> content = new ArrayList<>();
 		content.addAll(pageContent);
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-		content = content.stream().sorted(new Comparator<Advertisement>() {
-			private final WindowsExplorerComparator windowsExplorerComparator = new WindowsExplorerComparator();
+		content = advertisementService.sort(content);
 
-			@Override
-			public int compare(Advertisement adv1, Advertisement adv2) {
-				return windowsExplorerComparator.compare(adv1.getAddressSearching(), adv2.getAddressSearching());
-			}
-		}).collect(Collectors.toList());
-
-		model.addAttribute("pageContent", content);
+		// Build query string
+		model.put("queryString", advertisementService.getSearchQueryAndSetToModel(code, address, createdBy, daterange,
+				contactPerson, houseNo, street, ward, district, province, title, model));
+		model.addAttribute(Constants.MODEL_NAME.PAGE_CONTENT, content);
 		model.put("page", rs);
-		model.addAttribute("provinces",
+		model.addAttribute(Constants.MODEL_NAME.PROVINCES,
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
-		session.setAttribute("searchContent", request.getQueryString());
-		return "advs";
+		session.setAttribute(Constants.SESSION_NAME.SEARCH_CONTENT, request.getQueryString());
+		return PathContants.ADVERT_LIST;
 	}
 
 	/*
 	 * View
 	 */
-	@RequestMapping(value = { "/view" }, method = RequestMethod.GET)
+	@GetMapping("/view")
 	public String advs(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, HttpSession session,
 			ModelMap model) {
-		// Get user roles info
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		List<String> roles = new ArrayList<>();
-		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-
 		// Set page size
 		setPageSize(size, session);
-		session.setAttribute("currentPage", page);
-
-		session.setAttribute(pageIndex, "advs");
-		session.removeAttribute("searchContent");
+		session.setAttribute(Constants.SESSION_NAME.CURRENT_PAGE, page);
+		session.setAttribute(pageIndex, PathContants.ADVERT_LIST);
+		session.removeAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
 
 		model.addAttribute("advertWrapper", new AdvertisementWrapperDTO());
-		Page<Advertisement> result = advertisementService.findAll(new PageRequest(page,
-				(int) session.getAttribute("pageSize"), new Sort(Sort.Direction.DESC, "updatedDate")));
-		List<Advertisement> pageContent = advertisementService.setPermission(result.getContent(), roles,
-				userDetails.getUserId());
+		Page<Advertisement> result = advertisementService
+				.findAll(new PageRequest(page, (int) session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE),
+						new Sort(Sort.Direction.DESC, "updatedDate")));
 
-		model.addAttribute("pageContent", pageContent);
+		model.addAttribute(Constants.MODEL_NAME.PAGE_CONTENT, advertisementService.setPermission(result.getContent(),
+				AuthenticationUtils.getCurrentUserRoles(), AuthenticationUtils.getUserDetails().getUserId()));
 		model.addAttribute("page", result);
-		model.addAttribute("provinces",
+		model.addAttribute(Constants.MODEL_NAME.PROVINCES,
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
-		return "advs";
+		return PathContants.ADVERT_LIST;
 	}
 
 	/*
 	 * Get add new page
 	 */
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public String adv(HttpSession session, ModelMap model) {
-		session.setAttribute(pageIndex, "adv");
+		session.setAttribute(pageIndex, PathContants.ADVERT);
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
@@ -303,10 +192,10 @@ public class AdvController {
 		advDto.getAdvertisement().setWidthSize("m");
 		advDto.getAdvertisement().setHeightSize("m");
 
-		model.addAttribute("advertDto", advDto);
-		model.addAttribute("provinces",
+		model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advDto);
+		model.addAttribute(Constants.MODEL_NAME.PROVINCES,
 				StreamSupport.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
-		return "adv";
+		return PathContants.ADVERT;
 	}
 
 	private String generateCode(String provinceCode) {
@@ -319,29 +208,94 @@ public class AdvController {
 		}
 	}
 
-	/*
-	 * Add/Update
-	 */
-	@RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT }, consumes = { "multipart/form-data" })
-	public String adv(@Valid @ModelAttribute("advertDto") AdvertisementDTO advertDto, HttpSession session,
-			ModelMap model, BindingResult result) {
-		if (result.hasErrors()) {
-			log.debug("=====Errors:");
-			result.getFieldErrors().forEach(error -> {
-				log.debug(error.getField());
-			});
-			log.debug("===========");
-		}
-		log.debug("=================Advertisement====================");
-		log.debug(advertDto.getAdvertisement().toString());
-		// Get user roles info
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		List<String> roles = new ArrayList<>();
-		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
+	@PostMapping(value = "add", consumes = { "multipart/form-data" })
+	public String addAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
+			HttpSession session, ModelMap model, BindingResult result) {
+		session.setAttribute(pageIndex, PathContants.ADVERT);
 
-		session.setAttribute(pageIndex, "adv");
+		Advertisement advert = advertDto.getAdvertisement();
+		// Standardize and Fulfill data
+		advert.setId(null);
+		advert = advertisementService.fulfillStandardizeAdv(advert);
+
+		// Address conflict
+		List<Advertisement> addressConflict = advertisementService.checkAddressConflict(advertDto, null);
+		if (!addressConflict.isEmpty()) {
+			advertDto.setAdvertisement(advertisementService.setPermission(advertDto.getAdvertisement(),
+					AuthenticationUtils.getCurrentUserRoles(), AuthenticationUtils.getUserDetails().getUserId()));
+			model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
+			model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+					.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+
+			// Prepare error message (address conflict)
+			model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE, advertisementService.generateAddressConflictMessage(addressConflict, Enums.ACTION.ADD));
+			return PathContants.ADVERT;
+		}
+
+		advert.setCreatedDate(new Date());
+		advert.setCreatedBy(userRepository.findOne(AuthenticationUtils.getUserDetails().getUserId()));
+		advert.setCode(generateCode(advert.getProvinceCode()));
+		advert.setAdvImages(advertisementService.uploadAdvImage(advertDto));
+		advert.setUpdatedDate(new Date());
+		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
+		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
+
+		// Save
+		log.info("Saving an advert");
+		Advertisement advertisement = advertisementRepository.save(advert);
+
+		if (advertisement == null) {
+			advertDto.setAdvertisement(advertisementService.setPermission(advertDto.getAdvertisement(),
+					AuthenticationUtils.getCurrentUserRoles(), AuthenticationUtils.getUserDetails().getUserId()));
+			model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
+			model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+					.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+			model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE,
+					"There is an error occur, please contact IT department to support.");
+			return PathContants.ADVERT;
+		}
+		log.info("Save successful and redirect to view page");
+
+		String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
+				? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
+				: null;
+		log.debug("In search: {}", queryString);
+
+		if (queryString != null) {
+			return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
+		}
+		int page = session.getAttribute(Constants.SESSION_NAME.CURRENT_PAGE) != null
+				? (int) session.getAttribute("currentPage")
+				: 0;
+
+		return "redirect:/adv/view?page=" + page + "&size=" + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+	}
+
+	/*
+	 * Get update page
+	 */
+	@GetMapping("/{advId}")
+	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
+		session.setAttribute(pageIndex, PathContants.ADVERT_LIST);
+
+		Advertisement advertisement = advertisementService.setPermission(advertisementRepository.findOne(advId),
+				AuthenticationUtils.getCurrentUserRoles(), AuthenticationUtils.getUserDetails().getUserId());
+		if (advertisement != null) {
+			AdvertisementDTO advertDto = new AdvertisementDTO();
+			advertDto.setAdvertisement(advertisement);
+			model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
+			model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+					.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+			return PathContants.ADVERT;
+		} else {
+			return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+		}
+	}
+
+	@PostMapping(value = "update", consumes = { "multipart/form-data" })
+	public String updateAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
+			HttpSession session, ModelMap model, BindingResult result) {
+		session.setAttribute(pageIndex, PathContants.ADVERT);
 
 		// Update if it publish to billboardquangcao.com
 		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
@@ -357,196 +311,88 @@ public class AdvController {
 		Advertisement prevAdvertisement = null;
 		try {
 			prevAdvertisement = advertisementRepository.findOne(advert.getId());
+			if (Objects.nonNull(prevAdvertisement)) {
+				// Standardize and Fulfill data
+				advert = advertisementService.fulfillStandardizeAdv(advert);
+				List<Advertisement> addressConflict = advertisementService.checkAddressConflict(advertDto, prevAdvertisement);
+
+				if (!addressConflict.isEmpty()) {
+					advertDto.getAdvertisement().setAdvImages(prevAdvertisement.getAdvImages());
+					advertDto.setAdvertisement(advertDto.getAdvertisement());
+					advertDto.setAdvertisement(advertisementService.setPermission(advertDto.getAdvertisement(),
+							AuthenticationUtils.getCurrentUserRoles(),
+							AuthenticationUtils.getUserDetails().getUserId()));
+					model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
+					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+
+					// Prepare error message (address conflict)
+					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE, advertisementService.generateAddressConflictMessage(addressConflict, Enums.ACTION.UPDATE));
+					return PathContants.ADVERT;
+				}
+
+				// Normal cases
+				List<AdvImage> advImages = advertisementService.uploadAdvImage(advertDto);
+				// Delete previous files
+				List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
+				UUID prevAdvId = prevAdvertisement.getId();
+				oldAdvImages.forEach(image -> {
+					int duplicated = advImageRepository.countByIdAndAdvertisement_IdNot(image.getId(), prevAdvId);
+					log.debug("Image duplicated: {}", duplicated);
+					if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId()) && duplicated == 0) {
+						try {
+							FileUtils.forceDelete(new File(image.getUrl()));
+							advImageRepository.delete(image.getId());
+						} catch (IOException e) {
+							// Do nothing
+						}
+					} else {
+						advImages.add(image);
+					}
+				});
+
+				advert.setCreatedBy(prevAdvertisement.getCreatedBy());
+				// Update code if it change
+				if (!prevAdvertisement.getProvinceCode().equals(advert.getProvinceCode())) {
+					advert.setCode(generateCode(advert.getProvinceCode()));
+				}
+
+				advert.setAdvImages(advImages);
+				advert.setUpdatedDate(new Date());
+				advert.setOwnerContactPersonSearching(
+						StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
+				advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
+				log.info("Saving an advert");
+				Advertisement advertisement = advertisementRepository.save(advert);
+
+				if (advertisement == null) {
+					model.addAttribute(PathContants.ADVERT, advert);
+					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE,
+							"There is an error occur, please contact IT department to support.");
+					return PathContants.ADVERT;
+				}
+				log.info("Save successful and redirect to view page");
+
+				String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
+						? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
+						: null;
+				log.debug("In search: {}", queryString);
+				if (queryString != null) {
+					return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
+				}
+				int page = session.getAttribute(Constants.SESSION_NAME.CURRENT_PAGE) != null
+						? (int) session.getAttribute("currentPage")
+						: 0;
+
+				return "redirect:/adv/view?page=" + page + "&size="
+						+ session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+			}
 		} catch (Exception e) {
 			// Do nothing
 		}
-
-		// Set province
-		if (advert.getProvinceCode() != null && advert.getProvinceCode().length() > 0) {
-			advert.setProvince(provinceRepository.findOne(advert.getProvinceCode()).getName());
-		} else {
-			advert.setProvince("");
-		}
-
-		// Standardize
-		advert.setHouseNo(StringUtils.standardize(advert.getHouseNo()));
-		advert.setWard(StringUtils.standardize(advert.getWard()));
-		advert.setDistrict(StringUtils.standardize(advert.getDistrict()));
-		advert.setProvince(StringUtils.standardize(advert.getProvince()));
-		advert.setStreet(StringUtils.standardize(advert.getStreet()));
-		advert.setTitle(StringUtils.standardize(advert.getTitle().toUpperCase()));
-
-		// Validation address
-		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
-				+ advert.getDistrict() + ", " + advert.getProvince();
-
-		String fullExAddress = null;
-		if (prevAdvertisement != null) {
-			fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
-					+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
-					+ prevAdvertisement.getProvince();
-		}
-		List<Advertisement> advs = advertisementRepository
-				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
-						advert.getHouseNo(), advert.getStreet(), advert.getWard(), advert.getDistrict(),
-						advert.getProvince(), new PageRequest(0, 100))
-				.getContent();
-
-		// Ignore utf8 for searching
-		advert.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
-		advert.setHouseNoSearching(StringUtils.convertStringIgnoreUtf8(advert.getHouseNo()));
-		advert.setStreetSearching(StringUtils.convertStringIgnoreUtf8(advert.getStreet()));
-		advert.setWardSearching(StringUtils.convertStringIgnoreUtf8(advert.getWard()));
-		advert.setDistrictSearching(StringUtils.convertStringIgnoreUtf8(advert.getDistrict()));
-		advert.setProvinceSearching(StringUtils.convertStringIgnoreUtf8(advert.getProvince()));
-		advert.setTitleSearching(StringUtils.convertStringIgnoreUtf8(advert.getTitle()));
-
-		log.debug("Preparing to save adv ==============");
-		log.debug("Search address result: {}", advs.size());
-		log.debug("Full address: {}", fullAddress);
-		log.debug("Full ex address: {}", fullExAddress);
-		log.debug("====================================");
-
-		// Address conflict
-		if (!advs.isEmpty() && fullAddress.length() > 8
-				&& (fullExAddress == null || (fullExAddress != null && !fullExAddress.equalsIgnoreCase(fullAddress)))
-				&& !advertDto.isIgnoreError()) {
-			if (prevAdvertisement != null) {
-				advertDto.getAdvertisement().setAdvImages(prevAdvertisement.getAdvImages());
-				advertDto.setAdvertisement(advertDto.getAdvertisement());
-			}
-			model.addAttribute("advertDto", advertDto);
-			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
-					.collect(Collectors.toList()));
-
-			// Prepare error message (address conflict)
-			StringBuilder errorMsg = new StringBuilder("=============<br/>Địa chỉ vừa nhập đã được đặt:<br/>");
-			Advertisement adv = null;
-			for (int i = 0; i < advs.size(); i++) {
-				adv = advs.get(i);
-				errorMsg.append((i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle()
-						+ "</a><br/>");
-			}
-			if (prevAdvertisement == null) {
-				errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
-			} else {
-				errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");
-			}
-
-			model.addAttribute("errorMsg", errorMsg);
-			return "adv";
-		}
-
-		// Upload files
-		List<AdvImage> advImages = new ArrayList<>();
-		if (advertDto.getFiles() != null) {
-			log.info("Preparing to upload files");
-			// Upload
-			List<String> pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getFiles(), fileLimit, false);
-			for (String pathFile : pathFiles) {
-				String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
-				advImages.add(new AdvImage(name, pathFile, "Advertise_board", advert, false));
-			}
-			// Get map file
-			if (Objects.nonNull(advertDto.getMap()) && !advertDto.getMap().isEmpty()) {
-				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
-						fileLimit, true);
-				if (!fileNames.isEmpty()) {
-					String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1,
-							fileNames.get(0).length());
-					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board", advert, true));
-				}
-			}
-			log.info("Upload successful");
-		}
-
-		// For update
-		if (prevAdvertisement != null) {
-			// Delete previous files
-			List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
-			UUID prevAdvId = prevAdvertisement.getId();
-			oldAdvImages.forEach(image -> {
-				int duplicated = advImageRepository.countByIdAndAdvertisement_IdNot(image.getId(), prevAdvId);
-				log.debug("Image duplicated: {}", duplicated);
-				if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId()) && duplicated == 0) {
-					try {
-						FileUtils.forceDelete(new File(image.getUrl()));
-						advImageRepository.delete(image.getId());
-					} catch (IOException e) {
-						// Do nothing
-					}
-				} else {
-					advImages.add(image);
-				}
-			});
-			advert.setCreatedBy(prevAdvertisement.getCreatedBy());
-			// Update code if it change
-			if (!prevAdvertisement.getProvinceCode().equals(advert.getProvinceCode())) {
-				advert.setCode(generateCode(advert.getProvinceCode()));
-			}
-		} else {
-			advert.setCreatedDate(new Date());
-			advert.setCreatedBy(userRepository.findOne(userDetails.getUserId()));
-			advert.setCode(generateCode(advert.getProvinceCode()));
-		}
-
-		advert.setAdvImages(advImages);
-		advert.setUpdatedDate(new Date());
-		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
-		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
-
-		// Save
-		log.info("Saving an advert");
-		Advertisement advertisement = advertisementRepository.save(advert);
-
-		if (advertisement == null) {
-			model.addAttribute("adv", advert);
-			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
-					.collect(Collectors.toList()));
-			model.addAttribute("errorMsg", "There is an error occur, please contact IT department to support.");
-			return "adv";
-		}
-		log.info("Save successful and redirect to view page");
-
-		String queryString = session.getAttribute("searchContent") != null
-				? session.getAttribute("searchContent").toString()
-				: null;
-		log.debug("In search: {}", queryString);
-		if (queryString != null) {
-			return "redirect:/adv/search?" + session.getAttribute("searchContent");
-		}
-		int page = session.getAttribute("currentPage") != null ? (int) session.getAttribute("currentPage") : 0;
-
-		return "redirect:/adv/view?page=" + page + "&size=" + session.getAttribute("pageSize");
-	}
-
-	/*
-	 * Get update page
-	 */
-	@RequestMapping(value = "/{advId}", method = RequestMethod.GET)
-	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
-		// Get user roles info
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		List<String> roles = new ArrayList<>();
-		authorities.stream().forEach(auth -> roles.add(auth.getAuthority()));
-
-		log.debug("Getting {}'s info", advId);
-		session.setAttribute(pageIndex, "advs");
-
-		Advertisement advertisement = advertisementService.setPermission(advertisementRepository.findOne(advId), roles,
-				userDetails.getUserId());
-		if (advertisement != null) {
-			AdvertisementDTO advertDto = new AdvertisementDTO();
-			advertDto.setAdvertisement(advertisement);
-			model.addAttribute("advertDto", advertDto);
-			model.addAttribute("provinces", StreamSupport.stream(provinceRepository.findAll().spliterator(), false)
-					.collect(Collectors.toList()));
-			return "adv";
-		} else {
-			return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
-		}
+		return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
 	}
 
 	/*
@@ -554,35 +400,23 @@ public class AdvController {
 	 */
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session) {
-		String queryString = session.getAttribute("searchContent") != null
-				? session.getAttribute("searchContent").toString()
+		String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
+				? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
 				: null;
 		log.debug("Delete {}", advId);
 		advertisementRepository.delete(advId);
 		if (queryString != null) {
-			return "redirect:/adv/search?" + session.getAttribute("searchContent");
+			return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
 		}
-		return "redirect:/adv/view?page=0&size=" + session.getAttribute("pageSize");
+		return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
 	}
 
 	private void setPageSize(int pageSize, HttpSession session) {
-		if (session.getAttribute("pageSize") == null || pageSize <= 0 || pageSize > 10000 || pageSize == 10) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null || pageSize <= 0 || pageSize > 10000
+				|| pageSize == 10) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		} else {
-			session.setAttribute("pageSize", pageSize);
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, pageSize);
 		}
-	}
-
-	@GetMapping("updateTitle")
-	public String updateTitle() {
-		advertisementRepository.findAll().forEach(adv -> {
-			try {
-				adv.setTitle(adv.getTitle().substring(0, adv.getTitle().lastIndexOf(" - ")));
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			advertisementRepository.save(adv);
-		});
-		return "index";
 	}
 }

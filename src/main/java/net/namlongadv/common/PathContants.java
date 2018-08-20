@@ -3,8 +3,14 @@ package net.namlongadv.common;
 import java.io.File;
 
 public class PathContants {
-	public static String rootPath = System.getProperty("catalina.home");
-
-	public static final String UPLOAD_PATH = rootPath + File.separator + "temp";
+	private PathContants() {
+		// Prevent create this instance
+	}
+	
+	public static final String ROOT_PATH = System.getProperty("catalina.home");
+	public static final String UPLOAD_PATH = ROOT_PATH + File.separator + "temp";
+	
+	public static final String ADVERT = "adv";
+	public static final String ADVERT_LIST = "advs";
 	
 }

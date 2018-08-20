@@ -43,13 +43,18 @@
 textarea {
 	resize: none;
 }
+
+.custom-form-control {
+	display: inline-block !important;
+	width: 93% !important;
+}
 </style>
 
 <section class="content">
 	<div class="row">
 		<form:form modelAttribute="advertDto" id="formData"
-			action="${pageContext.request.contextPath }/adv?${_csrf.parameterName }=${_csrf.token}"
-			method="${advertDto.advertisement.id == null ? 'post' : 'put' }"
+			action="${pageContext.request.contextPath }/adv/${advertDto.advertisement.id == null ? 'add' : 'update' }?${_csrf.parameterName }=${_csrf.token}"
+			method="POST"
 			enctype="multipart/form-data">
 			<form:hidden path="advertisement.id" />
 			<form:hidden path="advertisement.publishedId" id="publishedId" />
@@ -59,12 +64,14 @@ textarea {
 			<div class="col-md-9">
 				<div class="box box-info">
 					<div class="box-header with-border">
-						<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : (advertDto.advertisement.allowEdit ? 'Cập Nhật Thông Tin Bảng Quảng Cáo' : 'Thông Tin Bảng Quảng Cáo') }</h3>
-						<c:if test="${errorMsg != null }">
-							<br/>
-							<br/>
-							<p class="error">${errorMsg }</p>
-						</c:if>
+						<div class="pull-left">
+							<h3 class="box-title">${advertDto.advertisement.id == null ? 'Tạo Mới Thông Tin Bảng Quảng Cáo' : (advertDto.advertisement.allowEdit ? 'Cập Nhật Thông Tin Bảng Quảng Cáo' : 'Thông Tin Bảng Quảng Cáo') }</h3>
+							<c:if test="${errorMsg != null }">
+								<br/>
+								<br/>
+								<p class="error">${errorMsg }</p>
+							</c:if>
+						</div>
 					</div>
 					<!-- /.box-header -->
 					<!-- form start -->
@@ -91,7 +98,8 @@ textarea {
 								<div class="col-md-9">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.title }">
 										<form:input type="text" path="advertisement.title"
-											class="form-control" id="title" placeholder="Nhập tiêu đề" />				
+											class="form-control custom-form-control" id="title" placeholder="Nhập tiêu đề" />
+										<button type="button" title="Lịch sử nhập liệu" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-logs">...</button>			
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.title }">
 										<input type="text" class="form-control" id="title" placeholder="#####" readonly />
@@ -139,7 +147,7 @@ textarea {
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="district" class="col-md-3 control-label">Quận ${ advertDto.advertisement.district }</label>
+								<label for="district" class="col-md-3 control-label">Quận</label>
 								<div class="col-md-9">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.district }">
 										<form:input cssClass="form-control"
@@ -276,7 +284,7 @@ textarea {
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện ${advertDto.advertisement.implForm }</label>
+								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
 								<div class="col-md-9">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.implForm || advertDto.advertisement.implForm eq 'in bạt hiflex 720 DPI'}">
 										<form:input path="advertisement.implForm" class="form-control"
@@ -608,7 +616,6 @@ textarea {
 								<b>Closest matching address:</b>
 								<div id="address"></div>
 							</div>
-<%-- 							<iframe id="mapFrame" src="${advertDto.advertisement.map }" width="100%" height="450" frameborder="0" style="border:0" allowfullscreen></iframe> --%>
 						</div>
 						<!-- /.box-body -->
 						<div class="box-footer">
@@ -757,6 +764,67 @@ textarea {
 	</div>
 	<!-- /.row -->
 </section>
+
+<div class="modal modal-default" id="modal-logs" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h4 class="modal-title">Lịch Sử Nhập Liệu</h4>
+			</div>
+			<div class="modal-body" style="text-align: left; padding: 10px;">
+		          <div class="box">
+		            <div class="box-header">
+		              <h3 class="box-title">Tên trường: Tiêu đề</h3>
+		            </div>
+		            <!-- /.box-header -->
+		            <div class="box-body table-responsive no-padding">
+		              <table class="table table-hover">
+		                <tbody><tr>
+		                  <th>ID</th>
+		                  <th>Tên Đăng Nhập</th>
+		                  <th>Ngày Cập Nhật</th>
+		                  <th>Nội Dung</th>
+		                </tr>
+		                <tr>
+		                  <td>183</td>
+		                  <td>John Doe</td>
+		                  <td>11-7-2014</td>
+		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+		                </tr>
+		                <tr>
+		                  <td>219</td>
+		                  <td>Alexander Pierce</td>
+		                  <td>11-6-2014</td>
+		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+		                </tr>
+		                <tr>
+		                  <td>657</td>
+		                  <td>Bob Doe</td>
+		                  <td>11-5-2014</td>
+		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+		                </tr>
+		                <tr>
+		                  <td>175</td>
+		                  <td>Mike Doe</td>
+		                  <td>11-4-2014</td>
+		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+		                </tr>
+		              </tbody>
+		              </table>
+		            </div>
+		            <!-- /.box-body -->
+		          </div>
+		          <!-- /.box -->
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
 
 <script>
 	$(document).ready(function() {
