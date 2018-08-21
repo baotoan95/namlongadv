@@ -126,8 +126,9 @@ public class AdvController {
 			// ============ End set date range
 
 			// Search
-			rs = advertisementService.search(code, address, createdBy, from, to, contactPerson, houseNo, street, ward,
-					district, title, province, page.intValue(), pageSize);
+			rs = advertisementService.search(code, address, createdBy, from, to, contactPerson, 
+					houseNo, street, ward,
+					district, province, title, page.intValue(), pageSize);
 			log.debug("Search result: " + rs.getContent().size());
 		} catch (ParseException e) {
 			return Constants.ADV_PAGE_REDIRECT + pageSize;
