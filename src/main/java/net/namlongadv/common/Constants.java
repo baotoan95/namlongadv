@@ -32,6 +32,7 @@ public class Constants {
 		public static final String PROVINCES = "provinces";
 		public static final String ADV_DTO = "advertDto";
 		public static final String ERROR_MESSAGE = "errorMsg";
+		public static final String HISTORY = "history";
 	}
 	
 	public static final class ACTION {

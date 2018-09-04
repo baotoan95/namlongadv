@@ -1,15 +1,11 @@
 package net.namlongadv.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -45,33 +40,32 @@ import net.namlongadv.common.Enums;
 import net.namlongadv.common.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
-import net.namlongadv.models.AdvImage;
 import net.namlongadv.models.Advertisement;
-import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.services.AdvChangeHistoryService;
 import net.namlongadv.services.AdvertisementService;
 import net.namlongadv.utils.AuthenticationUtils;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
 
 @Controller
-@Slf4j
 @RequestMapping(PathContants.ADVERT)
+@Slf4j
 public class AdvController {
 	@Value("${namlongadv.session.name.page-index}")
 	private String pageIndex;
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
-	private AdvImageRepository advImageRepository;
-	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private AdvertisementService advertisementService;
 	@Autowired
 	private ProvinceRepository provinceRepository;
+	@Autowired
+	private AdvChangeHistoryService changeHistoryService;
 
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
@@ -199,16 +193,6 @@ public class AdvController {
 		return PathContants.ADVERT;
 	}
 
-	private String generateCode(String provinceCode) {
-		String code = "";
-		while (true) {
-			code = provinceCode + "-" + StringUtils.randomCode();
-			if (advertisementRepository.findByCode(code) == null) {
-				return code;
-			}
-		}
-	}
-
 	@PostMapping(value = "add", consumes = { "multipart/form-data" })
 	public String addAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
 			HttpSession session, ModelMap model, BindingResult result) {
@@ -235,7 +219,7 @@ public class AdvController {
 
 		advert.setCreatedDate(new Date());
 		advert.setCreatedBy(userRepository.findOne(AuthenticationUtils.getUserDetails().getUserId()));
-		advert.setCode(generateCode(advert.getProvinceCode()));
+		advert.setCode(advertisementService.generateCode(advert.getProvinceCode()));
 		advert.setAdvImages(advertisementService.uploadAdvImage(advertDto));
 		advert.setUpdatedDate(new Date());
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
@@ -256,6 +240,9 @@ public class AdvController {
 			return PathContants.ADVERT;
 		}
 		log.info("Save successful and redirect to view page");
+		
+		// Initialize history
+		changeHistoryService.saveHistory(changeHistoryService.convertToAdvChangeHistory(advertisement));
 
 		String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
 				? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
@@ -287,6 +274,7 @@ public class AdvController {
 			model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
 			model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
 					.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+			model.addAttribute(Constants.MODEL_NAME.HISTORY, changeHistoryService.findByAdvId(advId));
 			return PathContants.ADVERT;
 		} else {
 			return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
@@ -295,105 +283,10 @@ public class AdvController {
 
 	@PostMapping(value = "update", consumes = { "multipart/form-data" })
 	public String updateAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
-			HttpSession session, ModelMap model, BindingResult result) {
+			HttpSession session, ModelMap model) {
 		session.setAttribute(pageIndex, PathContants.ADVERT);
 
-		// Update if it publish to billboardquangcao.com
-		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
-		if (advertDto.getAdvertisement().getPublishedId() != null
-				&& advertDto.getAdvertisement().getPublishedId() > 0) {
-			advertDto.getAdvertisement().setPublishedDate(new Date());
-		} else {
-			advertDto.getAdvertisement().setPublishedDate(null);
-		}
-
-		// Check existed
-		Advertisement advert = advertDto.getAdvertisement();
-		Advertisement prevAdvertisement = null;
-		try {
-			prevAdvertisement = advertisementRepository.findOne(advert.getId());
-			if (Objects.nonNull(prevAdvertisement)) {
-				// Standardize and Fulfill data
-				advert = advertisementService.fulfillStandardizeAdv(advert);
-				List<Advertisement> addressConflict = advertisementService.checkAddressConflict(advertDto, prevAdvertisement);
-
-				if (!addressConflict.isEmpty()) {
-					advertDto.getAdvertisement().setAdvImages(prevAdvertisement.getAdvImages());
-					advertDto.setAdvertisement(advertDto.getAdvertisement());
-					advertDto.setAdvertisement(advertisementService.setPermission(advertDto.getAdvertisement(),
-							AuthenticationUtils.getCurrentUserRoles(),
-							AuthenticationUtils.getUserDetails().getUserId()));
-					model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
-					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
-							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
-
-					// Prepare error message (address conflict)
-					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE, advertisementService.generateAddressConflictMessage(addressConflict, Enums.ACTION.UPDATE));
-					return PathContants.ADVERT;
-				}
-
-				// Normal cases
-				List<AdvImage> advImages = advertisementService.uploadAdvImage(advertDto);
-				// Delete previous files
-				List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
-				UUID prevAdvId = prevAdvertisement.getId();
-				oldAdvImages.forEach(image -> {
-					int duplicated = advImageRepository.countByIdAndAdvertisement_IdNot(image.getId(), prevAdvId);
-					log.debug("Image duplicated: {}", duplicated);
-					if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId()) && duplicated == 0) {
-						try {
-							FileUtils.forceDelete(new File(image.getUrl()));
-							advImageRepository.delete(image.getId());
-						} catch (IOException e) {
-							// Do nothing
-						}
-					} else {
-						advImages.add(image);
-					}
-				});
-
-				advert.setCreatedBy(prevAdvertisement.getCreatedBy());
-				// Update code if it change
-				if (!prevAdvertisement.getProvinceCode().equals(advert.getProvinceCode())) {
-					advert.setCode(generateCode(advert.getProvinceCode()));
-				}
-
-				advert.setAdvImages(advImages);
-				advert.setUpdatedDate(new Date());
-				advert.setOwnerContactPersonSearching(
-						StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
-				advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
-				log.info("Saving an advert");
-				Advertisement advertisement = advertisementRepository.save(advert);
-
-				if (advertisement == null) {
-					model.addAttribute(PathContants.ADVERT, advert);
-					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
-							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
-					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE,
-							"There is an error occur, please contact IT department to support.");
-					return PathContants.ADVERT;
-				}
-				log.info("Save successful and redirect to view page");
-
-				String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
-						? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
-						: null;
-				log.debug("In search: {}", queryString);
-				if (queryString != null) {
-					return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
-				}
-				int page = session.getAttribute(Constants.SESSION_NAME.CURRENT_PAGE) != null
-						? (int) session.getAttribute("currentPage")
-						: 0;
-
-				return "redirect:/adv/view?page=" + page + "&size="
-						+ session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
-			}
-		} catch (Exception e) {
-			// Do nothing
-		}
-		return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+		return advertisementService.update(advertDto, session, model);
 	}
 
 	/*
@@ -406,6 +299,7 @@ public class AdvController {
 				: null;
 		log.debug("Delete {}", advId);
 		advertisementRepository.delete(advId);
+		changeHistoryService.delete(advId);
 		if (queryString != null) {
 			return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
 		}
@@ -419,5 +313,18 @@ public class AdvController {
 		} else {
 			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, pageSize);
 		}
+	}
+	
+	@GetMapping("initHistory")
+	public void initHistory() {
+		advertisementService.initHistory();
+	}
+	
+	@GetMapping("updateNameProvince")
+	public void updateNameProvince() {
+		provinceRepository.findAll().forEach(province -> {
+			province.setName(province.getName().replace("Thành phố", "TP"));
+			provinceRepository.save(province);
+		});
 	}
 }

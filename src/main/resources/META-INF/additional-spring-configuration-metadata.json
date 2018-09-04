@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "namlongadv.session.name.page-index",
+    "type": "java.lang.String",
+    "description": "Session name for page index"
+  },
+  {
+    "name": "namlongadv.pagination.num-of-page",
+    "type": "java.lang.String",
+    "description": "Current page index"
+  },
+  {
+    "name": "namlongadv.file.limit",
+    "type": "java.lang.String",
+    "description": "File size limitted"
+  },
+  {
+    "name": "namlongadv.base_url",
+    "type": "java.lang.String",
+    "description": "Base URL"
+  }
+]}

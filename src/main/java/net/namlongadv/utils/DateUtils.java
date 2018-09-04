@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +49,8 @@ public class DateUtils {
 	}
 	
 	public static String convertDateToString(Date date, String pattern) {
+		if(Objects.nonNull(date)) return StringUtils.EMPTY;
+		
 		String dateString = "";
 		SimpleDateFormat sdfr = new SimpleDateFormat(pattern);
 		try {

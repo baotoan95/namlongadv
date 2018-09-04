@@ -6,13 +6,14 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import net.namlongadv.models.Advertisement;
 
-public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID> {
+public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID>, JpaSpecificationExecutor<Advertisement> {
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "
 			+ "upper(adv.addressSearching) like upper(concat('%',:address,'%'))")
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles, Pageable pageable);
@@ -58,7 +59,6 @@ public interface AdvertisementRepository extends PagingAndSortingRepository<Adve
 	@Query("select distinct adv from Advertisement adv inner join adv.createdBy.roles roles where roles.code in :roles")
 	public Page<Advertisement> findByRoles(@Param("roles") List<String> roles, Pageable pageable);
 	
-//	@Query("select adv from Advertisement adv where adv.code like concat('%',:code)")
 	public Advertisement findByCode(String code);
 	
 }

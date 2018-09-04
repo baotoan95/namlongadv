@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -53,4 +54,10 @@ public class User implements Serializable {
                     @JoinColumn(name = "role", nullable = false, updatable = false) })
     private List<UserRole> roles;
     private Date createdDate = new Date();
+    private Date updatedDate;
+    
+    @PreUpdate
+    public void onPreUpdate() {
+    	updatedDate = new Date();
+    }
 }

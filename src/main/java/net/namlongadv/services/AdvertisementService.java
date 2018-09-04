@@ -1,6 +1,7 @@
 package net.namlongadv.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +12,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,27 +33,43 @@ import org.springframework.ui.ModelMap;
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.common.Constants;
 import net.namlongadv.common.Enums;
+import net.namlongadv.common.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.models.AdvImage;
 import net.namlongadv.models.Advertisement;
+import net.namlongadv.models.User;
+import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.ProvinceRepository;
+import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.utils.AuthenticationUtils;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
 import net.namlongadv.utils.WindowsExplorerComparator;
 
 @Service
+@Transactional
 @Slf4j
 public class AdvertisementService {
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
 	private ProvinceRepository provinceRepository;
+	@Autowired
+	private AdvImageRepository advImageRepository;
+	@Autowired
+	private AdvChangeHistoryService advChangeHistoryService;
+	@Autowired
+	private UserRepository userRepository;
+
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
 	@Value("${namlongadv.base_url}")
 	private String baseUrl;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles,
 			Pageable pageable) {
@@ -277,7 +301,7 @@ public class AdvertisementService {
 		advert.setProvince(StringUtils.standardize(advert.getProvince()));
 		advert.setStreet(StringUtils.standardize(advert.getStreet()));
 		advert.setTitle(StringUtils.standardize(advert.getTitle().toUpperCase()));
-		
+
 		return addSearchingFields(advert);
 	}
 
@@ -289,7 +313,7 @@ public class AdvertisementService {
 		advert.setDistrictSearching(StringUtils.convertStringIgnoreUtf8(advert.getDistrict()));
 		advert.setProvinceSearching(StringUtils.convertStringIgnoreUtf8(advert.getProvince()));
 		advert.setTitleSearching(StringUtils.convertStringIgnoreUtf8(advert.getTitle()));
-		
+
 		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
 				+ advert.getDistrict() + ", " + advert.getProvince();
 		advert.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
@@ -326,16 +350,16 @@ public class AdvertisementService {
 
 	public List<Advertisement> checkAddressConflict(AdvertisementDTO advertDto, Advertisement prevAdvertisement) {
 		Advertisement advert = advertDto.getAdvertisement();
-		
+
 		String fullAddress = advert.getHouseNo() + ", " + advert.getStreet() + ", " + advert.getWard() + ", "
 				+ advert.getDistrict() + ", " + advert.getProvince();
 		String fullExAddress = null;
-		if(Objects.nonNull(prevAdvertisement)) {
+		if (Objects.nonNull(prevAdvertisement)) {
 			fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
 					+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
 					+ prevAdvertisement.getProvince();
 		}
-		
+
 		List<Advertisement> advs = advertisementRepository
 				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
 						advert.getHouseNo(), advert.getStreet(), advert.getWard(), advert.getDistrict(),
@@ -349,23 +373,144 @@ public class AdvertisementService {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	public String generateAddressConflictMessage(List<Advertisement> conflictItems, Enums.ACTION action) {
 		// Prepare error message (address conflict)
 		StringBuilder errorMsg = new StringBuilder("=============<br/>Địa chỉ vừa nhập đã được đặt:<br/>");
 		Advertisement adv = null;
 		for (int i = 0; i < conflictItems.size(); i++) {
 			adv = conflictItems.get(i);
-			errorMsg.append((i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>"
-					+ adv.getTitle() + "</a><br/>");
+			errorMsg.append(
+					(i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle() + "</a><br/>");
 		}
 
-		if(action == Enums.ACTION.ADD) {
+		if (action == Enums.ACTION.ADD) {
 			errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
 		} else {
-			errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");			
+			errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");
 		}
-		
+
 		return errorMsg.toString();
+	}
+
+	public String update(AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
+		// Update if it publish to billboardquangcao.com
+		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
+		if (advertDto.getAdvertisement().getPublishedId() != null
+				&& advertDto.getAdvertisement().getPublishedId() > 0) {
+			advertDto.getAdvertisement().setPublishedDate(new Date());
+		} else {
+			advertDto.getAdvertisement().setPublishedDate(null);
+		}
+
+		// Check existed
+		Advertisement advert = advertDto.getAdvertisement();
+		final Advertisement prevAdvertisement = advertisementRepository.findOne(advert.getId());
+		try {
+			if (Objects.nonNull(prevAdvertisement)) {
+				// Standardize and Fulfill data
+				advert = fulfillStandardizeAdv(advert);
+				List<Advertisement> addressConflict = checkAddressConflict(advertDto, prevAdvertisement);
+
+				if (!addressConflict.isEmpty()) {
+					advertDto.getAdvertisement().setAdvImages(prevAdvertisement.getAdvImages());
+					advertDto.setAdvertisement(advertDto.getAdvertisement());
+					advertDto.setAdvertisement(
+							setPermission(advertDto.getAdvertisement(), AuthenticationUtils.getCurrentUserRoles(),
+									AuthenticationUtils.getUserDetails().getUserId()));
+					model.addAttribute(Constants.MODEL_NAME.ADV_DTO, advertDto);
+					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+
+					// Prepare error message (address conflict)
+					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE,
+							generateAddressConflictMessage(addressConflict, Enums.ACTION.UPDATE));
+					return PathContants.ADVERT;
+				}
+
+				// Normal cases
+				List<AdvImage> advImages = uploadAdvImage(advertDto);
+				// Delete previous files
+				List<AdvImage> oldAdvImages = advImageRepository.findByAdvertisement_Id(prevAdvertisement.getId());
+				UUID prevAdvId = prevAdvertisement.getId();
+				oldAdvImages.forEach(image -> {
+					int duplicated = advImageRepository.countByIdAndAdvertisement_IdNot(image.getId(), prevAdvId);
+					log.debug("Image duplicated: {}", duplicated);
+					if (!Arrays.asList(advertDto.getPrevImages()).contains(image.getId()) && duplicated == 0) {
+						try {
+							FileUtils.forceDelete(new File(image.getUrl()));
+							advImageRepository.delete(image.getId());
+						} catch (IOException e) {
+							// Do nothing
+						}
+					} else {
+						advImages.add(image);
+					}
+				});
+
+				advert.setCreatedBy(prevAdvertisement.getCreatedBy());
+				// Update code if it change
+				if (!prevAdvertisement.getProvinceCode().equals(advert.getProvinceCode())) {
+					advert.setCode(generateCode(advert.getProvinceCode()));
+				}
+
+				advert.setAdvImages(advImages);
+				advert.setUpdatedDate(new Date());
+				advert.setOwnerContactPersonSearching(
+						StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
+				advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
+
+				// Saving change history
+				User updatedBy = userRepository.findByUsername(AuthenticationUtils.getUserDetails().getUsername());
+				advChangeHistoryService.saveHistory(
+						advChangeHistoryService.createIfDefferent(prevAdvertisement, advert, updatedBy, false));
+
+				log.info("Saving an advert");
+				Advertisement advertisement = advertisementRepository.save(advert);
+
+				if (advertisement == null) {
+					model.addAttribute(PathContants.ADVERT, advert);
+					model.addAttribute(Constants.MODEL_NAME.PROVINCES, StreamSupport
+							.stream(provinceRepository.findAll().spliterator(), false).collect(Collectors.toList()));
+					model.addAttribute(Constants.MODEL_NAME.ERROR_MESSAGE,
+							"There is an error occur, please contact IT department to support.");
+					return PathContants.ADVERT;
+				}
+				log.info("Save successful and redirect to view page");
+
+				String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
+						? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
+						: null;
+				log.debug("In search: {}", queryString);
+				if (queryString != null) {
+					return Constants.ADV_SEARCH_REDIRECT + session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT);
+				}
+				int page = session.getAttribute(Constants.SESSION_NAME.CURRENT_PAGE) != null
+						? (int) session.getAttribute("currentPage")
+						: 0;
+
+				return "redirect:/adv/view?page=" + page + "&size="
+						+ session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+			}
+		} catch (Exception e) {
+			log.error(e.toString());
+		}
+		return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
+	}
+
+	public String generateCode(String provinceCode) {
+		String code = "";
+		while (true) {
+			code = provinceCode + "-" + StringUtils.randomCode();
+			if (advertisementRepository.findByCode(code) == null) {
+				return code;
+			}
+		}
+	}
+
+	public void initHistory() {
+		advertisementRepository.findAll().forEach(adv -> {
+			advChangeHistoryService.saveHistory(advChangeHistoryService.convertToAdvChangeHistory(adv));
+		});
 	}
 }

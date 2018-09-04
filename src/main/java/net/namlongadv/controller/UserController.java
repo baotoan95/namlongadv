@@ -13,6 +13,7 @@ import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.common.Constants;
 import net.namlongadv.models.User;
 import net.namlongadv.models.UserRole;
 import net.namlongadv.repositories.RoleRepository;
@@ -45,8 +47,8 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String user(ModelMap model, HttpSession session) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		}
 		
 		log.debug("Getting add user page");
@@ -69,8 +71,8 @@ public class UserController {
 			model.addAttribute("roles", roleRepository.findAll());
 			return "user";
 		}
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		}
 		
 		model.addAttribute("roles", roleRepository.findAll());
@@ -129,8 +131,8 @@ public class UserController {
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public String user(@PathVariable("userId") UUID userId, ModelMap model, HttpSession session) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		}
 		log.debug("Getting " + userId + "'s info");
 		User user = userRepository.findOne(userId);
@@ -145,8 +147,8 @@ public class UserController {
 
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.GET)
 	public String user(@PathVariable("userId") UUID userId, HttpSession session) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		}
 		userRepository.delete(userId);
 		return "redirect:/user/view?page=0&size=10";
@@ -156,12 +158,12 @@ public class UserController {
 	public String users(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
 			@RequestParam(value = "size", required = false, defaultValue = "10") Integer size, ModelMap model,
 			HttpSession session) {
-		if (session.getAttribute("pageSize") == null) {
-			session.setAttribute("pageSize", 10);
+		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
+			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
 		}
 		log.debug("Getting users page");
 		session.setAttribute(pageIndex, "users");
-		model.addAttribute("page", userRepository.findAll(new PageRequest(page, size)));
+		model.addAttribute("page", userRepository.findAll(new PageRequest(page, size, Direction.ASC, "updatedDate")));
 		return "users";
 	}
 }

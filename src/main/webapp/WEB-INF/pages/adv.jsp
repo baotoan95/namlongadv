@@ -1,3 +1,4 @@
+<%@page import="net.namlongadv.models.AdvChangeHistory"%>
 <%@page import="net.namlongadv.models.AdvImage"%>
 <%@page import="java.util.List"%>
 <%@page import="net.namlongadv.models.Advertisement"%>
@@ -44,11 +45,15 @@ textarea {
 	resize: none;
 }
 
-.custom-form-control {
-	display: inline-block !important;
-	width: 93% !important;
+.tbl-row {
+	border-top: 2px solid;
 }
 </style>
+
+<%
+	@SuppressWarnings("unchecked")
+	List<AdvChangeHistory> history = (List<AdvChangeHistory>) request.getAttribute("history"); 
+%>
 
 <section class="content">
 	<div class="row">
@@ -72,6 +77,11 @@ textarea {
 								<p class="error">${errorMsg }</p>
 							</c:if>
 						</div>
+						<c:if test="${history.size() > 0 }">
+						<div class="pull-right">
+							<button type="button" title="Lịch sử nhập liệu" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-logs">...</button>
+						</div>
+						</c:if>
 					</div>
 					<!-- /.box-header -->
 					<!-- form start -->
@@ -99,7 +109,6 @@ textarea {
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.title }">
 										<form:input type="text" path="advertisement.title"
 											class="form-control custom-form-control" id="title" placeholder="Nhập tiêu đề" />
-										<button type="button" title="Lịch sử nhập liệu" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-logs">...</button>			
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.title }">
 										<input type="text" class="form-control" id="title" placeholder="#####" readonly />
@@ -766,7 +775,7 @@ textarea {
 </section>
 
 <div class="modal modal-default" id="modal-logs" style="display: none;">
-	<div class="modal-dialog">
+	<div class="modal-dialog" style="width: 95% !important; height: 100% !important;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
@@ -777,43 +786,143 @@ textarea {
 			</div>
 			<div class="modal-body" style="text-align: left; padding: 10px;">
 		          <div class="box">
-		            <div class="box-header">
-		              <h3 class="box-title">Tên trường: Tiêu đề</h3>
-		            </div>
 		            <!-- /.box-header -->
 		            <div class="box-body table-responsive no-padding">
-		              <table class="table table-hover">
-		                <tbody><tr>
-		                  <th>ID</th>
-		                  <th>Tên Đăng Nhập</th>
-		                  <th>Ngày Cập Nhật</th>
-		                  <th>Nội Dung</th>
-		                </tr>
-		                <tr>
-		                  <td>183</td>
-		                  <td>John Doe</td>
-		                  <td>11-7-2014</td>
-		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-		                </tr>
-		                <tr>
-		                  <td>219</td>
-		                  <td>Alexander Pierce</td>
-		                  <td>11-6-2014</td>
-		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-		                </tr>
-		                <tr>
-		                  <td>657</td>
-		                  <td>Bob Doe</td>
-		                  <td>11-5-2014</td>
-		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-		                </tr>
-		                <tr>
-		                  <td>175</td>
-		                  <td>Mike Doe</td>
-		                  <td>11-4-2014</td>
-		                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-		                </tr>
-		              </tbody>
+		              <table class="table" style="border: 1px solid">
+		              	<thead>
+		              		<tr>
+			                	<th>Ngày Cập Nhật</th>
+			                	<th>Thông Tin Cũ</th>
+			                	<th>Thông Tin Mới</th>
+			                	<th>Người Sửa</th>
+			                	<th>Người Tạo</th>
+			                </tr>
+		              	</thead>
+		                <tbody>
+		                	<% for(int i = 0; i < history.size() - 1; i += 2) {
+		                		AdvChangeHistory preHistory = history.get(i);
+		                		AdvChangeHistory currHistory = history.get(i + 1);
+		                		
+		                	%>
+		                	<fmt:formatDate value="<%= currHistory.getUpdatedDate() %>" type="date" pattern="HH:mm:ss dd/MM/yyyy" var="updatedDate"/>
+
+			                <tr class="tbl-row">
+			                	<td rowspan="24" style="border: 1px solid">${updatedDate }</td>
+				                <td>Địa chỉ: 
+				                <%= 
+				                	preHistory.getHouseNo() + ", " +
+				                	preHistory.getStreet() + ", " +
+				                	preHistory.getWard() + ", " +
+				                	preHistory.getDistrict() + ", " +
+				                	preHistory.getProvince()
+				                %>
+				                </td>
+				                <td>Địa chỉ: 
+				                <%=
+				                	currHistory.getHouseNo() + ", " +
+				                	currHistory.getStreet() + ", " +
+				                	currHistory.getWard() + ", " +
+				                	currHistory.getDistrict() + ", " +
+				                	currHistory.getProvince()
+				                %>
+				                </td>
+				                <td rowspan="24" style="border: 1px solid"><%= preHistory.getUpdatedBy().getName() %></td>
+				                <td rowspan="24" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Toạ độ: <%= preHistory.getMap() %></td>
+			                	<td>Toạ độ: <%= currHistory.getMap() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Tiêu đề: <%= preHistory.getTitle() %></td>
+			                	<td>Tiêu đề: <%= currHistory.getTitle() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Chiều rộng: <%= preHistory.getWidthSize() %></td>
+			                	<td>Chiều rộng: <%= currHistory.getWidthSize() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Chiều cao: <%= preHistory.getHeightSize() %></td>
+			                	<td>Chiều cao: <%= currHistory.getHeightSize() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Số lượng: <%= preHistory.getAmount() %></td>
+			                	<td>Số lượng: <%= currHistory.getAmount() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Lưu lượng: <%= preHistory.getFlow() %></td>
+			                	<td>Lưu lượng: <%= currHistory.getFlow() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Thời gian thực hiện: <%= preHistory.getImplTime() %></td>
+			                	<td>Thời gian thực hiện: <%= currHistory.getImplTime() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Hình thực thực hiện: <%= preHistory.getImplForm() %></td>
+			                	<td>Hình thức thực hiện: <%= currHistory.getImplForm() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Hệ thống chiếu sáng: <%= preHistory.getLightSystem() %></td>
+			                	<td>Hệ thống chiếu sáng: <%= currHistory.getLightSystem() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Loại: <%= preHistory.getType() %></td>
+			                	<td>Loại: <%= currHistory.getType() %></td>
+			                </tr>
+			                <tr>
+			                	<td>SDT (chủ nhà): <%= preHistory.getOwnerPhone() %></td>
+			                	<td>SDT (chủ nhà): <%= currHistory.getOwnerPhone() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Email (chủ nhà): <%= preHistory.getOwnerEmail() %></td>
+			                	<td>Email (chủ nhà): <%= currHistory.getOwnerEmail() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Giá (chủ nhà): <%= preHistory.getOwnerPrice() %></td>
+			                	<td>Giá (chủ nhà): <%= currHistory.getOwnerPrice() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Người liên hệ (chủ nhà): <%= preHistory.getOwnerContactPerson() %></td>
+			                	<td>Người liên hệ (chủ nhà): <%= currHistory.getOwnerContactPerson() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Ngày bắt đầu (chủ nhà): <%= preHistory.getOwnerStartDate() %></td>
+			                	<td>Ngày bắt đầu (chủ nhà): <%= currHistory.getOwnerStartDate() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Ngày kết thúc (chủ nhà): <%= preHistory.getOwnerEndDate() %></td>
+			                	<td>Ngày kết thúc (chủ nhà): <%= currHistory.getOwnerEndDate() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Tên công ty: <%= preHistory.getAdvCompName() %></td>
+			                	<td>Tên công ty: <%= currHistory.getAdvCompName() %></td>
+			                </tr>
+			                <tr>
+			                	<td>SDT (công ty): <%= preHistory.getAdvCompPhone() %></td>
+			                	<td>SDT (công ty): <%= currHistory.getAdvCompPhone() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Email (công ty): <%= preHistory.getAdvCompEmail() %></td>
+			                	<td>Email (công ty): <%= currHistory.getAdvCompEmail() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Giá (công ty): <%= preHistory.getAdvCompPrice() %></td>
+			                	<td>Giá (công ty): <%= currHistory.getAdvCompPrice() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Người liên hệ (công ty): <%= preHistory.getAdvCompContactPerson() %></td>
+			                	<td>Người liên hệ (công ty): <%= currHistory.getAdvCompContactPerson() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Ngày bắt đầu (công ty): <%= preHistory.getAdvCompStartDate() %></td>
+			                	<td>Ngày bắt đầu (công ty): <%= currHistory.getAdvCompStartDate() %></td>
+			                </tr>
+			                <tr>
+			                	<td>Ngày kết thúc (công ty): <%= preHistory.getAdvCompEndDate() %></td>
+			                	<td>Ngày kết thúc (công ty): <%= currHistory.getAdvCompEndDate() %></td>
+			                </tr>
+			                <% } %>
+		              	</tbody>
 		              </table>
 		            </div>
 		            <!-- /.box-body -->

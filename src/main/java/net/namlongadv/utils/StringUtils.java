@@ -8,6 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class StringUtils {
+	private StringUtils() {
+		
+	}
+	
+	public static final String EMPTY = "";
+	
 	public static String standardize(String str) {
         str = str.trim();
         str = str.replaceAll("\\s+", " ");
