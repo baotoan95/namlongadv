@@ -395,7 +395,6 @@ public class AdvertisementService {
 
 	public String update(AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
 		// Update if it publish to billboardquangcao.com
-		log.debug("PublishedId: {}", advertDto.getAdvertisement().getPublishedId());
 		if (advertDto.getAdvertisement().getPublishedId() != null
 				&& advertDto.getAdvertisement().getPublishedId() > 0) {
 			advertDto.getAdvertisement().setPublishedDate(new Date());
@@ -407,6 +406,7 @@ public class AdvertisementService {
 		Advertisement advert = advertDto.getAdvertisement();
 		final Advertisement prevAdvertisement = advertisementRepository.findOne(advert.getId());
 		try {
+			log.debug("Updating adv with id: {}", advertDto.getAdvertisement().getId());
 			if (Objects.nonNull(prevAdvertisement)) {
 				// Standardize and Fulfill data
 				advert = fulfillStandardizeAdv(advert);
@@ -493,7 +493,7 @@ public class AdvertisementService {
 						+ session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
 			}
 		} catch (Exception e) {
-			log.error(e.toString());
+			log.error("{}", e);
 		}
 		return Constants.ADV_PAGE_REDIRECT + session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE);
 	}

@@ -36,4 +36,12 @@ public class StringUtils {
 		}
 		return "";
 	}
+	
+	public static boolean equals(String str1, String str2) {
+		return str1 == str2 || (str1 != null && str2 != null && str1.equals(str2));
+	}
+	
+	public static boolean isEmptyOrNull(String str) {
+		return str == null || str.trim().equals("");
+	}
 }

@@ -1,3 +1,4 @@
+<%@page import="net.namlongadv.utils.StringUtils"%>
 <%@page import="net.namlongadv.models.AdvChangeHistory"%>
 <%@page import="net.namlongadv.models.AdvImage"%>
 <%@page import="java.util.List"%>
@@ -78,9 +79,11 @@ textarea {
 							</c:if>
 						</div>
 						<c:if test="${history.size() > 0 }">
+						<security:authorize access="hasAnyRole('ROLE_ADMIN')">
 						<div class="pull-right">
 							<button type="button" title="Lịch sử nhập liệu" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-logs">...</button>
 						</div>
+						</security:authorize>
 						</c:if>
 					</div>
 					<!-- /.box-header -->
@@ -804,10 +807,11 @@ textarea {
 		                		AdvChangeHistory currHistory = history.get(i + 1);
 		                		
 		                	%>
+		                	<%! %>
 		                	<fmt:formatDate value="<%= currHistory.getUpdatedDate() %>" type="date" pattern="HH:mm:ss dd/MM/yyyy" var="updatedDate"/>
 
 			                <tr class="tbl-row">
-			                	<td rowspan="24" style="border: 1px solid">${updatedDate }</td>
+			                	<td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid">${updatedDate }</td>
 				                <td>Địa chỉ: 
 				                <%= 
 				                	preHistory.getHouseNo() + ", " +
@@ -826,101 +830,218 @@ textarea {
 				                	currHistory.getProvince()
 				                %>
 				                </td>
-				                <td rowspan="24" style="border: 1px solid"><%= preHistory.getUpdatedBy().getName() %></td>
-				                <td rowspan="24" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
+				                
+				                <td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
+				                <td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
 			                </tr>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getMap()) || !StringUtils.isEmptyOrNull(currHistory.getMap())) {%>
 			                <tr>
 			                	<td>Toạ độ: <%= preHistory.getMap() %></td>
 			                	<td>Toạ độ: <%= currHistory.getMap() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getTitle()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getTitle())) {%>
 			                <tr>
 			                	<td>Tiêu đề: <%= preHistory.getTitle() %></td>
 			                	<td>Tiêu đề: <%= currHistory.getTitle() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getWidthSize()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getWidthSize())) {%>
 			                <tr>
 			                	<td>Chiều rộng: <%= preHistory.getWidthSize() %></td>
 			                	<td>Chiều rộng: <%= currHistory.getWidthSize() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getHeightSize()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getHeightSize())) {%>
 			                <tr>
 			                	<td>Chiều cao: <%= preHistory.getHeightSize() %></td>
 			                	<td>Chiều cao: <%= currHistory.getHeightSize() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAmount()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAmount())) {%>
 			                <tr>
 			                	<td>Số lượng: <%= preHistory.getAmount() %></td>
 			                	<td>Số lượng: <%= currHistory.getAmount() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getFlow()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getFlow())) {%>
 			                <tr>
 			                	<td>Lưu lượng: <%= preHistory.getFlow() %></td>
 			                	<td>Lưu lượng: <%= currHistory.getFlow() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getImplTime()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getImplTime())) {%>
 			                <tr>
 			                	<td>Thời gian thực hiện: <%= preHistory.getImplTime() %></td>
 			                	<td>Thời gian thực hiện: <%= currHistory.getImplTime() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getImplForm()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getImplForm())) {%>
 			                <tr>
 			                	<td>Hình thực thực hiện: <%= preHistory.getImplForm() %></td>
 			                	<td>Hình thức thực hiện: <%= currHistory.getImplForm() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getLightSystem()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getLightSystem())) {%>
 			                <tr>
 			                	<td>Hệ thống chiếu sáng: <%= preHistory.getLightSystem() %></td>
 			                	<td>Hệ thống chiếu sáng: <%= currHistory.getLightSystem() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getType()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getType())) {%>
 			                <tr>
 			                	<td>Loại: <%= preHistory.getType() %></td>
 			                	<td>Loại: <%= currHistory.getType() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getDescribe()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getDescribe())) {%>
+			                <tr>
+			                	<td>Mô tả: <%= preHistory.getDescribe() %></td>
+			                	<td>Mô tả: <%= currHistory.getDescribe() %></td>
+			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerPhone()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerPhone())) {%>
 			                <tr>
 			                	<td>SDT (chủ nhà): <%= preHistory.getOwnerPhone() %></td>
 			                	<td>SDT (chủ nhà): <%= currHistory.getOwnerPhone() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerEmail()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerEmail())) {%>
 			                <tr>
 			                	<td>Email (chủ nhà): <%= preHistory.getOwnerEmail() %></td>
 			                	<td>Email (chủ nhà): <%= currHistory.getOwnerEmail() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerPrice()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerPrice())) {%>
 			                <tr>
 			                	<td>Giá (chủ nhà): <%= preHistory.getOwnerPrice() %></td>
 			                	<td>Giá (chủ nhà): <%= currHistory.getOwnerPrice() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerContactPerson()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerContactPerson())) {%>
 			                <tr>
 			                	<td>Người liên hệ (chủ nhà): <%= preHistory.getOwnerContactPerson() %></td>
 			                	<td>Người liên hệ (chủ nhà): <%= currHistory.getOwnerContactPerson() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerStartDate()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerStartDate())) {%>
 			                <tr>
 			                	<td>Ngày bắt đầu (chủ nhà): <%= preHistory.getOwnerStartDate() %></td>
 			                	<td>Ngày bắt đầu (chủ nhà): <%= currHistory.getOwnerStartDate() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerEndDate()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerEndDate())) {%>
 			                <tr>
 			                	<td>Ngày kết thúc (chủ nhà): <%= preHistory.getOwnerEndDate() %></td>
 			                	<td>Ngày kết thúc (chủ nhà): <%= currHistory.getOwnerEndDate() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getOwnerNote()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getOwnerNote())) {%>
 			                <tr>
-			                	<td>Tên công ty: <%= preHistory.getAdvCompName() %></td>
-			                	<td>Tên công ty: <%= currHistory.getAdvCompName() %></td>
+			                	<td>Ghi chú (chủ nhà): <%= preHistory.getOwnerNote() %></td>
+			                	<td>Ghi chú (chủ nhà): <%= currHistory.getOwnerNote() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getWidthSize()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getWidthSize())) {%>
+			                <tr>
+			                	<td>Tên công ty: <%= preHistory.getWidthSize() %></td>
+			                	<td>Tên công ty: <%= currHistory.getWidthSize() %></td>
+			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompPhone()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompPhone())) {%>
 			                <tr>
 			                	<td>SDT (công ty): <%= preHistory.getAdvCompPhone() %></td>
 			                	<td>SDT (công ty): <%= currHistory.getAdvCompPhone() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompEmail()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompEmail())) {%>
 			                <tr>
 			                	<td>Email (công ty): <%= preHistory.getAdvCompEmail() %></td>
 			                	<td>Email (công ty): <%= currHistory.getAdvCompEmail() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompPrice()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompPrice())) {%>
 			                <tr>
 			                	<td>Giá (công ty): <%= preHistory.getAdvCompPrice() %></td>
 			                	<td>Giá (công ty): <%= currHistory.getAdvCompPrice() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompContactPerson()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompContactPerson())) {%>
 			                <tr>
 			                	<td>Người liên hệ (công ty): <%= preHistory.getAdvCompContactPerson() %></td>
 			                	<td>Người liên hệ (công ty): <%= currHistory.getAdvCompContactPerson() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompStartDate()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompStartDate())) {%>
 			                <tr>
 			                	<td>Ngày bắt đầu (công ty): <%= preHistory.getAdvCompStartDate() %></td>
 			                	<td>Ngày bắt đầu (công ty): <%= currHistory.getAdvCompStartDate() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompEndDate()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompEndDate())) {%>
 			                <tr>
 			                	<td>Ngày kết thúc (công ty): <%= preHistory.getAdvCompEndDate() %></td>
 			                	<td>Ngày kết thúc (công ty): <%= currHistory.getAdvCompEndDate() %></td>
 			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompNote()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompNote())) {%>
+			                <tr>
+			                	<td>Ghi chú (công ty): <%= preHistory.getAdvCompNote() %></td>
+			                	<td>Ghi chú (công ty): <%= currHistory.getAdvCompNote() %></td>
+			                </tr>
+			                <%} %>
+			                
 			                <% } %>
 		              	</tbody>
 		              </table>

@@ -15,6 +15,7 @@ import net.namlongadv.models.Advertisement;
 import net.namlongadv.models.User;
 import net.namlongadv.repositories.AdvChangeHistoryRepository;
 import net.namlongadv.utils.DateUtils;
+import net.namlongadv.utils.StringUtils;
 
 @Service
 @Slf4j
@@ -57,544 +58,586 @@ public class AdvChangeHistoryService {
 	}
 	
 	public AdvChangeHistory decorateDifferent(AdvChangeHistory preChange, AdvChangeHistory currChange) {
+		int numOfChanges = 1;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
-		if (!preChange.getCode().equals(currChange.getCode())) {
-			advChangeHistory.setCode(decorateDefferentField(currChange.getCode(), true));
-		} else {
-			advChangeHistory.setCode(currChange.getCode());
-		}
-		
-		if (!preChange.getTitle().equals(currChange.getTitle())) {
-			advChangeHistory.setTitle(decorateDefferentField(currChange.getTitle(), true));
-		} else {
-			advChangeHistory.setTitle(currChange.getTitle());
-		}
-
-		if (!preChange.getStreet().equals(currChange.getStreet())) {
+		if (!StringUtils.equals(preChange.getStreet(), currChange.getStreet())) {
 			advChangeHistory.setStreet(decorateDefferentField(currChange.getStreet(), true));
+			numOfChanges = 1;
 		} else {
 			advChangeHistory.setStreet(currChange.getStreet());
 		}
 
-		if (!preChange.getHouseNo().equals(currChange.getHouseNo())) {
+		if (!StringUtils.equals(preChange.getHouseNo(), currChange.getHouseNo())) {
 			advChangeHistory.setHouseNo(decorateDefferentField(currChange.getHouseNo(), true));
+			numOfChanges = 1;
 		} else {
 			advChangeHistory.setHouseNo(currChange.getHouseNo());
 		}
 
-		if (!preChange.getWard().equals(currChange.getWard())) {
+		if (!StringUtils.equals(preChange.getWard(), currChange.getWard())) {
 			advChangeHistory.setWard(decorateDefferentField(currChange.getWard(), true));
+			numOfChanges = 1;
 		} else {
 			advChangeHistory.setWard(currChange.getWard());
 		}
 
-		if (!preChange.getDistrict().equals(currChange.getDistrict())) {
+		if (!StringUtils.equals(preChange.getDistrict(), currChange.getDistrict())) {
 			advChangeHistory.setDistrict(decorateDefferentField(currChange.getDistrict(), true));
+			numOfChanges = 1;
 		} else {
 			advChangeHistory.setDistrict(currChange.getDistrict());
 		}
 
-		if (!preChange.getProvince().equals(currChange.getProvince())) {
+		if (!StringUtils.equals(preChange.getProvince(), currChange.getProvince())) {
 			advChangeHistory.setProvince(decorateDefferentField(currChange.getProvince(), true));
+			numOfChanges = 1;
 		} else {
 			advChangeHistory.setProvince(currChange.getProvince());
 		}
+		
+		if (!StringUtils.equals(preChange.getCode(), currChange.getCode())) {
+			advChangeHistory.setCode(decorateDefferentField(currChange.getCode(), true));
+			numOfChanges++;
+		} else {
+			advChangeHistory.setCode(StringUtils.EMPTY);
+		}
+		
+		if (!StringUtils.equals(preChange.getTitle(), currChange.getTitle())) {
+			advChangeHistory.setTitle(decorateDefferentField(currChange.getTitle(), true));
+			numOfChanges++;
+		} else {
+			advChangeHistory.setTitle(StringUtils.EMPTY);
+		}
 
-		if (!preChange.getWidthSize().equals(currChange.getWidthSize())) {
+		if (!StringUtils.equals(preChange.getWidthSize(), currChange.getWidthSize())) {
 			advChangeHistory.setWidthSize(decorateDefferentField(currChange.getWidthSize(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setWidthSize(currChange.getWidthSize());
+			advChangeHistory.setWidthSize(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getHeightSize().equals(currChange.getHeightSize())) {
+		if (!StringUtils.equals(preChange.getHeightSize(), currChange.getHeightSize())) {
 			advChangeHistory.setHeightSize(decorateDefferentField(currChange.getHeightSize(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setHeightSize(currChange.getHeightSize());
+			advChangeHistory.setHeightSize(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAmount().equals(currChange.getAmount())) {
+		if (!StringUtils.equals(preChange.getAmount(), currChange.getAmount())) {
 			advChangeHistory.setAmount(decorateDefferentField(currChange.getAmount(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAmount(currChange.getAmount());
+			advChangeHistory.setAmount(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getMap().equals(currChange.getMap())) {
+		if (!StringUtils.equals(preChange.getMap(), currChange.getMap())) {
 			advChangeHistory.setMap(decorateDefferentField(currChange.getMap(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setMap(currChange.getMap());
+			advChangeHistory.setMap(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getDescribe().equals(currChange.getDescribe())) {
+		if (!StringUtils.equals(preChange.getDescribe(), currChange.getDescribe())) {
 			advChangeHistory.setDescribe(decorateDefferentField(currChange.getDescribe(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setDescribe(currChange.getDescribe());
+			advChangeHistory.setDescribe(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getViews().equals(currChange.getViews())) {
+		if (!StringUtils.equals(preChange.getViews(), currChange.getViews())) {
 			advChangeHistory.setViews(decorateDefferentField(currChange.getViews(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setViews(currChange.getViews());
+			advChangeHistory.setViews(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getFlow().equals(currChange.getFlow())) {
+		if (!StringUtils.equals(preChange.getFlow(), currChange.getFlow())) {
 			advChangeHistory.setFlow(decorateDefferentField(currChange.getFlow(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setFlow(currChange.getFlow());
+			advChangeHistory.setFlow(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getImplForm().equals(currChange.getImplForm())) {
+		if (!StringUtils.equals(preChange.getImplForm(), currChange.getImplForm())) {
 			advChangeHistory.setImplForm(decorateDefferentField(currChange.getImplForm(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setImplForm(currChange.getImplForm());
+			advChangeHistory.setImplForm(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getImplTime().equals(currChange.getImplTime())) {
-			advChangeHistory.setImplTime(decorateDefferentField(currChange.getImplTime().toString(), true));
+		if (!StringUtils.equals(preChange.getImplTime(), currChange.getImplTime())) {
+			advChangeHistory.setImplTime(decorateDefferentField(currChange.getImplTime(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setImplTime(currChange.getImplTime().toString());
+			advChangeHistory.setImplTime(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getLightSystem().equals(currChange.getLightSystem())) {
+		if (!StringUtils.equals(preChange.getLightSystem(), currChange.getLightSystem())) {
 			advChangeHistory.setLightSystem(decorateDefferentField(currChange.getLightSystem(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setLightSystem(currChange.getLightSystem());
+			advChangeHistory.setLightSystem(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getOwnerPhone().equals(currChange.getOwnerPhone())) {
+		if (!StringUtils.equals(preChange.getOwnerPhone(), currChange.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(currChange.getOwnerPhone(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setOwnerPhone(currChange.getOwnerPhone());
+			advChangeHistory.setOwnerPhone(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getOwnerEmail().equals(currChange.getOwnerEmail())) {
+		if (!StringUtils.equals(preChange.getOwnerEmail(), currChange.getOwnerEmail())) {
 			advChangeHistory.setOwnerEmail(decorateDefferentField(currChange.getOwnerEmail(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setOwnerEmail(currChange.getOwnerEmail());
+			advChangeHistory.setOwnerEmail(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getOwnerPrice().equals(currChange.getOwnerPrice())) {
+		if (!StringUtils.equals(preChange.getOwnerPrice(), currChange.getOwnerPrice())) {
 			advChangeHistory.setOwnerPrice(decorateDefferentField(currChange.getOwnerPrice(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setOwnerPrice(currChange.getOwnerPrice());
+			advChangeHistory.setOwnerPrice(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getOwnerPhone().equals(currChange.getOwnerPhone())) {
+		if (!StringUtils.equals(preChange.getOwnerPhone(), currChange.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(currChange.getOwnerPhone(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setOwnerPhone(currChange.getOwnerPhone());
+			advChangeHistory.setOwnerPhone(StringUtils.EMPTY);
 		}
 
 		try {
-			if (!preChange.getOwnerStartDate().equals(currChange.getOwnerStartDate())) {
+			if (!StringUtils.equals(preChange.getOwnerStartDate(), currChange.getOwnerStartDate())) {
 				advChangeHistory.setOwnerStartDate(decorateDefferentField(currChange.getOwnerStartDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerStartDate(currChange.getOwnerStartDate());
+				advChangeHistory.setOwnerStartDate(StringUtils.EMPTY);
 			}
 		} catch (Exception e) {
 			if (preChange.getOwnerStartDate() != currChange.getOwnerStartDate()) {
 				advChangeHistory.setOwnerStartDate(decorateDefferentField(currChange.getOwnerStartDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerStartDate(currChange.getOwnerStartDate());
+				advChangeHistory.setOwnerStartDate(StringUtils.EMPTY);
 			}
 		}
 
 		try {
-			if (!preChange.getOwnerEndDate().equals(currChange.getOwnerEndDate())) {
+			if (!StringUtils.equals(preChange.getOwnerEndDate(), currChange.getOwnerEndDate())) {
 				advChangeHistory.setOwnerEndDate(decorateDefferentField(currChange.getOwnerEndDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerEndDate(currChange.getOwnerEndDate());
+				advChangeHistory.setOwnerEndDate(StringUtils.EMPTY);
 			}
 		} catch (Exception e) {
 			if (preChange.getOwnerEndDate() != currChange.getOwnerEndDate()) {
 				advChangeHistory.setOwnerEndDate(decorateDefferentField(currChange.getOwnerEndDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerEndDate(currChange.getOwnerEndDate());
+				advChangeHistory.setOwnerEndDate(StringUtils.EMPTY);
 			}
 		}
 
-		if (!preChange.getOwnerNote().equals(currChange.getOwnerNote())) {
+		if (!StringUtils.equals(preChange.getOwnerNote(), currChange.getOwnerNote())) {
 			advChangeHistory.setOwnerNote(decorateDefferentField(currChange.getOwnerNote(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setOwnerNote(currChange.getOwnerNote());
+			advChangeHistory.setOwnerNote(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAdvCompPhone().equals(currChange.getAdvCompPhone())) {
+		if (!StringUtils.equals(preChange.getAdvCompPhone(), currChange.getAdvCompPhone())) {
 			advChangeHistory.setAdvCompPhone(decorateDefferentField(currChange.getAdvCompPhone(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompPhone(currChange.getAdvCompPhone());
+			advChangeHistory.setAdvCompPhone(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAdvCompEmail().equals(currChange.getAdvCompEmail())) {
+		if (!StringUtils.equals(preChange.getAdvCompEmail(), currChange.getAdvCompEmail())) {
 			advChangeHistory.setAdvCompEmail(decorateDefferentField(currChange.getAdvCompEmail(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompEmail(currChange.getAdvCompEmail());
+			advChangeHistory.setAdvCompEmail(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAdvCompPrice().equals(currChange.getAdvCompPrice())) {
+		if (!StringUtils.equals(preChange.getAdvCompPrice(), currChange.getAdvCompPrice())) {
 			advChangeHistory.setAdvCompPrice(decorateDefferentField(currChange.getAdvCompPrice(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompPrice(currChange.getAdvCompPrice());
+			advChangeHistory.setAdvCompPrice(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAdvCompContactPerson().equals(currChange.getAdvCompContactPerson())) {
+		if (!StringUtils.equals(preChange.getAdvCompContactPerson(), currChange.getAdvCompContactPerson())) {
 			advChangeHistory.setAdvCompContactPerson(decorateDefferentField(currChange.getAdvCompContactPerson(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompContactPerson(currChange.getAdvCompContactPerson());
+			advChangeHistory.setAdvCompContactPerson(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getAdvCompName().equals(currChange.getAdvCompName())) {
+		if (!StringUtils.equals(preChange.getAdvCompName(), currChange.getAdvCompName())) {
 			advChangeHistory.setAdvCompName(decorateDefferentField(currChange.getAdvCompName(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompName(currChange.getAdvCompName());
+			advChangeHistory.setAdvCompName(StringUtils.EMPTY);
 		}
 
 		try {
-			if (!preChange.getAdvCompStartDate().equals(currChange.getAdvCompStartDate())) {
+			if (!StringUtils.equals(preChange.getAdvCompStartDate(), currChange.getAdvCompStartDate())) {
 				advChangeHistory.setAdvCompStartDate(decorateDefferentField(currChange.getAdvCompStartDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompStartDate(currChange.getAdvCompStartDate());
+				advChangeHistory.setAdvCompStartDate(StringUtils.EMPTY);
 			}
 		} catch (Exception e) {
 			if (preChange.getAdvCompStartDate() != currChange.getAdvCompStartDate()) {
 				advChangeHistory.setAdvCompStartDate(decorateDefferentField(currChange.getAdvCompStartDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompStartDate(currChange.getAdvCompStartDate());
+				advChangeHistory.setAdvCompStartDate(StringUtils.EMPTY);
 			}
 		}
 
 		try {
-			if (!preChange.getAdvCompEndDate().equals(currChange.getAdvCompEndDate())) {
+			if (!StringUtils.equals(preChange.getAdvCompEndDate(), currChange.getAdvCompEndDate())) {
 				advChangeHistory.setAdvCompEndDate(decorateDefferentField(currChange.getAdvCompEndDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompEndDate(currChange.getAdvCompEndDate());
+				advChangeHistory.setAdvCompEndDate(StringUtils.EMPTY);
 			}
 		} catch (Exception e) {
 			if (preChange.getAdvCompEndDate() != currChange.getAdvCompEndDate()) {
 				advChangeHistory.setAdvCompEndDate(decorateDefferentField(currChange.getAdvCompEndDate(), true));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompEndDate(currChange.getAdvCompEndDate());
+				advChangeHistory.setAdvCompEndDate(StringUtils.EMPTY);
 			}
 		}
 
-		if (!preChange.getAdvCompNote().equals(currChange.getAdvCompNote())) {
+		if (!StringUtils.equals(preChange.getAdvCompNote(), currChange.getAdvCompNote())) {
 			advChangeHistory.setAdvCompNote(decorateDefferentField(currChange.getAdvCompNote(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setAdvCompNote(currChange.getAdvCompNote());
+			advChangeHistory.setAdvCompNote(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getPrice().equals(currChange.getPrice())) {
+		if (!StringUtils.equals(preChange.getPrice(), currChange.getPrice())) {
 			advChangeHistory.setPrice(decorateDefferentField(currChange.getPrice(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setPrice(currChange.getPrice());
+			advChangeHistory.setPrice(StringUtils.EMPTY);
 		}
 
-		if (!preChange.getType().equals(currChange.getType())) {
+		if (!StringUtils.equals(preChange.getType(), currChange.getType())) {
 			advChangeHistory.setType(decorateDefferentField(currChange.getType(), true));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setType(currChange.getType());
+			advChangeHistory.setType(StringUtils.EMPTY);
 		}
 		
 		advChangeHistory.setAdvertId(currChange.getId());
 		advChangeHistory.setUpdatedBy(currChange.getUpdatedBy());
 		advChangeHistory.setUpdatedDate(currChange.getUpdatedDate());
+		advChangeHistory.setNumOfChanges(numOfChanges);
 
 		return advChangeHistory;
 	}
 	
 	public AdvChangeHistory createIfDefferent(Advertisement oldAdv, Advertisement newAdv, User updatedBy, boolean decorate) {
-		boolean isDefferent = false;
+		int numOfChanges = 0;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
-		if (!oldAdv.getCode().equals(newAdv.getCode())) {
+		if (!StringUtils.equals(oldAdv.getCode(), newAdv.getCode())) {
 			advChangeHistory.setCode(decorateDefferentField(newAdv.getCode(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setCode(newAdv.getCode());
 		}
 		
-		if (!oldAdv.getTitle().equals(newAdv.getTitle())) {
+		if (!StringUtils.equals(oldAdv.getTitle(), newAdv.getTitle())) {
 			advChangeHistory.setTitle(decorateDefferentField(newAdv.getTitle(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setTitle(newAdv.getTitle());
 		}
 
-		if (!oldAdv.getStreet().equals(newAdv.getStreet())) {
+		if (!StringUtils.equals(oldAdv.getStreet(), newAdv.getStreet())) {
 			advChangeHistory.setStreet(decorateDefferentField(newAdv.getStreet(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setStreet(newAdv.getStreet());
 		}
 
-		if (!oldAdv.getHouseNo().equals(newAdv.getHouseNo())) {
+		if (!StringUtils.equals(oldAdv.getHouseNo(), newAdv.getHouseNo())) {
 			advChangeHistory.setHouseNo(decorateDefferentField(newAdv.getHouseNo(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setHouseNo(newAdv.getHouseNo());
 		}
 
-		if (!oldAdv.getWard().equals(newAdv.getWard())) {
+		if (!StringUtils.equals(oldAdv.getWard(), newAdv.getWard())) {
 			advChangeHistory.setWard(decorateDefferentField(newAdv.getWard(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setWard(newAdv.getWard());
 		}
 
-		if (!oldAdv.getDistrict().equals(newAdv.getDistrict())) {
+		if (!StringUtils.equals(oldAdv.getDistrict(), newAdv.getDistrict())) {
 			advChangeHistory.setDistrict(decorateDefferentField(newAdv.getDistrict(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setDistrict(newAdv.getDistrict());
 		}
 
-		if (!oldAdv.getProvince().equals(newAdv.getProvince())) {
+		if (!StringUtils.equals(oldAdv.getProvince(), newAdv.getProvince())) {
 			advChangeHistory.setProvince(decorateDefferentField(newAdv.getProvince(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setProvince(newAdv.getProvince());
 		}
 
-		if (!oldAdv.getWidthSize().equals(newAdv.getWidthSize())) {
+		if (!StringUtils.equals(oldAdv.getWidthSize(), newAdv.getWidthSize())) {
 			advChangeHistory.setWidthSize(decorateDefferentField(newAdv.getWidthSize(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setWidthSize(newAdv.getWidthSize());
 		}
 
-		if (!oldAdv.getHeightSize().equals(newAdv.getHeightSize())) {
+		if (!StringUtils.equals(oldAdv.getHeightSize(), newAdv.getHeightSize())) {
 			advChangeHistory.setHeightSize(decorateDefferentField(newAdv.getHeightSize(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setHeightSize(newAdv.getHeightSize());
 		}
 
-		if (!oldAdv.getAmount().equals(newAdv.getAmount())) {
+		if (!StringUtils.equals(oldAdv.getAmount(), newAdv.getAmount())) {
 			advChangeHistory.setAmount(decorateDefferentField(newAdv.getAmount(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAmount(newAdv.getAmount());
 		}
 
-		if (!oldAdv.getMap().equals(newAdv.getMap())) {
+		if (!StringUtils.equals(oldAdv.getMap(), newAdv.getMap())) {
 			advChangeHistory.setMap(decorateDefferentField(newAdv.getMap(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setMap(newAdv.getMap());
 		}
 
-		if (!oldAdv.getDescribe().equals(newAdv.getDescribe())) {
+		if (!StringUtils.equals(oldAdv.getDescribe(), newAdv.getDescribe())) {
 			advChangeHistory.setDescribe(decorateDefferentField(newAdv.getDescribe(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setDescribe(newAdv.getDescribe());
 		}
 
-		if (!oldAdv.getViews().equals(newAdv.getViews())) {
+		if (!StringUtils.equals(oldAdv.getViews(), newAdv.getViews())) {
 			advChangeHistory.setViews(decorateDefferentField(newAdv.getViews(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setViews(newAdv.getViews());
 		}
 
-		if (!oldAdv.getFlow().equals(newAdv.getFlow())) {
+		if (!StringUtils.equals(oldAdv.getFlow(), newAdv.getFlow())) {
 			advChangeHistory.setFlow(decorateDefferentField(newAdv.getFlow(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setFlow(newAdv.getFlow());
 		}
 
-		if (!oldAdv.getImplForm().equals(newAdv.getImplForm())) {
+		if (!StringUtils.equals(oldAdv.getImplForm(), newAdv.getImplForm())) {
 			advChangeHistory.setImplForm(decorateDefferentField(newAdv.getImplForm(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setImplForm(newAdv.getImplForm());
 		}
 
 		if (!oldAdv.getImplTime().equals(newAdv.getImplTime())) {
-			advChangeHistory.setImplTime(decorateDefferentField(newAdv.getImplTime().toString(), decorate));
-			isDefferent = true;
+			advChangeHistory.setImplTime(decorateDefferentField(newAdv.getImplTime(), decorate));
+			numOfChanges++;
 		} else {
-			advChangeHistory.setImplTime(newAdv.getImplTime().toString());
+			advChangeHistory.setImplTime(Objects.nonNull(newAdv.getImplTime()) ? newAdv.getImplTime().toString() : null);
 		}
 
-		if (!oldAdv.getLightSystem().equals(newAdv.getLightSystem())) {
+		if (!StringUtils.equals(oldAdv.getLightSystem(), newAdv.getLightSystem())) {
 			advChangeHistory.setLightSystem(decorateDefferentField(newAdv.getLightSystem(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setLightSystem(newAdv.getLightSystem());
 		}
 
-		if (!oldAdv.getOwnerPhone().equals(newAdv.getOwnerPhone())) {
+		if (!StringUtils.equals(oldAdv.getOwnerPhone(), newAdv.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(newAdv.getOwnerPhone(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setOwnerPhone(newAdv.getOwnerPhone());
 		}
 
-		if (!oldAdv.getOwnerEmail().equals(newAdv.getOwnerEmail())) {
+		if (!StringUtils.equals(oldAdv.getOwnerEmail(), newAdv.getOwnerEmail())) {
 			advChangeHistory.setOwnerEmail(decorateDefferentField(newAdv.getOwnerEmail(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setOwnerEmail(newAdv.getOwnerEmail());
 		}
 
-		if (!oldAdv.getOwnerPrice().equals(newAdv.getOwnerPrice())) {
+		if (!StringUtils.equals(oldAdv.getOwnerPrice(), newAdv.getOwnerPrice())) {
 			advChangeHistory.setOwnerPrice(decorateDefferentField(newAdv.getOwnerPrice(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setOwnerPrice(newAdv.getOwnerPrice());
 		}
 
-		if (!oldAdv.getOwnerPhone().equals(newAdv.getOwnerPhone())) {
+		if (!StringUtils.equals(oldAdv.getOwnerPhone(), newAdv.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(newAdv.getOwnerPhone(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setOwnerPhone(newAdv.getOwnerPhone());
 		}
 
 		try {
-			if (!oldAdv.getOwnerStartDate().equals(newAdv.getOwnerStartDate())) {
-				advChangeHistory.setOwnerStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+			if (!DateUtils.equals(oldAdv.getOwnerStartDate(), newAdv.getOwnerStartDate())) {
+				advChangeHistory.setOwnerStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerStartDate(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setOwnerStartDate(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "dd/MM/yyyy"));
 			}
 		} catch (Exception e) {
 			if (oldAdv.getOwnerStartDate() != newAdv.getOwnerStartDate()) {
-				advChangeHistory.setOwnerStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+				advChangeHistory.setOwnerStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerStartDate(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setOwnerStartDate(DateUtils.convertDateToString(newAdv.getOwnerStartDate(), "dd/MM/yyyy"));
 			}
 		}
 
 		try {
-			if (!oldAdv.getOwnerEndDate().equals(newAdv.getOwnerEndDate())) {
-				advChangeHistory.setOwnerEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+			if (!DateUtils.equals(oldAdv.getOwnerEndDate(), newAdv.getOwnerEndDate())) {
+				advChangeHistory.setOwnerEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerEndDate(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setOwnerEndDate(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "dd/MM/yyyy"));
 			}
 		} catch (Exception e) {
 			if (oldAdv.getOwnerEndDate() != newAdv.getOwnerEndDate()) {
-				advChangeHistory.setOwnerEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+				advChangeHistory.setOwnerEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setOwnerEndDate(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setOwnerEndDate(DateUtils.convertDateToString(newAdv.getOwnerEndDate(), "dd/MM/yyyy"));
 			}
 		}
 
-		if (!oldAdv.getOwnerNote().equals(newAdv.getOwnerNote())) {
+		if (!StringUtils.equals(oldAdv.getOwnerNote(), newAdv.getOwnerNote())) {
 			advChangeHistory.setOwnerNote(decorateDefferentField(newAdv.getOwnerNote(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setOwnerNote(newAdv.getOwnerNote());
 		}
 
-		if (!oldAdv.getAdvCompPhone().equals(newAdv.getAdvCompPhone())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompPhone(), newAdv.getAdvCompPhone())) {
 			advChangeHistory.setAdvCompPhone(decorateDefferentField(newAdv.getAdvCompPhone(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompPhone(newAdv.getAdvCompPhone());
 		}
 
-		if (!oldAdv.getAdvCompEmail().equals(newAdv.getAdvCompEmail())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompEmail(), newAdv.getAdvCompEmail())) {
 			advChangeHistory.setAdvCompEmail(decorateDefferentField(newAdv.getAdvCompEmail(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompEmail(newAdv.getAdvCompEmail());
 		}
 
-		if (!oldAdv.getAdvCompPrice().equals(newAdv.getAdvCompPrice())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompPrice(), newAdv.getAdvCompPrice())) {
 			advChangeHistory.setAdvCompPrice(decorateDefferentField(newAdv.getAdvCompPrice(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompPrice(newAdv.getAdvCompPrice());
 		}
 
-		if (!oldAdv.getAdvCompContactPerson().equals(newAdv.getAdvCompContactPerson())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompContactPerson(), newAdv.getAdvCompContactPerson())) {
 			advChangeHistory.setAdvCompContactPerson(decorateDefferentField(newAdv.getAdvCompContactPerson(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompContactPerson(newAdv.getAdvCompContactPerson());
 		}
 
-		if (!oldAdv.getAdvCompName().equals(newAdv.getAdvCompName())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompName(), newAdv.getAdvCompName())) {
 			advChangeHistory.setAdvCompName(decorateDefferentField(newAdv.getAdvCompName(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompName(newAdv.getAdvCompName());
 		}
 
 		try {
-			if (!oldAdv.getAdvCompStartDate().equals(newAdv.getAdvCompStartDate())) {
-				advChangeHistory.setAdvCompStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+			if (!DateUtils.equals(oldAdv.getAdvCompStartDate(), newAdv.getAdvCompStartDate())) {
+				advChangeHistory.setAdvCompStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompStartDate(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setAdvCompStartDate(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "dd/MM/yyyy"));
 			}
 		} catch (Exception e) {
 			if (oldAdv.getAdvCompStartDate() != newAdv.getAdvCompStartDate()) {
-				advChangeHistory.setAdvCompStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+				advChangeHistory.setAdvCompStartDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompStartDate(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setAdvCompStartDate(DateUtils.convertDateToString(newAdv.getAdvCompStartDate(), "dd/MM/yyyy"));
 			}
 		}
 
 		try {
-			if (!oldAdv.getAdvCompEndDate().equals(newAdv.getAdvCompEndDate())) {
-				advChangeHistory.setAdvCompEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+			if (!DateUtils.equals(oldAdv.getAdvCompEndDate(), newAdv.getAdvCompEndDate())) {
+				advChangeHistory.setAdvCompEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompEndDate(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setAdvCompEndDate(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "dd/MM/yyyy"));
 			}
 		} catch (Exception e) {
 			if (oldAdv.getAdvCompEndDate() != newAdv.getAdvCompEndDate()) {
-				advChangeHistory.setAdvCompEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "HH:mm:ss dd/MM/yyyy"), decorate));
-				isDefferent = true;
+				advChangeHistory.setAdvCompEndDate(decorateDefferentField(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "dd/MM/yyyy"), decorate));
+				numOfChanges++;
 			} else {
-				advChangeHistory.setAdvCompEndDate(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				advChangeHistory.setAdvCompEndDate(DateUtils.convertDateToString(newAdv.getAdvCompEndDate(), "dd/MM/yyyy"));
 			}
 		}
 
-		if (!oldAdv.getAdvCompNote().equals(newAdv.getAdvCompNote())) {
+		if (!StringUtils.equals(oldAdv.getAdvCompNote(), newAdv.getAdvCompNote())) {
 			advChangeHistory.setAdvCompNote(decorateDefferentField(newAdv.getAdvCompNote(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setAdvCompNote(newAdv.getAdvCompNote());
 		}
 
-		if (!oldAdv.getPrice().equals(newAdv.getPrice())) {
+		if (!StringUtils.equals(oldAdv.getPrice(), newAdv.getPrice())) {
 			advChangeHistory.setPrice(decorateDefferentField(newAdv.getPrice(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setPrice(newAdv.getPrice());
 		}
 
-		if (!oldAdv.getType().equals(newAdv.getType())) {
+		if (!StringUtils.equals(oldAdv.getType(), newAdv.getType())) {
 			advChangeHistory.setType(decorateDefferentField(newAdv.getType(), decorate));
-			isDefferent = true;
+			numOfChanges++;
 		} else {
 			advChangeHistory.setType(newAdv.getType());
 		}
 		
-		advChangeHistory.setAdvertId(newAdv.getId());
-		advChangeHistory.setUpdatedBy(updatedBy);
-		advChangeHistory.setUpdatedDate(newAdv.getUpdatedDate());
 
-		if(isDefferent) {
+		if(numOfChanges > 0) {
+			advChangeHistory.setNumOfChanges(numOfChanges);
+			advChangeHistory.setAdvertId(newAdv.getId());
+			advChangeHistory.setUpdatedBy(updatedBy);
+			advChangeHistory.setUpdatedDate(newAdv.getUpdatedDate());
+			advChangeHistory.setCreatedBy(newAdv.getCreatedBy());
 			return advChangeHistory;
 		}
 		return null;
 	}
 	
-	private String decorateDefferentField(String value, boolean decorate) {
+	private String decorateDefferentField(Object value, boolean decorate) {
 		if(decorate) {
 			return "<b>" + value + "</b>";
 		}
-		return value;
+		return Objects.nonNull(value) ? value.toString() : StringUtils.EMPTY;
 	}
 	
 	public AdvChangeHistory convertToAdvChangeHistory(Advertisement adv) {
@@ -625,12 +668,12 @@ public class AdvChangeHistoryService {
 		advChangeHistory.setOwnerPhone(adv.getOwnerPhone());
 		try {
 		advChangeHistory
-				.setOwnerStartDate(DateUtils.convertDateToString(adv.getOwnerStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				.setOwnerStartDate(DateUtils.convertDateToString(adv.getOwnerStartDate(), "dd/MM/yyyy"));
 		} catch (Exception e) {
 		}
 		try {
 		advChangeHistory
-				.setOwnerEndDate(DateUtils.convertDateToString(adv.getOwnerEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				.setOwnerEndDate(DateUtils.convertDateToString(adv.getOwnerEndDate(), "dd/MM/yyyy"));
 		} catch (Exception e) {
 		}
 		advChangeHistory.setOwnerNote(adv.getOwnerNote());
@@ -641,12 +684,12 @@ public class AdvChangeHistoryService {
 		advChangeHistory.setAdvCompName(adv.getAdvCompName());
 		try {
 		advChangeHistory.setAdvCompStartDate(
-				DateUtils.convertDateToString(adv.getAdvCompStartDate(), "HH:mm:ss dd/MM/yyyy"));
+				DateUtils.convertDateToString(adv.getAdvCompStartDate(), "dd/MM/yyyy"));
 		} catch (Exception e) {
 		}
 		try {
 		advChangeHistory
-				.setAdvCompEndDate(DateUtils.convertDateToString(adv.getAdvCompEndDate(), "HH:mm:ss dd/MM/yyyy"));
+				.setAdvCompEndDate(DateUtils.convertDateToString(adv.getAdvCompEndDate(), "dd/MM/yyyy"));
 		} catch (Exception e) {
 		}
 		advChangeHistory.setAdvCompNote(adv.getAdvCompNote());

@@ -11,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DateUtils {
+	private DateUtils() {
+		
+	}
+	
 	private static Calendar calendar = Calendar.getInstance();
 
 	public static Date addDays(Date date, int days) {
@@ -38,7 +42,7 @@ public class DateUtils {
 	}
 
 	public static String convertDateToString(Date date) {
-		String dateString = "";
+		String dateString = StringUtils.EMPTY;
 		SimpleDateFormat sdfr = new SimpleDateFormat("dd/MM/yyyy");
 		try {
 			dateString = sdfr.format(date);
@@ -49,7 +53,7 @@ public class DateUtils {
 	}
 	
 	public static String convertDateToString(Date date, String pattern) {
-		if(Objects.nonNull(date)) return StringUtils.EMPTY;
+		if(Objects.isNull(date)) return StringUtils.EMPTY;
 		
 		String dateString = "";
 		SimpleDateFormat sdfr = new SimpleDateFormat(pattern);
@@ -59,5 +63,14 @@ public class DateUtils {
 			log.error(ex.getMessage());
 		}
 		return dateString;
+	}
+	
+	public static boolean equals(Date date1, Date date2) {
+		if(Objects.nonNull(date1) && Objects.nonNull(date2)) {
+			String dateOne = convertDateToString(date1, "dd/MM/yyyy");
+			String dateTwo = convertDateToString(date2, "dd/MM/yyyy");
+			return dateOne.equals(dateTwo);
+		}
+		return false;
 	}
 }
