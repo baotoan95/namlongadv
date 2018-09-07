@@ -71,6 +71,6 @@ public class DateUtils {
 			String dateTwo = convertDateToString(date2, "dd/MM/yyyy");
 			return dateOne.equals(dateTwo);
 		}
-		return false;
+		return date1 == date2;
 	}
 }

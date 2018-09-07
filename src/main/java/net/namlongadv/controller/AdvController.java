@@ -181,7 +181,7 @@ public class AdvController {
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Set default values
 		advDto.getAdvertisement().setImplTime(20);
-		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
+		advDto.getAdvertisement().setImplForm("in bạt hiflex 720 DPI");
 		advDto.getAdvertisement().setHouseNo("Số ");
 		advDto.getAdvertisement().setStreet("Đường ");
 		advDto.getAdvertisement().setWidthSize("m");
@@ -318,13 +318,5 @@ public class AdvController {
 	@GetMapping("initHistory")
 	public void initHistory() {
 		advertisementService.initHistory();
-	}
-	
-	@GetMapping("updateNameProvince")
-	public void updateNameProvince() {
-		provinceRepository.findAll().forEach(province -> {
-			province.setName(province.getName().replace("Thành phố", "TP"));
-			provinceRepository.save(province);
-		});
 	}
 }

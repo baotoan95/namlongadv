@@ -778,11 +778,11 @@ textarea {
 </section>
 
 <div class="modal modal-default" id="modal-logs" style="display: none;">
-	<div class="modal-dialog" style="width: 95% !important; height: 100% !important;">
+	<div class="modal-dialog" style="width: 95% !important;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal"
-					aria-label="Close">
+					aria-label="Close" title="Đóng">
 					<span aria-hidden="true">×</span>
 				</button>
 				<h4 class="modal-title">Lịch Sử Nhập Liệu</h4>
@@ -812,7 +812,7 @@ textarea {
 
 			                <tr class="tbl-row">
 			                	<td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid">${updatedDate }</td>
-				                <td>Địa chỉ: 
+				                <td title="<%= preHistory.getId() %>">Địa chỉ: 
 				                <%= 
 				                	preHistory.getHouseNo() + ", " +
 				                	preHistory.getStreet() + ", " +
@@ -821,7 +821,7 @@ textarea {
 				                	preHistory.getProvince()
 				                %>
 				                </td>
-				                <td>Địa chỉ: 
+				                <td title="<%= currHistory.getId() %>">Địa chỉ: 
 				                <%=
 				                	currHistory.getHouseNo() + ", " +
 				                	currHistory.getStreet() + ", " +
@@ -832,7 +832,7 @@ textarea {
 				                </td>
 				                
 				                <td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
-				                <td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid"><%= currHistory.getUpdatedBy().getName() %></td>
+				                <td rowspan="<%= currHistory.getNumOfChanges() %>" style="border: 1px solid"><%= currHistory.getCreatedBy().getName() %></td>
 			                </tr>
 			                
 			                <% if(!StringUtils.isEmptyOrNull(preHistory.getMap()) || !StringUtils.isEmptyOrNull(currHistory.getMap())) {%>
@@ -903,6 +903,14 @@ textarea {
 			                <tr>
 			                	<td>Hệ thống chiếu sáng: <%= preHistory.getLightSystem() %></td>
 			                	<td>Hệ thống chiếu sáng: <%= currHistory.getLightSystem() %></td>
+			                </tr>
+			                <%} %>
+			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getPrice()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getPrice())) {%>
+			                <tr>
+			                	<td>Loại: <%= preHistory.getPrice() %></td>
+			                	<td>Loại: <%= currHistory.getPrice() %></td>
 			                </tr>
 			                <%} %>
 			                

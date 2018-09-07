@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import net.namlongadv.models.AdvChangeHistory;
 import net.namlongadv.models.Advertisement;
 import net.namlongadv.models.User;
 import net.namlongadv.repositories.AdvChangeHistoryRepository;
+import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.utils.DateUtils;
 import net.namlongadv.utils.StringUtils;
 
@@ -22,13 +24,16 @@ import net.namlongadv.utils.StringUtils;
 public class AdvChangeHistoryService {
 	@Autowired
 	private AdvChangeHistoryRepository advChangeHistoryRepository;
+	@Autowired
+	private AdvertisementRepository advertisementRepository;
 	
 	public AdvChangeHistory saveHistory(AdvChangeHistory advChangeHistory) {
 		log.info("Saving history");
 		if(Objects.nonNull(advChangeHistory) && Objects.nonNull(advChangeHistory.getUpdatedBy()) 
 				&& Objects.nonNull(advChangeHistory.getUpdatedDate()) 
 				&& Objects.nonNull(advChangeHistory.getAdvertId())
-				&& !advChangeHistory.getUpdatedBy().getUsername().equalsIgnoreCase("baotoan")) {
+				&& !advChangeHistory.getUpdatedBy().getUsername().equalsIgnoreCase("baotoan")
+				&& !advChangeHistory.getUpdatedBy().getUsername().equalsIgnoreCase("baotoan2")) {
 			advChangeHistory.setId(null);
 			AdvChangeHistory savedEntity = advChangeHistoryRepository.save(advChangeHistory);
 			log.info("Saved history");
@@ -58,12 +63,14 @@ public class AdvChangeHistoryService {
 	}
 	
 	public AdvChangeHistory decorateDifferent(AdvChangeHistory preChange, AdvChangeHistory currChange) {
-		int numOfChanges = 1;
+		log.info("Start find different between {} and {} ======================", preChange.getId(), currChange.getId());
+		int numOfChanges = 0;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
 		if (!StringUtils.equals(preChange.getStreet(), currChange.getStreet())) {
 			advChangeHistory.setStreet(decorateDefferentField(currChange.getStreet(), true));
 			numOfChanges = 1;
+			log.info("Different street");
 		} else {
 			advChangeHistory.setStreet(currChange.getStreet());
 		}
@@ -71,6 +78,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getHouseNo(), currChange.getHouseNo())) {
 			advChangeHistory.setHouseNo(decorateDefferentField(currChange.getHouseNo(), true));
 			numOfChanges = 1;
+			log.info("Different houseNo");
 		} else {
 			advChangeHistory.setHouseNo(currChange.getHouseNo());
 		}
@@ -78,6 +86,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getWard(), currChange.getWard())) {
 			advChangeHistory.setWard(decorateDefferentField(currChange.getWard(), true));
 			numOfChanges = 1;
+			log.info("Different ward");
 		} else {
 			advChangeHistory.setWard(currChange.getWard());
 		}
@@ -85,6 +94,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getDistrict(), currChange.getDistrict())) {
 			advChangeHistory.setDistrict(decorateDefferentField(currChange.getDistrict(), true));
 			numOfChanges = 1;
+			log.info("Different district");
 		} else {
 			advChangeHistory.setDistrict(currChange.getDistrict());
 		}
@@ -92,6 +102,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getProvince(), currChange.getProvince())) {
 			advChangeHistory.setProvince(decorateDefferentField(currChange.getProvince(), true));
 			numOfChanges = 1;
+			log.info("Different province");
 		} else {
 			advChangeHistory.setProvince(currChange.getProvince());
 		}
@@ -99,6 +110,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getCode(), currChange.getCode())) {
 			advChangeHistory.setCode(decorateDefferentField(currChange.getCode(), true));
 			numOfChanges++;
+			log.info("Different code");
 		} else {
 			advChangeHistory.setCode(StringUtils.EMPTY);
 		}
@@ -106,6 +118,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getTitle(), currChange.getTitle())) {
 			advChangeHistory.setTitle(decorateDefferentField(currChange.getTitle(), true));
 			numOfChanges++;
+			log.info("Different title");
 		} else {
 			advChangeHistory.setTitle(StringUtils.EMPTY);
 		}
@@ -113,6 +126,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getWidthSize(), currChange.getWidthSize())) {
 			advChangeHistory.setWidthSize(decorateDefferentField(currChange.getWidthSize(), true));
 			numOfChanges++;
+			log.info("Different widthSize");
 		} else {
 			advChangeHistory.setWidthSize(StringUtils.EMPTY);
 		}
@@ -120,6 +134,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getHeightSize(), currChange.getHeightSize())) {
 			advChangeHistory.setHeightSize(decorateDefferentField(currChange.getHeightSize(), true));
 			numOfChanges++;
+			log.info("Different heightSize");
 		} else {
 			advChangeHistory.setHeightSize(StringUtils.EMPTY);
 		}
@@ -127,6 +142,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAmount(), currChange.getAmount())) {
 			advChangeHistory.setAmount(decorateDefferentField(currChange.getAmount(), true));
 			numOfChanges++;
+			log.info("Different amount");
 		} else {
 			advChangeHistory.setAmount(StringUtils.EMPTY);
 		}
@@ -134,6 +150,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getMap(), currChange.getMap())) {
 			advChangeHistory.setMap(decorateDefferentField(currChange.getMap(), true));
 			numOfChanges++;
+			log.info("Different map");
 		} else {
 			advChangeHistory.setMap(StringUtils.EMPTY);
 		}
@@ -141,6 +158,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getDescribe(), currChange.getDescribe())) {
 			advChangeHistory.setDescribe(decorateDefferentField(currChange.getDescribe(), true));
 			numOfChanges++;
+			log.info("Different describe");
 		} else {
 			advChangeHistory.setDescribe(StringUtils.EMPTY);
 		}
@@ -148,6 +166,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getViews(), currChange.getViews())) {
 			advChangeHistory.setViews(decorateDefferentField(currChange.getViews(), true));
 			numOfChanges++;
+			log.info("Different views");
 		} else {
 			advChangeHistory.setViews(StringUtils.EMPTY);
 		}
@@ -155,6 +174,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getFlow(), currChange.getFlow())) {
 			advChangeHistory.setFlow(decorateDefferentField(currChange.getFlow(), true));
 			numOfChanges++;
+			log.info("Different flow");
 		} else {
 			advChangeHistory.setFlow(StringUtils.EMPTY);
 		}
@@ -162,6 +182,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getImplForm(), currChange.getImplForm())) {
 			advChangeHistory.setImplForm(decorateDefferentField(currChange.getImplForm(), true));
 			numOfChanges++;
+			log.info("Different impl form");
 		} else {
 			advChangeHistory.setImplForm(StringUtils.EMPTY);
 		}
@@ -169,6 +190,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getImplTime(), currChange.getImplTime())) {
 			advChangeHistory.setImplTime(decorateDefferentField(currChange.getImplTime(), true));
 			numOfChanges++;
+			log.info("Different impl time");
 		} else {
 			advChangeHistory.setImplTime(StringUtils.EMPTY);
 		}
@@ -176,6 +198,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getLightSystem(), currChange.getLightSystem())) {
 			advChangeHistory.setLightSystem(decorateDefferentField(currChange.getLightSystem(), true));
 			numOfChanges++;
+			log.info("Different light system");
 		} else {
 			advChangeHistory.setLightSystem(StringUtils.EMPTY);
 		}
@@ -183,6 +206,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getOwnerPhone(), currChange.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(currChange.getOwnerPhone(), true));
 			numOfChanges++;
+			log.info("Different owner phone");
 		} else {
 			advChangeHistory.setOwnerPhone(StringUtils.EMPTY);
 		}
@@ -190,6 +214,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getOwnerEmail(), currChange.getOwnerEmail())) {
 			advChangeHistory.setOwnerEmail(decorateDefferentField(currChange.getOwnerEmail(), true));
 			numOfChanges++;
+			log.info("Different owner email");
 		} else {
 			advChangeHistory.setOwnerEmail(StringUtils.EMPTY);
 		}
@@ -197,6 +222,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getOwnerPrice(), currChange.getOwnerPrice())) {
 			advChangeHistory.setOwnerPrice(decorateDefferentField(currChange.getOwnerPrice(), true));
 			numOfChanges++;
+			log.info("Different owner price");
 		} else {
 			advChangeHistory.setOwnerPrice(StringUtils.EMPTY);
 		}
@@ -204,6 +230,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getOwnerPhone(), currChange.getOwnerPhone())) {
 			advChangeHistory.setOwnerPhone(decorateDefferentField(currChange.getOwnerPhone(), true));
 			numOfChanges++;
+			log.info("Different owner phone");
 		} else {
 			advChangeHistory.setOwnerPhone(StringUtils.EMPTY);
 		}
@@ -212,6 +239,7 @@ public class AdvChangeHistoryService {
 			if (!StringUtils.equals(preChange.getOwnerStartDate(), currChange.getOwnerStartDate())) {
 				advChangeHistory.setOwnerStartDate(decorateDefferentField(currChange.getOwnerStartDate(), true));
 				numOfChanges++;
+				log.info("Different owner start date");
 			} else {
 				advChangeHistory.setOwnerStartDate(StringUtils.EMPTY);
 			}
@@ -219,6 +247,7 @@ public class AdvChangeHistoryService {
 			if (preChange.getOwnerStartDate() != currChange.getOwnerStartDate()) {
 				advChangeHistory.setOwnerStartDate(decorateDefferentField(currChange.getOwnerStartDate(), true));
 				numOfChanges++;
+				log.info("Different owner start date");
 			} else {
 				advChangeHistory.setOwnerStartDate(StringUtils.EMPTY);
 			}
@@ -228,6 +257,7 @@ public class AdvChangeHistoryService {
 			if (!StringUtils.equals(preChange.getOwnerEndDate(), currChange.getOwnerEndDate())) {
 				advChangeHistory.setOwnerEndDate(decorateDefferentField(currChange.getOwnerEndDate(), true));
 				numOfChanges++;
+				log.info("Different owner end date");
 			} else {
 				advChangeHistory.setOwnerEndDate(StringUtils.EMPTY);
 			}
@@ -235,6 +265,7 @@ public class AdvChangeHistoryService {
 			if (preChange.getOwnerEndDate() != currChange.getOwnerEndDate()) {
 				advChangeHistory.setOwnerEndDate(decorateDefferentField(currChange.getOwnerEndDate(), true));
 				numOfChanges++;
+				log.info("Different owner end date");
 			} else {
 				advChangeHistory.setOwnerEndDate(StringUtils.EMPTY);
 			}
@@ -243,6 +274,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getOwnerNote(), currChange.getOwnerNote())) {
 			advChangeHistory.setOwnerNote(decorateDefferentField(currChange.getOwnerNote(), true));
 			numOfChanges++;
+			log.info("Different owner note");
 		} else {
 			advChangeHistory.setOwnerNote(StringUtils.EMPTY);
 		}
@@ -250,6 +282,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompPhone(), currChange.getAdvCompPhone())) {
 			advChangeHistory.setAdvCompPhone(decorateDefferentField(currChange.getAdvCompPhone(), true));
 			numOfChanges++;
+			log.info("Different adv comp phone");
 		} else {
 			advChangeHistory.setAdvCompPhone(StringUtils.EMPTY);
 		}
@@ -257,6 +290,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompEmail(), currChange.getAdvCompEmail())) {
 			advChangeHistory.setAdvCompEmail(decorateDefferentField(currChange.getAdvCompEmail(), true));
 			numOfChanges++;
+			log.info("Different adv comp email");
 		} else {
 			advChangeHistory.setAdvCompEmail(StringUtils.EMPTY);
 		}
@@ -264,6 +298,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompPrice(), currChange.getAdvCompPrice())) {
 			advChangeHistory.setAdvCompPrice(decorateDefferentField(currChange.getAdvCompPrice(), true));
 			numOfChanges++;
+			log.info("Different adv comp price");
 		} else {
 			advChangeHistory.setAdvCompPrice(StringUtils.EMPTY);
 		}
@@ -271,6 +306,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompContactPerson(), currChange.getAdvCompContactPerson())) {
 			advChangeHistory.setAdvCompContactPerson(decorateDefferentField(currChange.getAdvCompContactPerson(), true));
 			numOfChanges++;
+			log.info("Different adv comp contact person");
 		} else {
 			advChangeHistory.setAdvCompContactPerson(StringUtils.EMPTY);
 		}
@@ -278,6 +314,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompName(), currChange.getAdvCompName())) {
 			advChangeHistory.setAdvCompName(decorateDefferentField(currChange.getAdvCompName(), true));
 			numOfChanges++;
+			log.info("Different adv comp name");
 		} else {
 			advChangeHistory.setAdvCompName(StringUtils.EMPTY);
 		}
@@ -286,6 +323,7 @@ public class AdvChangeHistoryService {
 			if (!StringUtils.equals(preChange.getAdvCompStartDate(), currChange.getAdvCompStartDate())) {
 				advChangeHistory.setAdvCompStartDate(decorateDefferentField(currChange.getAdvCompStartDate(), true));
 				numOfChanges++;
+				log.info("Different adv comp start date");
 			} else {
 				advChangeHistory.setAdvCompStartDate(StringUtils.EMPTY);
 			}
@@ -293,6 +331,7 @@ public class AdvChangeHistoryService {
 			if (preChange.getAdvCompStartDate() != currChange.getAdvCompStartDate()) {
 				advChangeHistory.setAdvCompStartDate(decorateDefferentField(currChange.getAdvCompStartDate(), true));
 				numOfChanges++;
+				log.info("Different adv comp start date");
 			} else {
 				advChangeHistory.setAdvCompStartDate(StringUtils.EMPTY);
 			}
@@ -302,6 +341,7 @@ public class AdvChangeHistoryService {
 			if (!StringUtils.equals(preChange.getAdvCompEndDate(), currChange.getAdvCompEndDate())) {
 				advChangeHistory.setAdvCompEndDate(decorateDefferentField(currChange.getAdvCompEndDate(), true));
 				numOfChanges++;
+				log.info("Different adv comp end date");
 			} else {
 				advChangeHistory.setAdvCompEndDate(StringUtils.EMPTY);
 			}
@@ -309,6 +349,7 @@ public class AdvChangeHistoryService {
 			if (preChange.getAdvCompEndDate() != currChange.getAdvCompEndDate()) {
 				advChangeHistory.setAdvCompEndDate(decorateDefferentField(currChange.getAdvCompEndDate(), true));
 				numOfChanges++;
+				log.info("Different adv comp end date");
 			} else {
 				advChangeHistory.setAdvCompEndDate(StringUtils.EMPTY);
 			}
@@ -317,6 +358,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getAdvCompNote(), currChange.getAdvCompNote())) {
 			advChangeHistory.setAdvCompNote(decorateDefferentField(currChange.getAdvCompNote(), true));
 			numOfChanges++;
+			log.info("Different adv comp note");
 		} else {
 			advChangeHistory.setAdvCompNote(StringUtils.EMPTY);
 		}
@@ -324,6 +366,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getPrice(), currChange.getPrice())) {
 			advChangeHistory.setPrice(decorateDefferentField(currChange.getPrice(), true));
 			numOfChanges++;
+			log.info("Different price");
 		} else {
 			advChangeHistory.setPrice(StringUtils.EMPTY);
 		}
@@ -331,6 +374,7 @@ public class AdvChangeHistoryService {
 		if (!StringUtils.equals(preChange.getType(), currChange.getType())) {
 			advChangeHistory.setType(decorateDefferentField(currChange.getType(), true));
 			numOfChanges++;
+			log.info("Different type");
 		} else {
 			advChangeHistory.setType(StringUtils.EMPTY);
 		}
@@ -338,12 +382,15 @@ public class AdvChangeHistoryService {
 		advChangeHistory.setAdvertId(currChange.getId());
 		advChangeHistory.setUpdatedBy(currChange.getUpdatedBy());
 		advChangeHistory.setUpdatedDate(currChange.getUpdatedDate());
+		advChangeHistory.setCreatedBy(currChange.getCreatedBy());
+		advChangeHistory.setId(currChange.getId());
 		advChangeHistory.setNumOfChanges(numOfChanges);
-
+		
+		log.info("Finish ======================");
 		return advChangeHistory;
 	}
 	
-	public AdvChangeHistory createIfDefferent(Advertisement oldAdv, Advertisement newAdv, User updatedBy, boolean decorate) {
+	public AdvChangeHistory createIfDifferent(Advertisement oldAdv, Advertisement newAdv, User updatedBy, boolean decorate) {
 		int numOfChanges = 0;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
@@ -698,7 +745,36 @@ public class AdvChangeHistoryService {
 		advChangeHistory.setAdvertId(adv.getId());
 		advChangeHistory.setUpdatedBy(adv.getCreatedBy());
 		advChangeHistory.setUpdatedDate(adv.getUpdatedDate());
+		advChangeHistory.setCreatedBy(adv.getCreatedBy());
 		
 		return advChangeHistory;
+	}
+	
+	public void updateCreatedBy() {
+		advChangeHistoryRepository.findAll().forEach(history -> {
+			Advertisement adv = advertisementRepository.findOne(history.getAdvertId());
+			if(Objects.nonNull(adv)) {
+				history.setCreatedBy(adv.getCreatedBy());
+				advChangeHistoryRepository.save(history);
+			}
+		});
+	}
+	
+	public void deleteById(UUID id) {
+		advChangeHistoryRepository.delete(id);
+	}
+	
+	public List<AdvChangeHistory> advChangesById(UUID id) {
+		return advChangeHistoryRepository.findByAdvertIdOrderByUpdatedDateDesc(id).stream().map(history -> {
+			User createdBy = history.getCreatedBy();
+			if(Objects.nonNull(createdBy)) {
+				history.setCreatedBy(User.builder().id(createdBy.getId()).build());
+			}
+			User updatedBy = history.getUpdatedBy();
+			if(Objects.nonNull(updatedBy)) {
+				history.setUpdatedBy(User.builder().id(updatedBy.getId()).build());
+			}
+			return history;
+		}).collect(Collectors.toList());
 	}
 }

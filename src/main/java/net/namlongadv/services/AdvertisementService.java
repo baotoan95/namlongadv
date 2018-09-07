@@ -463,7 +463,7 @@ public class AdvertisementService {
 				// Saving change history
 				User updatedBy = userRepository.findByUsername(AuthenticationUtils.getUserDetails().getUsername());
 				advChangeHistoryService.saveHistory(
-						advChangeHistoryService.createIfDefferent(prevAdvertisement, advert, updatedBy, false));
+						advChangeHistoryService.createIfDifferent(prevAdvertisement, advert, updatedBy, false));
 
 				log.info("Saving an advert");
 				Advertisement advertisement = advertisementRepository.save(advert);

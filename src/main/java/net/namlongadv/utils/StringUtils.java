@@ -38,7 +38,8 @@ public class StringUtils {
 	}
 	
 	public static boolean equals(String str1, String str2) {
-		return str1 == str2 || (str1 != null && str2 != null && str1.equals(str2));
+		return str1 == str2 || (str1 != null && str2 != null && str1.equals(str2)) 
+				|| (isEmptyOrNull(str1) && isEmptyOrNull(str2));
 	}
 	
 	public static boolean isEmptyOrNull(String str) {
