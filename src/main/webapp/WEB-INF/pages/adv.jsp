@@ -1,3 +1,5 @@
+<%@page import="java.util.Collections"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="net.namlongadv.utils.StringUtils"%>
 <%@page import="net.namlongadv.models.AdvChangeHistory"%>
 <%@page import="net.namlongadv.models.AdvImage"%>
@@ -53,7 +55,7 @@ textarea {
 
 <%
 	@SuppressWarnings("unchecked")
-	List<AdvChangeHistory> history = (List<AdvChangeHistory>) request.getAttribute("history"); 
+	List<AdvChangeHistory> history = request.getAttribute("history") != null ? (List<AdvChangeHistory>) request.getAttribute("history") : new ArrayList<AdvChangeHistory>();
 %>
 
 <section class="content">
@@ -298,11 +300,11 @@ textarea {
 							<div class="form-group">
 								<label for="implForm" class="col-md-3 control-label">Hình thức thực hiện</label>
 								<div class="col-md-9">
-									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.implForm || advertDto.advertisement.implForm eq 'in bạt hiflex 720 DPI'}">
+									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.implForm || advertDto.advertisement.implForm eq 'in bạt hiflex 720 DPI'}">
 										<form:input path="advertisement.implForm" class="form-control"
 											id="implForm" style="resize: none;" placeholder="Nhập hình thức thực hiện" />
 									</c:if>
-									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.implForm && advertDto.advertisement.implForm ne 'in bạt hiflex 720 DPI'}">
+									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.implForm && advertDto.advertisement.implForm ne 'in bạt hiflex 720 DPI'}">
 										<input type="text" class="form-control" id="implForm" placeholder="#####" readonly />
 										<form:hidden path="advertisement.implForm"/>
 									</c:if>
