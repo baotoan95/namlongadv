@@ -64,12 +64,11 @@ public class AdvChangeHistoryService {
 	
 	public AdvChangeHistory decorateDifferent(AdvChangeHistory preChange, AdvChangeHistory currChange) {
 		log.info("Start find different between {} and {} ======================", preChange.getId(), currChange.getId());
-		int numOfChanges = 0;
+		int numOfChanges = 1;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
 		if (!StringUtils.equals(preChange.getStreet(), currChange.getStreet())) {
 			advChangeHistory.setStreet(decorateDefferentField(currChange.getStreet(), true));
-			numOfChanges = 1;
 			log.info("Different street");
 		} else {
 			advChangeHistory.setStreet(currChange.getStreet());
@@ -77,7 +76,6 @@ public class AdvChangeHistoryService {
 
 		if (!StringUtils.equals(preChange.getHouseNo(), currChange.getHouseNo())) {
 			advChangeHistory.setHouseNo(decorateDefferentField(currChange.getHouseNo(), true));
-			numOfChanges = 1;
 			log.info("Different houseNo");
 		} else {
 			advChangeHistory.setHouseNo(currChange.getHouseNo());
@@ -85,7 +83,6 @@ public class AdvChangeHistoryService {
 
 		if (!StringUtils.equals(preChange.getWard(), currChange.getWard())) {
 			advChangeHistory.setWard(decorateDefferentField(currChange.getWard(), true));
-			numOfChanges = 1;
 			log.info("Different ward");
 		} else {
 			advChangeHistory.setWard(currChange.getWard());
@@ -93,7 +90,6 @@ public class AdvChangeHistoryService {
 
 		if (!StringUtils.equals(preChange.getDistrict(), currChange.getDistrict())) {
 			advChangeHistory.setDistrict(decorateDefferentField(currChange.getDistrict(), true));
-			numOfChanges = 1;
 			log.info("Different district");
 		} else {
 			advChangeHistory.setDistrict(currChange.getDistrict());
@@ -101,7 +97,6 @@ public class AdvChangeHistoryService {
 
 		if (!StringUtils.equals(preChange.getProvince(), currChange.getProvince())) {
 			advChangeHistory.setProvince(decorateDefferentField(currChange.getProvince(), true));
-			numOfChanges = 1;
 			log.info("Different province");
 		} else {
 			advChangeHistory.setProvince(currChange.getProvince());
