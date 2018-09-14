@@ -23,6 +23,8 @@
 .magnify-modal {
 	width: 96% !important;
 	left: 2% !important;
+	height: 95% !important;
+	top: 10px !important;
 }
 </style>
 
