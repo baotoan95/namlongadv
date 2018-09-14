@@ -494,7 +494,7 @@ public class AdvChangeHistoryService {
 			advChangeHistory.setImplForm(newAdv.getImplForm());
 		}
 
-		if (!oldAdv.getImplTime().equals(newAdv.getImplTime())) {
+		if (oldAdv.getImplTime() != newAdv.getImplTime()) {
 			advChangeHistory.setImplTime(decorateDefferentField(newAdv.getImplTime(), decorate));
 			numOfChanges++;
 		} else {
@@ -663,7 +663,6 @@ public class AdvChangeHistoryService {
 			advChangeHistory.setType(newAdv.getType());
 		}
 		
-
 		if(numOfChanges > 0) {
 			advChangeHistory.setNumOfChanges(numOfChanges);
 			advChangeHistory.setAdvertId(newAdv.getId());

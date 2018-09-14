@@ -36,7 +36,7 @@ public class UploadFileUtils {
 				if (mpf.getSize() > 0) {
 					String originalFileName = mpf.getOriginalFilename();
 					String fileName = StringUtils.standardize(StringUtils.convertStringIgnoreUtf8(originalFileName.substring(0, originalFileName.lastIndexOf("."))));
-					fileName = fileName.replaceAll(" ", "-");
+					fileName = fileName.replaceAll(" ", "-").replaceAll("\\+", "");
 					log.info("Uploading: " + originalFileName);
 					if (isMap) {
 						pathFile = dir.getAbsolutePath() + File.separator + fileName + "-" + new Date().getTime() + "map."
@@ -69,12 +69,13 @@ public class UploadFileUtils {
 					} else {
 						// Normal case
 						serverFile = new File(pathFile);
-						serverFile.createNewFile();
 						log.debug("Upload to " + pathFile);
-						if (mpf.getBytes().length > 0) {
+						if (serverFile.createNewFile() && mpf.getBytes().length > 0) {
 							FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(serverFile));
 							log.info(mpf.getOriginalFilename() + " uploaded! ");
 							pathFilesUploaded.add(serverFile.getPath());
+						} else {
+							log.error("Can't not create new file");
 						}
 					}
 				}

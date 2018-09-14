@@ -1,5 +1,7 @@
 package net.namlongadv.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,13 +9,14 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.utils.FileUtils;
 import net.namlongadv.utils.ImageUtils;
 
 @RestController
@@ -25,19 +28,17 @@ public class ResourceController {
 	public void responseData(@RequestParam("url") String path,
 			@RequestParam(value = "w", required = false) Optional<Integer> width,
 			@RequestParam(value = "h", required = false) Optional<Integer> height, HttpServletResponse response) {
+		log.debug(path);
 		try {
 			File file = new File(path);
-			
-			if(width.isPresent() && width.get() > 0 || height.isPresent() && height.get() > 0) {
+
+			if (width.isPresent() && width.get() > 0 || height.isPresent() && height.get() > 0) {
 				file = ImageUtils.resizeImage(width.get(), height.get(), file);
 			}
-			
-			byte[] rs = new byte[(int)file.length()];
-			new FileInputStream(file).read(rs);
-			response.setContentType("image/" + FileUtils.getExtensions(path));
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-			response.getOutputStream().write(rs);
-			response.getOutputStream().close();
+
+			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+			BufferedOutputStream bufferedOutput = new BufferedOutputStream(response.getOutputStream());
+			IOUtils.copy(new BufferedInputStream(new FileInputStream(file)), bufferedOutput);
 		} catch (IOException e) {
 			log.error("Error: " + e.getMessage());
 		}

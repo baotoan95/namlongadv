@@ -19,9 +19,15 @@
 .select2-selection__arrow {
 	top: -7px !important;
 }
+
+.magnify-modal {
+	width: 96% !important;
+	left: 2% !important;
+}
 </style>
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/plugins/jquery-magnify/jquery.magnify.min.css'/>" />
 
 <section class="content">
 	<div class="row">
@@ -259,7 +265,8 @@
 											  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
 											    <label for="cb${loop.index }-${i.index }">
 											    	<img class="image lazy" data-original="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" />
-											    	<button type="button" index="${i.index }" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button>
+											    	<button type="button" data-magnify="gallery" data-group="${adv.id }" data-caption="${advImage.name }" href="${pageContext.request.contextPath }/resources/images?url=${advImage.url }">Preview</button>
+											    	<!-- <button type="button" index="${i.index }" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button> -->
 											    </label>
 											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>
 											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].url" value="${advImage.url }"/>
@@ -367,6 +374,28 @@
 
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<script type="text/javascript" src="<c:url value='/resources/plugins/jquery-magnify/jquery.magnify.js'/>"></script>
+
+<script>
+$('[data-magnify]').magnify({
+    headToolbar: [
+      'close'
+    ],
+    footToolbar: [
+      'zoomIn',
+      'zoomOut',
+      'prev',
+      'fullscreen',
+      'next',
+      'actualSize',
+      'rotateRight'
+    ],
+    title: true,
+    modalWidth: 320,
+    modalHeight: 320
+  });
+</script>
+
 <script>
 function exportExcel(hide) {
 	var token = $('input[name=csrf]').val();
