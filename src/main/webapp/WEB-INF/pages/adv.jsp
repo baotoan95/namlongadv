@@ -876,6 +876,14 @@ textarea {
 			                </tr>
 			                <%} %>
 			                
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getViews()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getViews())) {%>
+			                <tr>
+			                	<td>Tầm nhìn: <%= preHistory.getViews() %></td>
+			                	<td>Tầm nhìn: <%= currHistory.getViews() %></td>
+			                </tr>
+			                <%} %>
+			                
 			                <% if(!StringUtils.isEmptyOrNull(preHistory.getFlow()) 
 			                		|| !StringUtils.isEmptyOrNull(currHistory.getFlow())) {%>
 			                <tr>
@@ -911,8 +919,8 @@ textarea {
 			                <% if(!StringUtils.isEmptyOrNull(preHistory.getPrice()) 
 			                		|| !StringUtils.isEmptyOrNull(currHistory.getPrice())) {%>
 			                <tr>
-			                	<td>Loại: <%= preHistory.getPrice() %></td>
-			                	<td>Loại: <%= currHistory.getPrice() %></td>
+			                	<td>Giá: <%= preHistory.getPrice() %></td>
+			                	<td>Giá: <%= currHistory.getPrice() %></td>
 			                </tr>
 			                <%} %>
 			                
@@ -988,11 +996,11 @@ textarea {
 			                </tr>
 			                <%} %>
 			                
-			                <% if(!StringUtils.isEmptyOrNull(preHistory.getWidthSize()) 
-			                		|| !StringUtils.isEmptyOrNull(currHistory.getWidthSize())) {%>
+			                <% if(!StringUtils.isEmptyOrNull(preHistory.getAdvCompName()) 
+			                		|| !StringUtils.isEmptyOrNull(currHistory.getAdvCompName())) {%>
 			                <tr>
-			                	<td>Tên công ty: <%= preHistory.getWidthSize() %></td>
-			                	<td>Tên công ty: <%= currHistory.getWidthSize() %></td>
+			                	<td>Tên công ty: <%= preHistory.getAdvCompName() %></td>
+			                	<td>Tên công ty: <%= currHistory.getAdvCompName() %></td>
 			                </tr>
 			                <%} %>
 			                

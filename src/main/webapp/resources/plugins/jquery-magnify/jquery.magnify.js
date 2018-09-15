@@ -561,18 +561,17 @@ Magnify.prototype = {
     }
 
     // Fixed modal position bug
-    if (!$('.magnify-modal').length && this.options.fixedContent) {
-
-      $('html').css({ 'overflow': 'hidden' });
-
-      if (hasScrollbar()) {
-        var scrollbarWidth = getScrollbarWidth();
-        if (scrollbarWidth) {
-          $('html').css({ 'padding-right': scrollbarWidth });
-        }
-      }
-
-    }
+//    if (!$('.magnify-modal').length && this.options.fixedContent) {
+//
+//      $('html').css({ 'overflow': 'hidden' });
+//
+//      if (hasScrollbar()) {
+//        var scrollbarWidth = getScrollbarWidth();
+//        if (scrollbarWidth) {
+//          $('html').css({ 'padding-right': scrollbarWidth });
+//        }
+//      }
+//    }
 
     this.build();
 

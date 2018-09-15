@@ -21,10 +21,11 @@
 }
 
 .magnify-modal {
-	width: 96% !important;
-	left: 2% !important;
-	height: 95% !important;
-	top: 10px !important;
+	width: 100% !important;
+	left: 0px !important;
+	height: 100% !important;
+	top: 0px !important;
+	position: fixed !important;
 }
 </style>
 

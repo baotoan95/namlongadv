@@ -44,6 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .userDetailsService(nLAdvUserDetailsService)
         .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(5 * 86400);
         
+        http.headers().cacheControl().disable();
+        
         http.sessionManagement().invalidSessionUrl("/login");
     }
     
