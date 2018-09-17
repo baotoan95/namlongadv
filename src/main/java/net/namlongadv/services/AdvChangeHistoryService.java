@@ -222,14 +222,6 @@ public class AdvChangeHistoryService {
 			advChangeHistory.setOwnerPrice(StringUtils.EMPTY);
 		}
 
-		if (!StringUtils.equals(preChange.getOwnerPhone(), currChange.getOwnerPhone())) {
-			advChangeHistory.setOwnerPhone(decorateDefferentField(currChange.getOwnerPhone(), true));
-			numOfChanges++;
-			log.info("Different owner phone");
-		} else {
-			advChangeHistory.setOwnerPhone(StringUtils.EMPTY);
-		}
-
 		try {
 			if (!StringUtils.equals(preChange.getOwnerStartDate(), currChange.getOwnerStartDate())) {
 				advChangeHistory.setOwnerStartDate(decorateDefferentField(currChange.getOwnerStartDate(), true));
