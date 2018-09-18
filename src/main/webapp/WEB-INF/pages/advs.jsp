@@ -268,7 +268,7 @@
 											  	<input type="checkbox" checked="checked" name="advs[${loop.index }].advImages[${i.index }].id" value="${advImage.id }" id="cb${loop.index }-${i.index }" />
 											    <label for="cb${loop.index }-${i.index }">
 											    	<img class="image lazy" data-original="${pageContext.request.contextPath }/resources/images?url=${advImage.url }" />
-											    	<button type="button" data-magnify="gallery" data-group="${adv.id }" data-caption="${advImage.name }" href="${pageContext.request.contextPath }/resources/images?url=${advImage.url }">Preview</button>
+											    	<button type="button" data-magnify="gallery" data-group="${adv.id }" data-caption="${advImage.name }" href="${pageContext.request.contextPath }/resources/images?url=${advImage.url }"><span class="fa fa-external-link" title="Xem"></span></button>
 											    	<!-- <button type="button" index="${i.index }" class="btn-preview-image" data-toggle="modal" data-target="#modal-success">Preview</button> -->
 											    </label>
 											  	<input type="hidden" name="advs[${loop.index }].advImages[${i.index }].name" value="${advImage.name }"/>

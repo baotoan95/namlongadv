@@ -6,7 +6,7 @@
 	
 <footer class="main-footer">
 	<div class="pull-right hidden-xs">
-		<b>Version</b> 1.8.30
+		<b>Version</b> 2.0.0
 	</div>
-	Copyright &copy; 2018 by <b>BTIT95</b>
+	Design by <b>BTIT95</b>
 </footer>

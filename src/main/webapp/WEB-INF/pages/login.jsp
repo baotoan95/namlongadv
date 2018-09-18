@@ -56,15 +56,15 @@
 					<span class="glyphicon glyphicon-lock form-control-feedback"></span>
 				</div>
 				<div class="row">
-					<div class="col-xs-8">
+					<div class="col-xs-7">
 						<div class="checkbox icheck">
-							<label> <input type="checkbox" name="remember-me"> Ghi nhớ tài khoản
+							<label> <input type="checkbox" checked name="remember-me"> Ghi nhớ tài khoản
 							</label>
 						</div>
 					</div>
 					<!-- /.col -->
-					<div class="col-xs-4">
-						<button type="submit" class="btn btn-primary btn-block btn-flat">Đăng Nhập</button>
+					<div class="col-xs-5">
+						<button type="submit" class="btn btn-primary btn-flat pull-right"><span class="fa fa-sign-in"></span> Đăng Nhập</button>
 					</div>
 					<!-- /.col -->
 				</div>

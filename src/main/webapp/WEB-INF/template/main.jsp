@@ -93,28 +93,6 @@
 	</div>
 	<!-- ./wrapper -->
 
-	<!-- The Modal -->
-	<div class="modal modal-success" id="modal-success" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">×</span>
-					</button>
-					<h4 class="modal-title">Preview</h4>
-				</div>
-				<div class="modal-body">
-					<div class="sp-wrap" style="max-width: none;">
-						<div class="sp-loading">LOADING IMAGES...</div>
-					</div>
-				</div>
-			</div>
-			<!-- /.modal-content -->
-		</div>
-		<!-- /.modal-dialog -->
-	</div>
-
 	<script src="<c:url value='/resources/jquery-ui-1.12.1/jquery-ui.min.js'/>"></script>
 	<!-- Bootstrap 3.3.6 -->
 	<script src="<c:url value='/resources/bootstrap/js/bootstrap.min.js'/>"></script>

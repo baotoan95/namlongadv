@@ -40,15 +40,17 @@
 							<p>
 								<security:authorize access="isAuthenticated()">
 									<security:authentication property="principal.name" />
+									<small><security:authentication property="principal.authorities" /></small>
 								</security:authorize>
-								<small><security:authentication property="principal.authorities" /></small>
 							</p></li>
 						<!-- Menu Footer-->
 						<li class="user-footer">
 							<div class="pull-right">
 								<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-									<input type="submit" class="btn btn-default btn-flat"
-										value="Đăng Xuất" />
+									<button type="submit" class="btn btn-default btn-flat">
+										<span class="fa fa-sign-out"></span>
+										Đăng Xuất
+									</button>
 								</form:form>
 							</div>
 						</li>
