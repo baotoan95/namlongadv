@@ -41,6 +41,7 @@ import net.namlongadv.common.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
 import net.namlongadv.models.Advertisement;
+import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
@@ -66,6 +67,8 @@ public class AdvController {
 	private ProvinceRepository provinceRepository;
 	@Autowired
 	private AdvChangeHistoryService changeHistoryService;
+	@Autowired
+	private AdvImageRepository advImageRepository;
 
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
@@ -318,5 +321,11 @@ public class AdvController {
 	@GetMapping("initHistory")
 	public void initHistory() {
 		advertisementService.initHistory();
+	}
+	
+	@GetMapping("deleteImg")
+	public String deleteImgNotExist() {
+		advImageRepository.delete(UUID.fromString("b13c0c4c-66a7-4a7a-8ca8-51fbe088d52b"));
+		return "Done";
 	}
 }

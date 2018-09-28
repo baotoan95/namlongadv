@@ -55,9 +55,13 @@ public class AdvChangeHistory implements Serializable {
 	private String district;
 	@Column(columnDefinition="text")
 	private String province;
+	@Column(columnDefinition="text")
 	private String widthSize;
+	@Column(columnDefinition="text")
 	private String heightSize;
+	@Column(columnDefinition="text")
 	private String amount;
+	@Column(columnDefinition="text")
 	private String map;
 	@Column(columnDefinition="text")
 	private String describe;
@@ -65,26 +69,43 @@ public class AdvChangeHistory implements Serializable {
 	private String views;
 	@Column(columnDefinition="text")
 	private String flow;
+	@Column(columnDefinition="text")
 	private String implTime;
+	@Column(columnDefinition="text")
 	private String implForm;
+	@Column(columnDefinition="text")
 	private String lightSystem;
+	@Column(columnDefinition="text")
 	private String ownerPhone;
+	@Column(columnDefinition="text")
 	private String ownerEmail;
+	@Column(columnDefinition="text")
 	private String ownerPrice;
+	@Column(columnDefinition="text")
 	private String ownerContactPerson;
+	@Column(columnDefinition="text")
 	private String ownerStartDate;
+	@Column(columnDefinition="text")
 	private String ownerEndDate;
 	@Column(columnDefinition="text")
 	private String ownerNote;
+	@Column(columnDefinition="text")
 	private String advCompPhone;
+	@Column(columnDefinition="text")
 	private String advCompEmail;
+	@Column(columnDefinition="text")
 	private String advCompPrice;
+	@Column(columnDefinition="text")
 	private String advCompContactPerson;
+	@Column(columnDefinition="text")
 	private String advCompName;
+	@Column(columnDefinition="text")
 	private String advCompStartDate;
+	@Column(columnDefinition="text")
 	private String advCompEndDate;
 	@Column(columnDefinition="text")
 	private String advCompNote;
+	@Column(columnDefinition="text")
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "updatedBy")
@@ -93,6 +114,7 @@ public class AdvChangeHistory implements Serializable {
 	@JoinColumn(name = "createdBy")
 	private User createdBy;
 	private Date updatedDate;
+	@Column(columnDefinition="text")
 	private String type;
 	@Transient
 	private int numOfChanges;

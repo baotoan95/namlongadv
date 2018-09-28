@@ -306,7 +306,7 @@
 				<!-- /.box-body -->
 
 				<div class="box-footer clearfix">
-					<div class="pull-left">Hiển thị từ ${(page.number * sessionScope.pageSize) + 1} tới ${(page.number * sessionScope.pageSize) + page.content.size() } trong tổng ${page.totalElements } mục được tìm thấy</div>
+					<div class="pull-left">Hiển thị từ <b>${(page.number * sessionScope.pageSize) + 1}</b> tới <b>${(page.number * sessionScope.pageSize) + page.content.size() }</b> trong tổng <b>${page.totalElements }</b> mục được tìm thấy</div>
 					<ul class="pagination pagination-sm no-margin pull-right">
 						<c:set var="currentPage" value="${page.number }"></c:set>
 						<c:set var="firstPrev" value="${page.number - 5 }"></c:set>

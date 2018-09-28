@@ -48,9 +48,13 @@ public class Advertisement {
 	private String district;
 	@Column(columnDefinition="text")
 	private String province;
+	@Column(columnDefinition="text")
 	private String widthSize;
+	@Column(columnDefinition="text")
 	private String heightSize;
+	@Column(columnDefinition="text")
 	private String amount;
+	@Column(columnDefinition="text")
 	private String map;
 	@Column(columnDefinition="text")
 	private String describe;
@@ -59,25 +63,37 @@ public class Advertisement {
 	@Column(columnDefinition="text")
 	private String flow;
 	private Integer implTime;
+	@Column(columnDefinition="text")
 	private String implForm;
+	@Column(columnDefinition="text")
 	private String lightSystem;
+	@Column(columnDefinition="text")
 	private String ownerPhone;
+	@Column(columnDefinition="text")
 	private String ownerEmail;
+	@Column(columnDefinition="text")
 	private String ownerPrice;
+	@Column(columnDefinition="text")
 	private String ownerContactPerson;
 	private Date ownerStartDate;
 	private Date ownerEndDate;
 	@Column(columnDefinition="text")
 	private String ownerNote;
+	@Column(columnDefinition="text")
 	private String advCompPhone;
+	@Column(columnDefinition="text")
 	private String advCompEmail;
+	@Column(columnDefinition="text")
 	private String advCompPrice;
+	@Column(columnDefinition="text")
 	private String advCompContactPerson;
+	@Column(columnDefinition="text")
 	private String advCompName;
 	private Date advCompStartDate;
 	private Date advCompEndDate;
 	@Column(columnDefinition="text")
 	private String advCompNote;
+	@Column(columnDefinition="text")
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
@@ -90,6 +106,7 @@ public class Advertisement {
 	private Boolean trash = false;
 	private Date publishedDate;
 	private Integer publishedId;
+	@Column(columnDefinition="text")
 	private String type;
 	@Column(columnDefinition="text")
 	private String addressSearching;

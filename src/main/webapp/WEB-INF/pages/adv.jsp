@@ -40,12 +40,9 @@
 .select2-selection--single, .select2-selection__rendered {
 	margin-top: -7px !important;
 }
+
 .select2-selection__arrow {
 	top: -7px !important;
-}
-
-textarea {
-	resize: none;
 }
 
 .tbl-row {
@@ -95,7 +92,7 @@ textarea {
 							<div class="form-group">
 								<label for="code" class="col-md-3 control-label">Mã</label>
 								<div class="col-md-3">
-									<form:input readonly="true" maxlength="254" type="text" path="advertisement.code"
+									<form:input readonly="true" type="text" path="advertisement.code"
 										class="form-control" id="code" placeholder="Tự động tạo" />
 								</div>
 								<c:if test="${not empty advertDto.advertisement.updatedDate }">
@@ -195,7 +192,7 @@ textarea {
 								<label for="coordinates" class="col-md-3 control-label">Toạ độ</label>
 								<div class="col-md-9">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.map }">
-										<form:input maxlength="254" path="advertisement.map" type="text" onchange="initialize()"
+										<form:input path="advertisement.map" type="text" onchange="initialize()"
 											class="form-control" id="coordinates" name="coordinates" placeholder="Nhập toạ độ (VD: 123.2334, 234.2343)" />
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.map }">
@@ -209,7 +206,7 @@ textarea {
 								<label for="price" class="col-md-3 control-label">Đơn giá</label>
 								<div class="col-md-9">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.price }">
-										<form:input maxlength="254" path="advertisement.price" type="text"
+										<form:input path="advertisement.price" type="text"
 										class="form-control" id="price" name="price" placeholder="Nhập đơn giá (USD/năm)" />
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.price }">
@@ -223,7 +220,7 @@ textarea {
 								<label for="heightSize" class="col-md-3 control-label">Kích thước</label>
 								<div class="col-md-2">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.heightSize || advertDto.advertisement.heightSize eq ' m' || advertDto.advertisement.heightSize eq 'm' }">
-										<form:input maxlength="254" path="advertisement.heightSize" type="text"
+										<form:input path="advertisement.heightSize" type="text"
 											class="form-control" id="heightSize" placeholder="Chiều cao" />
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.heightSize && advertDto.advertisement.heightSize ne ' m' && advertDto.advertisement.heightSize ne 'm' }">
@@ -236,7 +233,7 @@ textarea {
 								</div>
 								<div class="col-md-2">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.widthSize || advertDto.advertisement.widthSize eq 'm' || advertDto.advertisement.widthSize eq ' m' }">
-										<form:input maxlength="254" path="advertisement.widthSize" type="text"
+										<form:input path="advertisement.widthSize" type="text"
 											class="form-control" id="widthSize" placeholder="Chiều rộng" />
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.widthSize && advertDto.advertisement.widthSize ne 'm' && advertDto.advertisement.widthSize ne ' m' }">
@@ -249,7 +246,7 @@ textarea {
 								</div>
 								<div class="col-md-2">
 									<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.amount }">
-										<form:input maxlength="254" path="advertisement.amount" type="text"
+										<form:input path="advertisement.amount" type="text"
 											class="form-control" id="amount" placeholder="Số lượng" />
 									</c:if>
 									<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.amount }">
@@ -376,7 +373,7 @@ textarea {
 
 							<div class="row">
 								<div class="col-md-6">
-									<div class="box box-info">
+									<div class="box box-info" style="z-index: 99">
 										<div class="box-header with-border">
 											<h3 class="box-title">Thông Tin Chủ Nhà</h3>
 										</div>
@@ -388,7 +385,7 @@ textarea {
 													<label for="ownerPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerPhone }">
-															<form:input maxlength="254" path="advertisement.ownerPhone" type="text"
+															<form:input path="advertisement.ownerPhone" type="text"
 																class="form-control" id="ownerPhone"
 																placeholder="Số điện thoại" />
 														</c:if>
@@ -402,7 +399,7 @@ textarea {
 													<label for="ownerEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerEmail }">
-															<form:input maxlength="254" path="advertisement.ownerEmail" type="text"
+															<form:input path="advertisement.ownerEmail" type="text"
 																class="form-control" id="ownerEmail" placeholder="Email" />
 														</c:if>
 														<c:if test="${ !advertDto.advertisement.belongCurrentUser && not empty advertDto.advertisement.ownerEmail }">
@@ -415,7 +412,7 @@ textarea {
 													<label for="ownerPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerPrice }">
-															<form:input maxlength="254" path="advertisement.ownerPrice" type="text"
+															<form:input path="advertisement.ownerPrice" type="text"
 																class="form-control" id="ownerPrice"
 																placeholder="Giá thuê" />
 														</c:if>
@@ -430,7 +427,7 @@ textarea {
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.ownerContactPerson }">
-															<form:input maxlength="254" path="advertisement.ownerContactPerson"
+															<form:input path="advertisement.ownerContactPerson"
 																type="text" class="form-control" id="ownerContactPerson"
 																placeholder="Người liên hệ" />
 														</c:if>
@@ -502,7 +499,7 @@ textarea {
 													<label for="advCompName" class="col-md-3 control-label">Tên Cty</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompName }">
-															<form:input maxlength="254" path="advertisement.advCompName" type="text"
+															<form:input path="advertisement.advCompName" type="text"
 																class="form-control" id="advCompName"
 																placeholder="Tên công ty" />
 														</c:if>
@@ -516,7 +513,7 @@ textarea {
 													<label for="advCompPhone" class="col-md-3 control-label">Phone</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompPhone }">
-															<form:input maxlength="254" path="advertisement.advCompPhone" type="text"
+															<form:input path="advertisement.advCompPhone" type="text"
 																class="form-control" id="advCompPhone"
 																placeholder="Số điện thoại" />
 														</c:if>
@@ -530,7 +527,7 @@ textarea {
 													<label for="advCompEmail" class="col-md-3 control-label">Email</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompEmail }">
-														<form:input maxlength="254" path="advertisement.advCompEmail" type="text"
+														<form:input path="advertisement.advCompEmail" type="text"
 															class="form-control" id="advCompEmail"
 															placeholder="Email" />
 														</c:if>
@@ -544,7 +541,7 @@ textarea {
 													<label for="advCompPrice" class="col-md-3 control-label">Giá</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompPrice }">
-															<form:input maxlength="254" path="advertisement.advCompPrice" type="text"
+															<form:input path="advertisement.advCompPrice" type="text"
 																class="form-control" id="advCompPrice"
 																placeholder="Giá thuê" />
 														</c:if>
@@ -559,7 +556,7 @@ textarea {
 														class="col-md-3 control-label">NLH</label>
 													<div class="col-md-9">
 														<c:if test="${ advertDto.advertisement.belongCurrentUser || empty advertDto.advertisement.advCompContactPerson }">
-															<form:input maxlength="254" path="advertisement.advCompContactPerson"
+															<form:input path="advertisement.advCompContactPerson"
 																type="text" class="form-control"
 																id="advCompContactPerson" placeholder="Người liên hệ" />
 														</c:if>
