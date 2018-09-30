@@ -680,7 +680,7 @@
 							<img class="img-thumbnail" data=""
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
-		 					<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
+		 					<input type="file" onchange="previewImages(this)" accept="image/gif,image/jpeg,image/png,.heic" name="files" class="form-control"/>
 						</div>
 				<%
 						} else {
@@ -689,7 +689,7 @@
 					}
 				%>
 					<div id="new-preview"></div>
-					<input type="file" multiple="multiple" onchange="previewImages(this, true)" accept="image/gif,image/jpeg,image/png" name="files" class="form-control"/>
+					<input type="file" multiple="multiple" onchange="previewImages(this, true)" accept="image/gif,image/jpeg,image/png,.heic" name="files" class="form-control"/>
 				</div>
 				
 				<div id="imgMap">
@@ -709,14 +709,14 @@
 		 						src="${pageContext.request.contextPath }/resources/images?url=<%= advImage.getUrl() %>"
 		 						alt="<%= advImage.getName() %>" name="<%= advImage.isMap() ? "map" : "" %>"></img>
 		 					<c:if test="${advertDto.advertisement.belongCurrentUser }">
-		 						<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, false)">
+		 						<input type="file" accept="image/gif,image/jpeg,image/png,.heic" class="form-control" name="map" onchange="previewImages(this, false)">
 		 					</c:if>
 						</div>
 		 			<%
 						} else {
 					%>
 					</div>
-					<input type="file" accept="image/gif,image/jpeg,image/png" class="form-control" name="map" onchange="previewImages(this, true, true)">
+					<input type="file" accept="image/gif,image/jpeg,image/png,.heic" class="form-control" name="map" onchange="previewImages(this, true, true)">
 					<%
 						}
 		 			%>
