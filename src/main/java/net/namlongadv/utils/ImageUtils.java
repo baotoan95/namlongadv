@@ -1,9 +1,13 @@
 package net.namlongadv.utils;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,6 +19,11 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.JAI;
+import javax.media.jai.OpImage;
+import javax.media.jai.RenderedOp;
+
+import com.sun.media.jai.codec.SeekableStream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -162,6 +171,36 @@ public class ImageUtils {
 			log.error(e.getMessage());
 		}
 		return 0;
+	}
+
+	private static String compress(File file, String output) throws FileNotFoundException {
+		File outFile = new File(output);
+
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(outFile));
+		SeekableStream s = SeekableStream.wrapInputStream(bis, true);
+		
+		try {
+			RenderedOp image = JAI.create("stream", s);
+			((OpImage) image.getRendering()).setTileCache(null);
+
+			RenderingHints qualityHints = new RenderingHints(RenderingHints.KEY_RENDERING,
+					RenderingHints.VALUE_RENDER_QUALITY);
+
+			RenderedOp resizedImage = JAI.create("SubsampleAverage", image, 1.1, 1.1, qualityHints);
+
+			JAI.create("encode", resizedImage, bos, FileUtils.getExtensions(file.getName()), null);
+
+			return outFile.getPath();
+		} finally {
+			try {
+				bis.close();
+				bos.close();
+				s.close();
+			} catch (Exception e) {
+				// Do nothing
+			}
+		}
 	}
 
 }
