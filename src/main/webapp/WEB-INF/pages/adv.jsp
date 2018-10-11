@@ -1175,7 +1175,7 @@
 			}).done(function(msg) {
 				// Update if it existed
 				$.ajax({
-		 			method: "PUT",
+		 			method: "GET",
 		 			url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 		 			data: data
 		 		}).done(function(msg) {
@@ -1212,7 +1212,7 @@
 			var conf = confirm("Bạn có chắc muốn huỷ xuất bản?");
 			if(conf) {
 				$.ajax({
-		 			method: "DELETE",
+		 			method: "GET",
 		 			url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 		 		}).done(function(msg) {
 		 			alert("Huỷ xuất bản thành công!!!");
