@@ -180,6 +180,7 @@ public class AdvController {
 	 */
 	@GetMapping
 	public String adv(HttpSession session, ModelMap model) {
+		setPageSize(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) != null ? Integer.parseInt(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE).toString()) : null, session);
 		session.setAttribute(pageIndex, PathContants.ADVERT);
 		AdvertisementDTO advDto = new AdvertisementDTO();
 		// Set default values
@@ -199,6 +200,7 @@ public class AdvController {
 	@PostMapping(value = "add", consumes = { "multipart/form-data" })
 	public String addAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
 			HttpSession session, ModelMap model, BindingResult result) {
+		setPageSize(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) != null ? Integer.parseInt(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE).toString()) : null, session);
 		session.setAttribute(pageIndex, PathContants.ADVERT);
 
 		Advertisement advert = advertDto.getAdvertisement();
@@ -267,6 +269,7 @@ public class AdvController {
 	 */
 	@GetMapping("/{advId}")
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session, ModelMap model) {
+		setPageSize(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) != null ? Integer.parseInt(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE).toString()) : null, session);
 		session.setAttribute(pageIndex, PathContants.ADVERT_LIST);
 
 		Advertisement advertisement = advertisementService.setPermission(advertisementRepository.findOne(advId),
@@ -287,8 +290,8 @@ public class AdvController {
 	@PostMapping(value = "update", consumes = { "multipart/form-data" })
 	public String updateAdv(@Valid @ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto,
 			HttpSession session, ModelMap model) {
+		setPageSize(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) != null ? Integer.parseInt(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE).toString()) : null, session);
 		session.setAttribute(pageIndex, PathContants.ADVERT);
-
 		return advertisementService.update(advertDto, session, model);
 	}
 
@@ -297,6 +300,7 @@ public class AdvController {
 	 */
 	@RequestMapping(value = "/delete/{advId}", method = RequestMethod.GET)
 	public String adv(@PathVariable("advId") UUID advId, HttpSession session) {
+		setPageSize(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) != null ? Integer.parseInt(session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE).toString()) : null, session);
 		String queryString = session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT) != null
 				? session.getAttribute(Constants.SESSION_NAME.SEARCH_CONTENT).toString()
 				: null;
