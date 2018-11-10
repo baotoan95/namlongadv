@@ -226,7 +226,7 @@ public class ExportFileService {
 						}
 						// Owner Price
 						cell = row.createCell(15);
-						if(!adv.getPrice().isEmpty() && hideInfo) {
+						if(!adv.getOwnerPrice().isEmpty() && hideInfo) {
 							cell.setCellStyle(hiddenBackground);
 						} else {
 							if(hideInfo) {
@@ -234,7 +234,7 @@ public class ExportFileService {
 							} else {
 								cell.setCellStyle(cellStyle);
 							}
-							cell.setCellValue(adv.getPrice());
+							cell.setCellValue(adv.getOwnerPrice());
 						}
 						// Owner start date
 						cell = row.createCell(16);
