@@ -31,6 +31,7 @@ public class ResourceController {
 			// Caching
 			response.setHeader("cache-control", "max-age=31536000");
 			response.setHeader("Expires", "31536000");
+			response.setHeader("Content-Disposition", "inline; filename=" + file.getName());
 			BufferedOutputStream bufferedOutput = new BufferedOutputStream(response.getOutputStream());
 			BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
 			IOUtils.copy(bufferedInputStream, bufferedOutput);

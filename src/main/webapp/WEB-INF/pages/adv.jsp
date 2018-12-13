@@ -1168,7 +1168,7 @@
 		if(publishedId === undefined || publishedId < 0 || publishedId === '') {
 			publishedId = 0;
 		}
-		// Validate if it existed
+			// Validate if it existed
 			$.ajax({
 				method: "GET",
 				url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
@@ -1179,7 +1179,7 @@
 		 			url: "https://billboardquangcao.com/api.php/firerox_jv_article/" + publishedId,
 		 			data: data
 		 		}).done(function(msg) {
-		 			if(msg === 1) {
+		 			if(msg) {
 			 			alert("Tái xuất bản thành công!!!");
 			 			$('#publishedId').attr("value", publishedId);
 			 			$('#formData').submit();
