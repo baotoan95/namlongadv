@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import net.namlongadv.models.User;
+import net.namlongadv.entities.User;
 
 public interface UserRepository extends PagingAndSortingRepository<User, UUID> {
     public User findByUsernameAndPassword(String username, String password);

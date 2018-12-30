@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.Advertisement;
 
 public interface AdvertisementRepository extends PagingAndSortingRepository<Advertisement, UUID>, JpaSpecificationExecutor<Advertisement> {
 	@Query("select distinct adv from Advertisement adv join adv.createdBy.roles roles where roles.code in :roles and "

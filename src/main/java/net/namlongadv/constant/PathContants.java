@@ -1,4 +1,4 @@
-package net.namlongadv.common;
+package net.namlongadv.constant;
 
 import java.io.File;
 

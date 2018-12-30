@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.dto.AdvertisementWrapperDTO;
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.Advertisement;
 import net.namlongadv.services.ExportFileService;
 
 @Controller

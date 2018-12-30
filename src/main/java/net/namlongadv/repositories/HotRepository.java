@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.Advertisement;
 
 public interface HotRepository extends JpaRepository<Advertisement, UUID> {
 	@Query(value = "alter table adv_change_history alter column title type text, "

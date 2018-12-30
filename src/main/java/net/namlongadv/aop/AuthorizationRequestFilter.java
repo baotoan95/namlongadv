@@ -41,7 +41,7 @@ public class AuthorizationRequestFilter extends OncePerRequestFilter {
                 resp.reset();
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (IOException | ServletException e) {
+        } catch (Exception e) {
             resp.reset();
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
         }

@@ -1,12 +1,26 @@
 package net.namlongadv.dto;
 
+import java.io.Serializable;
+import java.util.UUID;
+
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.namlongadv.models.User;
 
 @Setter
 @Getter
-public class UserDTO {
-    private User user;
-    private String newPassword;
+@NoArgsConstructor
+public class UserDTO implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6437282434269438553L;
+	private UUID id;
+    private String username;
+    private String password;
+    private String name;
+    private String email;
+    private String department;
+    private String phone;
+    private boolean accountNonLocked;
 }

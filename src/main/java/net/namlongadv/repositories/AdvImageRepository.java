@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import net.namlongadv.models.AdvImage;
+import net.namlongadv.entities.AdvImage;
 
 public interface AdvImageRepository extends CrudRepository<AdvImage, UUID> {
 	public List<AdvImage> findByAdvertisement_Id(UUID advId);

@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.models.NLAdvUserDetails;
-import net.namlongadv.models.User;
+import net.namlongadv.entities.NLAdvUserDetails;
+import net.namlongadv.entities.User;
 import net.namlongadv.repositories.UserRepository;
 
 @Service

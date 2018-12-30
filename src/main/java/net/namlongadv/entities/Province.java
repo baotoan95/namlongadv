@@ -1,4 +1,4 @@
-package net.namlongadv.models;
+package net.namlongadv.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

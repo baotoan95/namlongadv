@@ -11,7 +11,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.common.PathContants;
+import net.namlongadv.constant.PathContants;
 
 @Slf4j
 public class UploadFileUtils {

@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.models.AdvChangeHistory;
-import net.namlongadv.models.Advertisement;
-import net.namlongadv.models.User;
+import net.namlongadv.entities.AdvChangeHistory;
+import net.namlongadv.entities.Advertisement;
+import net.namlongadv.entities.User;
 import net.namlongadv.repositories.AdvChangeHistoryRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.utils.DateUtils;

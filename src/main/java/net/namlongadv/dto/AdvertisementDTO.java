@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.Advertisement;
 
 @Setter
 @Getter

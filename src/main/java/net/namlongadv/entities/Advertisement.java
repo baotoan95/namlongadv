@@ -1,9 +1,10 @@
-package net.namlongadv.models;
+package net.namlongadv.entities;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,38 +12,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Entity
-@Table(name = "adv_change_history")
+@Table(name = "advertisements")
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Entity
 @ToString
-public class AdvChangeHistory implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+public class Advertisement {
 	@Id
 	@GeneratedValue(generator = "uuid2")
 	@GenericGenerator(name = "uuid2", strategy = "uuid2")
 	private UUID id;
-	private UUID advertId;
 	private String code;
+	private String provinceCode;
 	@Column(columnDefinition="text")
 	private String title;
 	@Column(columnDefinition="text")
@@ -69,8 +62,7 @@ public class AdvChangeHistory implements Serializable {
 	private String views;
 	@Column(columnDefinition="text")
 	private String flow;
-	@Column(columnDefinition="text")
-	private String implTime;
+	private Integer implTime;
 	@Column(columnDefinition="text")
 	private String implForm;
 	@Column(columnDefinition="text")
@@ -83,10 +75,8 @@ public class AdvChangeHistory implements Serializable {
 	private String ownerPrice;
 	@Column(columnDefinition="text")
 	private String ownerContactPerson;
-	@Column(columnDefinition="text")
-	private String ownerStartDate;
-	@Column(columnDefinition="text")
-	private String ownerEndDate;
+	private Date ownerStartDate;
+	private Date ownerEndDate;
 	@Column(columnDefinition="text")
 	private String ownerNote;
 	@Column(columnDefinition="text")
@@ -99,23 +89,47 @@ public class AdvChangeHistory implements Serializable {
 	private String advCompContactPerson;
 	@Column(columnDefinition="text")
 	private String advCompName;
-	@Column(columnDefinition="text")
-	private String advCompStartDate;
-	@Column(columnDefinition="text")
-	private String advCompEndDate;
+	private Date advCompStartDate;
+	private Date advCompEndDate;
 	@Column(columnDefinition="text")
 	private String advCompNote;
 	@Column(columnDefinition="text")
 	private String price;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "updatedBy")
-	private User updatedBy;
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "createdBy")
+	@JsonIgnore
 	private User createdBy;
+	private Date createdDate;
 	private Date updatedDate;
+	@OneToMany(mappedBy = "advertisement", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<AdvImage> advImages;
+	private Boolean trash = false;
+	private Date publishedDate;
+	private Integer publishedId;
 	@Column(columnDefinition="text")
 	private String type;
+	@Column(columnDefinition="text")
+	private String addressSearching;
+	@Column(columnDefinition="text")
+	private String advCompNameSearching;
+	@Column(columnDefinition="text")
+	private String ownerContactPersonSearching;
+	@Column(columnDefinition="text")
+	private String houseNoSearching;
+	@Column(columnDefinition="text")
+	private String streetSearching;
+	@Column(columnDefinition="text")
+	private String wardSearching;
+	@Column(columnDefinition="text")
+	private String districtSearching;
+	@Column(columnDefinition="text")
+	private String provinceSearching;
+	@Column(columnDefinition="text")
+	private String titleSearching;
 	@Transient
-	private int numOfChanges;
+	private boolean allowEdit = true;
+	@Transient
+	private boolean allowDelete = true;
+	@Transient
+	private boolean belongCurrentUser = false;
 }

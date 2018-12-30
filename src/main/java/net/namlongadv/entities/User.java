@@ -1,4 +1,4 @@
-package net.namlongadv.models;
+package net.namlongadv.entities;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,8 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -44,12 +42,8 @@ public class User implements Serializable {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
-    @Size(min = 5, message = "Tên tài khoản phải lớn hơn hoặc bằng 5 ký tự")
-    @NotNull(message = "Vui lòng nhập tên tài khoản")
     private String username;
-    @NotNull(message = "Vui lòng nhập mật khẩu")
     private String password;
-    @NotNull(message = "Vui lòng nhập tên")
     private String name;
     private String email;
     private String department;

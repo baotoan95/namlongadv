@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.Advertisement;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.services.MailService;
 import net.namlongadv.utils.DateUtils;

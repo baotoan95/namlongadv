@@ -44,8 +44,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.models.AdvImage;
-import net.namlongadv.models.Advertisement;
+import net.namlongadv.entities.AdvImage;
+import net.namlongadv.entities.Advertisement;
 import net.namlongadv.utils.DateUtils;
 
 @Service
