@@ -1,9 +1,9 @@
 package net.namlongadv.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -14,23 +14,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.common.Constants;
+import net.namlongadv.dto.UserRoleDTO;
 import net.namlongadv.models.User;
-import net.namlongadv.models.UserRole;
 import net.namlongadv.repositories.RoleRepository;
 import net.namlongadv.repositories.UserRepository;
 
-@Controller
+@RestController
 @RequestMapping("user")
 @Slf4j
 public class UserController {
@@ -45,23 +47,13 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String user(ModelMap model, HttpSession session) {
-		if (session.getAttribute(Constants.SESSION_NAME.PAGE_SIZE) == null) {
-			session.setAttribute(Constants.SESSION_NAME.PAGE_SIZE, 10);
-		}
-		
-		log.debug("Getting add user page");
-		session.setAttribute(pageIndex, "user");
-
-		List<UserRole> userRoles = Lists.newArrayList(roleRepository.findAll());
-		model.addAttribute("roles", userRoles);
-		User newUser = new User();
-		// Set default value
-		newUser.setRoles(Arrays.asList(userRoles.get(0)));
-		newUser.setAccountNonLocked(true);
-		model.addAttribute("user", newUser);
-		return "user";
+	@GetMapping("user_roles")
+	public ResponseEntity<List<UserRoleDTO>> userRoles() {
+		List<UserRoleDTO> userRoles = Lists.newArrayList(roleRepository.findAll()).stream().map(userRole -> {
+			return UserRoleDTO.builder().id(userRole.getId()).code(userRole.getCode())
+					.name(userRole.getName()).build();
+		}).collect(Collectors.toList());
+		return ResponseEntity.ok(userRoles);
 	}
 
 	@RequestMapping(method = { RequestMethod.PUT, RequestMethod.POST })

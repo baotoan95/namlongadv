@@ -7,10 +7,9 @@ import org.springframework.boot.autoconfigure.web.HttpEncodingProperties;
 import org.springframework.boot.web.filter.OrderedCharacterEncodingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
-import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
 @SpringBootApplication
-public class NamlongadvApplication extends AbstractSecurityWebApplicationInitializer {
+public class NamlongadvApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NamlongadvApplication.class, args);
 	}

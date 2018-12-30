@@ -1,0 +1,60 @@
+server:
+  port: 8080
+  context-path: /management
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+  datasource:
+    platform: postgresql
+    url: jdbc:postgresql://127.0.0.1:5432/namlongadv_management
+    username: postgres
+    password: root
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: quangcaotruyenthongnamlong@gmail.com
+    password: congtynamlong
+  properties:
+    mail:
+      smtp:
+        starttls:
+          enable: true
+          required: true
+        auth: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+
+# logback
+logging:
+  level:
+    net:
+      namlongadv: debug
+
+# Session keys
+namlongadv:
+  session:
+    name:
+      page-index: PAGE_INDEX
+# App properties
+  pagination:
+    num-of-page: 10
+  file:
+    limit: 512000
+  base_url: http://namlongadv.ddns.net:7070/management
+
+
+
+
+
+
+
+

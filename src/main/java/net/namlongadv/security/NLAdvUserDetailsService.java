@@ -1,6 +1,10 @@
 package net.namlongadv.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +30,15 @@ public class NLAdvUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
         log.debug("User {} is authenticated", username);
-        return new NLAdvUserDetails(user);
+        return new NLAdvUserDetails(user.getId(), user.getUsername(), user.getPassword(), getAuthority(user));
     }
+    
+    private List<SimpleGrantedAuthority> getAuthority(User user) {
+		List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+		user.getRoles().forEach(role -> {
+			grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+		});
+		return grantedAuthorities;
+	}
     
 }

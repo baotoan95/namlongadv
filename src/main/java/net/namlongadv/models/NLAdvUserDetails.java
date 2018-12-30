@@ -1,70 +1,66 @@
 package net.namlongadv.models;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 
-public class NLAdvUserDetails implements UserDetails {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    private User user;
-    
-    public NLAdvUserDetails(User user) {
-        this.user = user;
-    }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for(UserRole role: user.getRoles()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getCode()));
-        }
-        return grantedAuthorities;
-    }
+public class NLAdvUserDetails extends User {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1439099307330350284L;
+	private UUID userId;
+	private String firstName;
+	private String lastName;
+	private String phoneNumber;
+	private String email;
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
+	public NLAdvUserDetails(UUID userId, String username, String password,
+			Collection<? extends GrantedAuthority> authorities) {
+		super(username, password, authorities);
+		this.userId = userId;
+	}
 
-    @Override
-    public String getUsername() {
-        return user.getUsername();
-    }
+	public UUID getUserId() {
+		return userId;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	public void setUserId(UUID userId) {
+		this.userId = userId;
+	}
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return user.isAccountNonLocked();
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-    
-    public String getName() {
-        return user.getName();
-    }
-    
-    public UUID getUserId() {
-    	return user.getId();
-    }
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 }
