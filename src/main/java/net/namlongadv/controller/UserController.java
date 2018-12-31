@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
-import net.namlongadv.dto.PageDTO;
+import net.namlongadv.dto.GenericResponse;
 import net.namlongadv.dto.UserDTO;
 import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.services.UserService;
@@ -31,30 +31,30 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public PageDTO<UserDTO> users(@RequestParam(value = "page", required = false) Optional<Integer> page,
+	public ResponseEntity<GenericResponse> users(@RequestParam(value = "page", required = false) Optional<Integer> page,
 			@RequestParam(value = "size", required = false) Optional<Integer> size) {
 		log.debug("Getting users page");
-		return userService.getAll(page.orElse(0), size.orElse(Integer.MAX_VALUE));
+		return ResponseEntity.ok(new GenericResponse(userService.getAll(page.orElse(0), size.orElse(Integer.MAX_VALUE))));
 	}
 	
 	@GetMapping(value = "/{userId}")
-	public UserDTO user(@PathVariable("userId") UUID userId) throws BadRequestException {
+	public ResponseEntity<GenericResponse> user(@PathVariable("userId") UUID userId) throws BadRequestException {
 		log.debug("Getting " + userId + "'s info");
-		return userService.getUserById(userId);
+		return ResponseEntity.ok(new GenericResponse(userService.getUserById(userId)));
 	}
 	
 	@PostMapping
-	public UserDTO createUser(@RequestBody UserDTO userDTO) throws BadRequestException {
-		return userService.create(userDTO);
+	public ResponseEntity<GenericResponse> createUser(@RequestBody UserDTO userDTO) throws BadRequestException {
+		return ResponseEntity.ok(new GenericResponse(userService.create(userDTO)));
 	}
 	
 	@PutMapping
-	public UserDTO updateUser(@RequestBody UserDTO userDTO) throws BadRequestException {
-		return userService.save(userDTO);
+	public ResponseEntity<GenericResponse> updateUser(@RequestBody UserDTO userDTO) throws BadRequestException {
+		return ResponseEntity.ok(new GenericResponse(userService.save(userDTO)));
 	}
 
 	@DeleteMapping(value = "/{userId}")
-	public ResponseEntity<Boolean> deleteUser(@PathVariable("userId") UUID userId, HttpSession session) {
-		return ResponseEntity.ok(userService.delete(userId));
+	public ResponseEntity<GenericResponse> deleteUser(@PathVariable("userId") UUID userId, HttpSession session) {
+		return ResponseEntity.ok(new GenericResponse(userService.delete(userId)));
 	}
 }

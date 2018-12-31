@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import net.namlongadv.constant.Constants;
-import net.namlongadv.constant.GenericResponse;
+import net.namlongadv.dto.GenericResponse;
 import net.namlongadv.exceptions.AuthenticationException;
 import net.namlongadv.exceptions.AuthorizationException;
 import net.namlongadv.exceptions.BadRequestException;

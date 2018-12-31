@@ -1,9 +1,11 @@
 package net.namlongadv.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +37,7 @@ public class UserService {
     	if(user != null) {
     		return UserConvertor.convertToDTO(user);
     	}
-    	throw new BadRequestException(ErrorMessageCommon.DATA_NOT_FOUND);
+    	throw new BadRequestException(ErrorMessageCommon.USER_NOT_EXISTED);
     }
     
     public PageDTO<UserDTO> getAll(int page, int size) {
@@ -51,9 +53,11 @@ public class UserService {
     }
     
     public UserDTO create(UserDTO userDTO) throws BadRequestException {
+    	verify(userDTO);
+    	
     	User existedUser = userRepository.findByUsername(userDTO.getUsername());
     	if(existedUser != null) {
-    		throw new BadRequestException("Username is existed in the system");
+    		throw new BadRequestException(ErrorMessageCommon.USER_EXISTED);
     	} else {
     		User newUser = UserConvertor.convertToEntity(userDTO);
     		newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -71,15 +75,25 @@ public class UserService {
     }
     
     public UserDTO save(UserDTO userDTO) throws BadRequestException {
+    	verify(userDTO);
+    	
     	User existedUser = userRepository.findOne(userDTO.getId());
     	if(existedUser == null) {
-    		throw new BadRequestException("User is not existed in the system");
+    		throw new BadRequestException(ErrorMessageCommon.USER_NOT_EXISTED);
     	} else {
     		User newUser = UserConvertor.convertToEntity(userDTO);
-    		if(!passwordEncoder.matches(userDTO.getPassword(), existedUser.getPassword())) {
+    		if(!StringUtils.isEmpty(userDTO.getNewPassword()) 
+    				&& !passwordEncoder.matches(userDTO.getNewPassword(), existedUser.getPassword())) {
     			newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
     		}
     		return UserConvertor.convertToDTO(userRepository.save(newUser));
+    	}
+    }
+    
+    private void verify(UserDTO userDTO) throws BadRequestException {
+    	if(StringUtils.isEmpty(userDTO.getUsername()) || Objects.isNull(userDTO.getId()) || StringUtils.isEmpty(userDTO.getEmail())
+    			|| StringUtils.isEmpty(userDTO.getName()) || StringUtils.isEmpty(userDTO.getPassword())) {
+    		throw new BadRequestException(ErrorMessageCommon.USER_REQUIRED_FIELDS);
     	}
     }
 }

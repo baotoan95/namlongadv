@@ -1,9 +1,11 @@
-package net.namlongadv.constant;
+package net.namlongadv.dto;
 
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import net.namlongadv.constant.Constants;
 
 /**
  * Common Rest response
