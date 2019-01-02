@@ -88,6 +88,7 @@ public class SearchForm implements Serializable {
 	}
 
 	public void setPageRequestDTO(PageRequestDTO pageRequestDTO) {
+		this.pageRequestDTO = Objects.isNull(pageRequestDTO) ? new PageRequestDTO() : pageRequestDTO;
 		pageRequestDTO.setPage(pageRequestDTO.getPage() != null ? pageRequestDTO.getPage() : 0);
 		pageRequestDTO.setSize(pageRequestDTO.getSize() != null ? pageRequestDTO.getSize() : Integer.MAX_VALUE);
 		this.pageRequestDTO = pageRequestDTO;

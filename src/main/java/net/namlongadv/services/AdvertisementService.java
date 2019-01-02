@@ -21,11 +21,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.common.Enums;
+import net.namlongadv.common.SearchCriteria;
 import net.namlongadv.constant.Constants;
 import net.namlongadv.convertor.AdvertisementConvertor;
 import net.namlongadv.dto.AdvertisementDTO;
@@ -34,10 +39,9 @@ import net.namlongadv.dto.SearchForm;
 import net.namlongadv.entities.AdvImage;
 import net.namlongadv.entities.Advertisement;
 import net.namlongadv.exceptions.BadRequestException;
-import net.namlongadv.repositories.AdvImageRepository;
 import net.namlongadv.repositories.AdvertisementRepository;
-import net.namlongadv.repositories.ProvinceRepository;
 import net.namlongadv.repositories.UserRepository;
+import net.namlongadv.specs.AdvertSpecificationBuilder;
 import net.namlongadv.utils.AuthenticationUtils;
 import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
@@ -50,10 +54,6 @@ public class AdvertisementService {
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
-	private ProvinceRepository provinceRepository;
-	@Autowired
-	private AdvImageRepository advImageRepository;
-	@Autowired
 	private AdvChangeHistoryService advChangeHistoryService;
 	@Autowired
 	private UserRepository userRepository;
@@ -62,6 +62,8 @@ public class AdvertisementService {
 	private int fileLimit;
 	@Value("${namlongadv.base_url}")
 	private String baseUrl;
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -90,6 +92,26 @@ public class AdvertisementService {
 		}).collect(Collectors.toList());
 		// TODO: view permission
 		return new PageDTO<>(advPage.getNumberOfElements(), advDTOs);
+	}
+	
+	public PageDTO<AdvertisementDTO> findAll(String filter, int page, int size) throws BadRequestException {
+		page = page - 1;
+		size = size <= -1 ? Integer.MAX_VALUE : size;
+		filter = StringUtils.isEmptyOrNull(filter) ? "[]" : filter;
+		try {
+			List<SearchCriteria> params = objectMapper.readValue(filter, new TypeReference<List<SearchCriteria>>() {});
+			Specification<Advertisement> specification = new AdvertSpecificationBuilder(params).build();
+			Page<Advertisement> advertPage = advertisementRepository.findAll(specification, new PageRequest(page, size, new Sort(Sort.Direction.ASC, "addressSearching")));
+			System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+			List<AdvertisementDTO> advDTOs = sort(advertPage.getContent()).stream().map(adv -> {
+				return AdvertisementConvertor.convertToDTO(adv);
+			}).collect(Collectors.toList());
+			// TODO: view permission
+			return new PageDTO<>(advertPage.getNumberOfElements(), advDTOs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BadRequestException("Can't parse search criteries");
+		}
 	}
 	
 	public AdvertisementDTO findOne(UUID advId) throws BadRequestException {

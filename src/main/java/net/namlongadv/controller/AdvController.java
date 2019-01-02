@@ -1,5 +1,6 @@
 package net.namlongadv.controller;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.namlongadv.constant.Constants;
 import net.namlongadv.constant.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.GenericResponse;
-import net.namlongadv.dto.SearchForm;
 import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.services.AdvertisementService;
 
@@ -34,9 +34,14 @@ public class AdvController {
 	/*
 	 * Search
 	 */
-	@PostMapping("/search")
-	public ResponseEntity<GenericResponse> search(@RequestBody SearchForm searchForm) {
-		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(searchForm)));
+	@GetMapping("/search")
+	public ResponseEntity<GenericResponse> search(
+			@RequestParam(required = false) Optional<Integer> page,
+			@RequestParam(required = false) Optional<Integer> size,
+			@RequestParam(required = true) String filter
+		) throws BadRequestException {
+		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(filter, page.orElse(1), size.orElse(-1))));
+//		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(searchForm)));
 	}
 
 	@PostMapping(value = "add", consumes = { "multipart/form-data" })
