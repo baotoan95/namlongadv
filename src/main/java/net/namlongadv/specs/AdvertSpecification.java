@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import net.namlongadv.common.SearchCriteria;
 import net.namlongadv.entities.Advertisement;
+import net.namlongadv.utils.StringUtils;
 
 public class AdvertSpecification implements Specification<Advertisement> {
 	private SearchCriteria criteria;
@@ -21,9 +22,9 @@ public class AdvertSpecification implements Specification<Advertisement> {
 	public Predicate toPredicate(Root<Advertisement> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		switch (criteria.getOperation()) {
 		case LIKE:
-			return cb.like(cb.lower(root.get(criteria.getKey())), "%" + criteria.getValue() + "%");
+			return cb.like(cb.lower(root.get(criteria.getKey())), "%" + StringUtils.convertStringIgnoreUtf8(criteria.getValue().toString()).toLowerCase() + "%");
 		case EQUALITY:
-			return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			return cb.equal(cb.lower(root.get(criteria.getKey())), StringUtils.convertStringIgnoreUtf8(criteria.getValue().toString()).toLowerCase());
 		default:
 			return null;
 		}

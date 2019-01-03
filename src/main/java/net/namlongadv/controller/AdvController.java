@@ -41,7 +41,6 @@ public class AdvController {
 			@RequestParam(required = true) String filter
 		) throws BadRequestException {
 		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(filter, page.orElse(1), size.orElse(-1))));
-//		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(searchForm)));
 	}
 
 	@PostMapping(value = "add", consumes = { "multipart/form-data" })

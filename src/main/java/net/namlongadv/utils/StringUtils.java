@@ -30,7 +30,7 @@ public class StringUtils {
 		try {
 			String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
 			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-			return pattern.matcher(temp).replaceAll("").toLowerCase().replaceAll("đ", "d");
+			return pattern.matcher(temp).replaceAll("").replaceAll(" +", " ").toLowerCase().replaceAll("đ", "d");
 		} catch (Exception e) {
 			log.error("Error: {}", e);
 		}

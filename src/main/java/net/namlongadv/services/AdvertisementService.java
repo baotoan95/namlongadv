@@ -35,7 +35,6 @@ import net.namlongadv.constant.Constants;
 import net.namlongadv.convertor.AdvertisementConvertor;
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.PageDTO;
-import net.namlongadv.dto.SearchForm;
 import net.namlongadv.entities.AdvImage;
 import net.namlongadv.entities.Advertisement;
 import net.namlongadv.exceptions.BadRequestException;
@@ -68,32 +67,6 @@ public class AdvertisementService {
 	@PersistenceContext
 	private EntityManager em;
 
-	public PageDTO<AdvertisementDTO>  findAll(SearchForm searchForm) {
-		Page<Advertisement> advPage = advertisementRepository.search(
-				searchForm.getCode(), searchForm.getAddress(),
-				searchForm.getCreatedBy(),
-				searchForm.getFrom(),
-				searchForm.getTo(),
-				searchForm.getContactPerson(), 
-				searchForm.getHouseNo(),
-				searchForm.getStreet(),
-				searchForm.getWard(),
-				searchForm.getDistrict(),
-				searchForm.getTitle(),
-				searchForm.getProvinceCode(),
-				new PageRequest(
-						searchForm.getPageRequestDTO().getPage(),
-						searchForm.getPageRequestDTO().getSize(), 
-						new Sort(Sort.Direction.ASC, "addressSearching")));
-		
-		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-		List<AdvertisementDTO> advDTOs = sort(advPage.getContent()).stream().map(adv -> {
-			return AdvertisementConvertor.convertToDTO(adv);
-		}).collect(Collectors.toList());
-		// TODO: view permission
-		return new PageDTO<>(advPage.getNumberOfElements(), advDTOs);
-	}
-	
 	public PageDTO<AdvertisementDTO> findAll(String filter, int page, int size) throws BadRequestException {
 		page = page - 1;
 		size = size <= -1 ? Integer.MAX_VALUE : size;
@@ -107,7 +80,7 @@ public class AdvertisementService {
 				return AdvertisementConvertor.convertToDTO(adv);
 			}).collect(Collectors.toList());
 			// TODO: view permission
-			return new PageDTO<>(advertPage.getNumberOfElements(), advDTOs);
+			return new PageDTO<>(advertPage.getTotalElements(), advDTOs);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BadRequestException("Can't parse search criteries");

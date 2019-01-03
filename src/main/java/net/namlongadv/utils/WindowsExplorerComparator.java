@@ -1,6 +1,7 @@
 package net.namlongadv.utils;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class WindowsExplorerComparator implements Comparator<String> {
 	int compareRight(String a, String b) {
@@ -38,6 +39,9 @@ public class WindowsExplorerComparator implements Comparator<String> {
 	}
 
 	public int compare(String o1, String o2) {
+		if(Objects.isNull(o1) || Objects.isNull(o2)) {
+			return 0;
+		}
 		String a = o1.toString();
 		String b = o2.toString();
 
