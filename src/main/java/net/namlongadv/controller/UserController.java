@@ -31,10 +31,12 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public ResponseEntity<GenericResponse> users(@RequestParam(value = "page", required = false) Optional<Integer> page,
-			@RequestParam(value = "size", required = false) Optional<Integer> size) {
+	public ResponseEntity<GenericResponse> users(
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size,
+			@RequestParam(required = false) String filter) {
 		log.debug("Getting users page");
-		return ResponseEntity.ok(new GenericResponse(userService.getAll(page.orElse(0), size.orElse(Integer.MAX_VALUE))));
+		return ResponseEntity.ok(new GenericResponse(userService.getAll(filter, page.orElse(1), size.orElse(-1))));
 	}
 	
 	@GetMapping(value = "/{userId}")

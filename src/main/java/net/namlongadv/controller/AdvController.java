@@ -43,7 +43,7 @@ public class AdvController {
 		return ResponseEntity.ok(new GenericResponse(advertisementService.findAll(filter, page.orElse(1), size.orElse(-1))));
 	}
 
-	@PostMapping(value = "add", consumes = { "multipart/form-data" })
+	@PostMapping(consumes = { "multipart/form-data" })
 	public ResponseEntity<GenericResponse> addAdv(@ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDTO) throws BadRequestException {
 		return ResponseEntity.ok(new GenericResponse(advertisementService.addNew(advertDTO)));
 	}
