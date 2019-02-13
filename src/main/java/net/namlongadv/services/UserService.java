@@ -2,7 +2,6 @@ package net.namlongadv.services;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -73,7 +72,7 @@ public class UserService {
 	public UserDTO create(UserDTO userDTO) throws BadRequestException {
 		verify(userDTO);
 
-		User existedUser = userRepository.findByUsername(userDTO.getUsername());
+		User existedUser = userRepository.findFirstByUsername(userDTO.getUsername());
 		if (existedUser != null) {
 			throw new BadRequestException(ErrorMessageCommon.USER_EXISTED);
 		} else {
@@ -102,14 +101,14 @@ public class UserService {
 			User newUser = UserConvertor.convertToEntity(userDTO);
 			if (!StringUtils.isEmpty(userDTO.getNewPassword())
 					&& !passwordEncoder.matches(userDTO.getNewPassword(), existedUser.getPassword())) {
-				newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+				newUser.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
 			}
 			return UserConvertor.convertToDTO(userRepository.save(newUser));
 		}
 	}
 
 	private void verify(UserDTO userDTO) throws BadRequestException {
-		if (StringUtils.isEmpty(userDTO.getUsername()) || Objects.isNull(userDTO.getId())
+		if (StringUtils.isEmpty(userDTO.getUsername())
 				|| StringUtils.isEmpty(userDTO.getEmail()) || StringUtils.isEmpty(userDTO.getName())
 				|| StringUtils.isEmpty(userDTO.getPassword())) {
 			throw new BadRequestException(ErrorMessageCommon.USER_REQUIRED_FIELDS);

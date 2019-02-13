@@ -30,6 +30,9 @@ public class AdvertSpecification implements Specification<Advertisement> {
 		case LIKE:
 			return cb.like(cb.lower(root.get(criteria.getKey())), "%" + StringUtils.convertStringIgnoreUtf8(criteria.getValue().toString()).toLowerCase() + "%");
 		case EQUALITY:
+			if(criteria.getKey().equalsIgnoreCase("createdBy")) {
+				return cb.equal(cb.lower(root.get("createdBy").get("username")), criteria.getValue().toString().toLowerCase());
+			}
 			return cb.equal(cb.lower(root.get(criteria.getKey())), StringUtils.convertStringIgnoreUtf8(criteria.getValue().toString()).toLowerCase());
 		case BETWEEN:
 			if(criteria.getKey().equalsIgnoreCase("createdDate")) {

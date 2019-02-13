@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.namlongadv.aop.UserSession;
 import net.namlongadv.common.Enums;
 import net.namlongadv.common.SearchCriteria;
 import net.namlongadv.constant.Constants;
@@ -41,7 +42,6 @@ import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
 import net.namlongadv.specs.AdvertSpecificationBuilder;
-import net.namlongadv.utils.AuthenticationUtils;
 import net.namlongadv.utils.StringUtils;
 import net.namlongadv.utils.UploadFileUtils;
 import net.namlongadv.utils.WindowsExplorerComparator;
@@ -56,6 +56,8 @@ public class AdvertisementService {
 	private AdvChangeHistoryService advChangeHistoryService;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserSession userSession;
 
 	@Value("${namlongadv.file.limit}")
 	private int fileLimit;
@@ -88,6 +90,7 @@ public class AdvertisementService {
 	}
 	
 	public AdvertisementDTO findOne(UUID advId) throws BadRequestException {
+		System.out.println(userSession.getUserId());
 		Advertisement adv = advertisementRepository.findOne(advId);
 		if(adv != null) {
 			return AdvertisementConvertor.convertToDTO(adv);
@@ -100,11 +103,11 @@ public class AdvertisementService {
 		List<Advertisement> addressConflict = checkAddressConflict(advDTO, null);
 		if (!addressConflict.isEmpty() && !advDTO.isIgnoreError()) {
 			// TODO: list address conflict
-			throw new BadRequestException("Address conflicted");
+			throw new BadRequestException("address_conflict_confirm");
 		}
 		Advertisement advert = AdvertisementConvertor.convertToEntity(advDTO);
 		advert.setCreatedDate(new Date());
-		advert.setCreatedBy(userRepository.findOne(AuthenticationUtils.getUserDetails().getUserId()));
+		advert.setCreatedBy(userRepository.findOne(userSession.getUserId()));
 		advert.setCode(generateCode(advert.getProvinceCode()));
 		advert.setAdvImages(uploadAdvImage(advDTO));
 		advert.setUpdatedDate(new Date());
@@ -262,13 +265,12 @@ public class AdvertisementService {
 		return errorMsg.toString();
 	}
 
-//	public String update(AdvertisementDTO advertDto, HttpSession session, ModelMap model) {
+//	public String update(AdvertisementDTO advertDto) {
 //		// Update if it publish to billboardquangcao.com
-//		if (advertDto.getAdvertisement().getPublishedId() != null
-//				&& advertDto.getAdvertisement().getPublishedId() > 0) {
-//			advertDto.getAdvertisement().setPublishedDate(new Date());
+//		if (advertDto.getPublishedId() != null && advertDto.getPublishedId() > 0) {
+//			advertDto.setPublishedDate(new Date());
 //		} else {
-//			advertDto.getAdvertisement().setPublishedDate(null);
+//			advertDto.setPublishedDate(null);
 //		}
 //
 //		// Check existed

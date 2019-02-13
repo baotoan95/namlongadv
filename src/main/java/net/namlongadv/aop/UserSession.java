@@ -5,7 +5,6 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -17,10 +16,9 @@ import net.namlongadv.exceptions.AuthenticationException;
 import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.utils.UaaTokenUtils;
 
-
 /**
  * 
- * @author HoangDQ
+ * @author ToanNgo
  *
  */
 
@@ -39,9 +37,9 @@ public class UserSession {
 	@PostConstruct
 	void init() throws AuthenticationException, BadRequestException {
 		// Check Authorization - UAA
-		this.reset();
+//		this.reset();
 		String uaaToken = this.request.getHeader(HttpHeaders.AUTHORIZATION);
-		if(null == uaaToken || uaaToken.isEmpty()) {
+		if (null == uaaToken || uaaToken.isEmpty()) {
 			throw new BadRequestException(Constants.INVALID_USER_SESSION);
 		}
 		UaaTokenDTO uaa = UaaTokenUtils.parseUaaToken(uaaToken);
@@ -49,20 +47,20 @@ public class UserSession {
 			throw new AuthenticationException(Constants.INVALID_USER_SESSION);
 		}
 		this.userId = uaa.getUserId();
-		this.author = uaa.getFirstName()+ Constants.SPACE + uaa.getLastName();
+		this.author = uaa.getFirstName() + Constants.SPACE + uaa.getLastName();
 		this.userName = uaa.getUserName();
 		this.email = uaa.getEmail();
 	}
 
-	public void reset() {
-		this.author = Constants.EMPTY;
-		this.userName = Constants.EMPTY;
-		this.email = Constants.EMPTY;
-	}
-	
+//	public void reset() {
+//		this.author = Constants.EMPTY;
+//		this.userName = Constants.EMPTY;
+//		this.email = Constants.EMPTY;
+//	}
+
 	public boolean isValid() {
-        return !StringUtils.isEmpty(author);
-    }
+		return userId != null;
+	}
 
 	/**
 	 * @return the author

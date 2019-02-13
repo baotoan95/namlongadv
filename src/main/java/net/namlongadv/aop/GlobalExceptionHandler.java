@@ -10,13 +10,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import net.namlongadv.constant.Constants;
 import net.namlongadv.dto.GenericResponse;
 import net.namlongadv.exceptions.AuthenticationException;
 import net.namlongadv.exceptions.AuthorizationException;
 import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.exceptions.BusinessException;
-import net.namlongadv.exceptions.CustomError;
 
 @ControllerAdvice(basePackages = {"net.namlongadv"})
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -38,9 +36,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseEntity<GenericResponse> badRequestException(BadRequestException ex) {
 		LOG.error(ERROR_MGS, ex.getMessage(), ex);
-		CustomError customError = ex.getCustomError();
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new GenericResponse(null != customError ? customError : Constants.EMPTY));
+				.body(new GenericResponse(ex.getMessage()));
 	}
 
 	@ResponseBody

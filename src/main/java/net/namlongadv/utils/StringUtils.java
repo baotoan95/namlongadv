@@ -15,6 +15,7 @@ public class StringUtils {
 	public static final String EMPTY = "";
 	
 	public static String standardize(String str) {
+		if (str == null) return "";
         str = str.trim();
         str = str.replaceAll("\\s+", " ");
         return str;
@@ -26,7 +27,7 @@ public class StringUtils {
 	}
 	
 	public static String convertStringIgnoreUtf8(String str) {
-		if(str == null) return null;
+		if(str == null) return "";
 		try {
 			String temp = Normalizer.normalize(str, Normalizer.Form.NFD);
 			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");

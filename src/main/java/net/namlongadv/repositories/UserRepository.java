@@ -9,5 +9,5 @@ import net.namlongadv.entities.User;
 
 public interface UserRepository extends PagingAndSortingRepository<User, UUID>, JpaSpecificationExecutor<User> {
     public User findByUsernameAndPassword(String username, String password);
-    public User findByUsername(String username);
+    public User findFirstByUsername(String username);
 }
