@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.constant.PathContants;
+import net.namlongadv.dto.ImageDTO;
 
 @Slf4j
 public class UploadFileUtils {
@@ -20,7 +22,8 @@ public class UploadFileUtils {
 	 * @param files
 	 * @return list of path files
 	 */
-	public List<String> uploadMultipleFile(List<MultipartFile> files, int reduce, boolean isMap) {
+	public List<String> uploadMultipleFile(List<Object> files, int reduce, boolean isMap) {
+		ObjectMapper objectMapper = new ObjectMapper();
 		List<String> pathFilesUploaded = new ArrayList<>();
 		File dir = new File(PathContants.UPLOAD_PATH);
 		log.debug("Uploading {} images", files.size());
@@ -32,8 +35,9 @@ public class UploadFileUtils {
 		String pathFile = null;
 
 		try {
-			for (MultipartFile mpf : files) {
-				if (mpf.getSize() > 0) {
+			for (Object obj : files) {
+				if (obj instanceof MultipartFile && ((MultipartFile)obj).getSize() > 0) {
+					final MultipartFile mpf = (MultipartFile) obj;
 					String originalFileName = mpf.getOriginalFilename();
 					String fileName = StringUtils.standardize(StringUtils.convertStringIgnoreUtf8(originalFileName.substring(0, originalFileName.lastIndexOf("."))));
 					fileName = fileName.replaceAll(" ", "-").replaceAll("\\+", "");
@@ -78,6 +82,9 @@ public class UploadFileUtils {
 							log.error("Can't not create new file");
 						}
 					}
+				} else {
+					final ImageDTO image = objectMapper.readValue(obj.toString(), ImageDTO.class);
+					pathFilesUploaded.add(image.getUrl());
 				}
 			}
 		} catch (IOException e) {

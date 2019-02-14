@@ -70,8 +70,7 @@ public class AdvertisementDTO implements Serializable {
 	private Date publishedDate;
 	private UUID publishedId;
 	private String type;
-	private List<MultipartFile> images = new ArrayList<>();
-	private List<ImageDTO> prevImages = new ArrayList<>();
+	private List<Object> images = new ArrayList<>(); // Including ImageDTO as JSON object or MultipartFile object
 	private MultipartFile map;
 	private boolean ignoreError = false;
 	

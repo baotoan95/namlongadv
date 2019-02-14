@@ -12,7 +12,7 @@ public class AdvertisementConvertor {
 	public static AdvertisementDTO convertToDTO(Advertisement adv) {
 		AdvertisementDTO advDTO = new AdvertisementDTO();
 		BeanUtils.copyProperties(adv, advDTO);
-		advDTO.setPrevImages(adv.getAdvImages().stream().map(advImg -> {
+		advDTO.setImages(adv.getAdvImages().stream().map(advImg -> {
 			return ImageConvertor.convertToDTO(advImg);
 		}).collect(Collectors.toList()));
 		return advDTO;

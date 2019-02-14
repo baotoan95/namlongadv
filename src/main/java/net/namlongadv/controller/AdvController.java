@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.namlongadv.aop.UserSession;
 import net.namlongadv.constant.Constants;
 import net.namlongadv.constant.PathContants;
 import net.namlongadv.dto.AdvertisementDTO;
@@ -32,8 +31,6 @@ import net.namlongadv.services.AdvertisementService;
 public class AdvController {
 	@Autowired
 	private AdvertisementService advertisementService;
-	@Autowired
-	private UserSession userSession;
 
 	@InitBinder
 	public void initBinder(final WebDataBinder webdataBinder) {
@@ -60,20 +57,15 @@ public class AdvController {
 	}
 
 	@PostMapping(consumes = { "multipart/form-data" })
-	public ResponseEntity<GenericResponse> addAdv(
+	public ResponseEntity<GenericResponse> saveAdv(
 			@ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDTO) throws BadRequestException {
-		return ResponseEntity.ok(new GenericResponse(advertisementService.addNew(advertDTO)));
+		return ResponseEntity.ok(new GenericResponse(advertisementService.save(advertDTO)));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<GenericResponse> getAdv(@PathVariable("id") UUID id) throws BadRequestException {
 		return ResponseEntity.ok(new GenericResponse(advertisementService.findOne(id)));
 	}
-
-//	@PutMapping(consumes = { "multipart/form-data" })
-//	public ResponseEntity<GenericResponse> updateAdv(@ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDto) {
-//		return ResponseEntity.ok(new GenericResponse(advertisementService.update(advertDto));
-//	}
 	/*
 	 * Delete
 	 */

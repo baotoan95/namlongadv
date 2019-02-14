@@ -73,37 +73,50 @@ public class AdvertisementService {
 		page = page - 1;
 		size = size <= -1 ? Integer.MAX_VALUE : size;
 		filter = StringUtils.isEmptyOrNull(filter) ? "[]" : filter;
+		Page<Advertisement> advertPage = null;
 		try {
-			List<SearchCriteria> params = objectMapper.readValue(filter, new TypeReference<List<SearchCriteria>>() {});
-			Specification<Advertisement> specification = new AdvertSpecificationBuilder(params).build();
-			Page<Advertisement> advertPage = advertisementRepository.findAll(specification, new PageRequest(page, size, new Sort(Sort.Direction.ASC, "addressSearching")));
-			System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-			List<AdvertisementDTO> advDTOs = sort(advertPage.getContent()).stream().map(adv -> {
-				return AdvertisementConvertor.convertToDTO(adv);
-			}).collect(Collectors.toList());
-			// TODO: view permission
-			return new PageDTO<>(advertPage.getTotalElements(), advDTOs);
+			List<SearchCriteria> params = objectMapper.readValue(filter, new TypeReference<List<SearchCriteria>>() {
+			});
+			if (params.size() > 1) {
+				Specification<Advertisement> specification = new AdvertSpecificationBuilder(params).build();
+				advertPage = advertisementRepository.findAll(specification,
+						new PageRequest(page, size, new Sort(Sort.Direction.ASC, "addressSearching")));
+				System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+				List<AdvertisementDTO> advDTOs = sort(advertPage.getContent()).stream().map(adv -> {
+					return AdvertisementConvertor.convertToDTO(adv);
+				}).collect(Collectors.toList());
+				// TODO: view permission
+				return new PageDTO<>(advertPage.getTotalElements(), advDTOs);
+			} else {
+				advertPage = advertisementRepository
+						.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updatedDate")));
+				List<AdvertisementDTO> advDTOs = advertPage.getContent().stream().map(adv -> {
+					return AdvertisementConvertor.convertToDTO(adv);
+				}).collect(Collectors.toList());
+				// TODO: view permission
+				return new PageDTO<>(advertPage.getTotalElements(), advDTOs);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BadRequestException("Can't parse search criteries");
 		}
 	}
-	
+
 	public AdvertisementDTO findOne(UUID advId) throws BadRequestException {
 		System.out.println(userSession.getUserId());
 		Advertisement adv = advertisementRepository.findOne(advId);
-		if(adv != null) {
+		if (adv != null) {
 			return AdvertisementConvertor.convertToDTO(adv);
 		}
 		throw new BadRequestException("Advertisement is not existed in the system");
 	}
-	
-	public AdvertisementDTO addNew(AdvertisementDTO advDTO) throws BadRequestException {
+
+	public String save(AdvertisementDTO advDTO) throws BadRequestException {
 		// Address conflict
 		List<Advertisement> addressConflict = checkAddressConflict(advDTO, null);
 		if (!addressConflict.isEmpty() && !advDTO.isIgnoreError()) {
 			// TODO: list address conflict
-			throw new BadRequestException("address_conflict_confirm");
+			throw new BadRequestException("advert.address_conflict_confirm");
 		}
 		Advertisement advert = AdvertisementConvertor.convertToEntity(advDTO);
 		advert.setCreatedDate(new Date());
@@ -113,10 +126,15 @@ public class AdvertisementService {
 		advert.setUpdatedDate(new Date());
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
-		
-		return AdvertisementConvertor.convertToDTO(advertisementRepository.save(advert));
+
+		advertisementRepository.save(advert);
+		if (advert.getId() != null) {
+			return "advert.update_success";
+		} else {
+			return "advert.add_success";
+		}
 	}
-	
+
 	public boolean delete(UUID userId) {
 		try {
 			advertisementRepository.delete(userId);
@@ -125,7 +143,7 @@ public class AdvertisementService {
 			return false;
 		}
 	}
-	
+
 	public Page<Advertisement> findByAddress(@Param("address") String address, @Param("roles") List<String> roles,
 			Pageable pageable) {
 		return advertisementRepository.findByAddress(address, searchPermission(roles), pageable);
@@ -203,7 +221,8 @@ public class AdvertisementService {
 			List<String> pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getImages(), fileLimit, false);
 			for (String pathFile : pathFiles) {
 				String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
-				advImages.add(new AdvImage(name, pathFile, "Advertise_board", Advertisement.builder().id(advertDto.getId()).build(), false));
+				advImages.add(new AdvImage(name, pathFile, "Advertise_board",
+						Advertisement.builder().id(advertDto.getId()).build(), false));
 			}
 			// Get map file
 			if (Objects.nonNull(advertDto.getMap()) && !advertDto.getMap().isEmpty()) {
@@ -212,8 +231,8 @@ public class AdvertisementService {
 				if (!fileNames.isEmpty()) {
 					String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1,
 							fileNames.get(0).length());
-					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board", Advertisement.builder().id(advertDto.getId()).build(),
-							true));
+					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board",
+							Advertisement.builder().id(advertDto.getId()).build(), true));
 				}
 			}
 			log.info("Upload successful");
