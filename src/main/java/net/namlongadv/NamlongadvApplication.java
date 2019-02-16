@@ -5,10 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpEncodingProperties;
 import org.springframework.boot.web.filter.OrderedCharacterEncodingFilter;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 
 @SpringBootApplication
+@EnableCaching
 public class NamlongadvApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NamlongadvApplication.class, args);

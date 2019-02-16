@@ -22,6 +22,9 @@ spring:
     port: 587
     username: quangcaotruyenthongnamlong@gmail.com
     password: congtynamlong
+  cache:
+    jcache:
+      config: ehcache.xml
   properties:
     mail:
       smtp:

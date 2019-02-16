@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -43,7 +42,7 @@ public class AdvertisementDTO implements Serializable {
 	private String describe;
 	private String views;
 	private String flow;
-	private String implTime;
+	private Integer implTime;
 	private String implForm;
 	private String lightSystem;
 	private String ownerPhone;
@@ -62,7 +61,6 @@ public class AdvertisementDTO implements Serializable {
 	private Date advCompEndDate;
 	private String advCompNote;
 	private String price;
-	@JsonIgnore
 	private String createdBy;
 	private Date createdDate;
 	private Date updatedDate;
@@ -71,7 +69,8 @@ public class AdvertisementDTO implements Serializable {
 	private UUID publishedId;
 	private String type;
 	private List<Object> images = new ArrayList<>(); // Including ImageDTO as JSON object or MultipartFile object
-	private MultipartFile map;
+	private String map;
+	private MultipartFile mapImage;
 	private boolean ignoreError = false;
 	
 }

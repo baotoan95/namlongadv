@@ -50,6 +50,8 @@ import net.namlongadv.utils.WindowsExplorerComparator;
 @Transactional
 @Slf4j
 public class AdvertisementService {
+	private final int NUM_OF_DEFAULT_ADDRESS_CHARS = 8;
+	
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
@@ -103,7 +105,6 @@ public class AdvertisementService {
 	}
 
 	public AdvertisementDTO findOne(UUID advId) throws BadRequestException {
-		System.out.println(userSession.getUserId());
 		Advertisement adv = advertisementRepository.findOne(advId);
 		if (adv != null) {
 			return AdvertisementConvertor.convertToDTO(adv);
@@ -113,7 +114,7 @@ public class AdvertisementService {
 
 	public String save(AdvertisementDTO advDTO) throws BadRequestException {
 		// Address conflict
-		List<Advertisement> addressConflict = checkAddressConflict(advDTO, null);
+		List<Advertisement> addressConflict = checkAddressConflict(advDTO);
 		if (!addressConflict.isEmpty() && !advDTO.isIgnoreError()) {
 			// TODO: list address conflict
 			throw new BadRequestException("advert.address_conflict_confirm");
@@ -127,8 +128,9 @@ public class AdvertisementService {
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
 
+		boolean updateMode = Objects.nonNull(advert.getId());
 		advertisementRepository.save(advert);
-		if (advert.getId() != null) {
+		if (updateMode) {
 			return "advert.update_success";
 		} else {
 			return "advert.add_success";
@@ -241,24 +243,35 @@ public class AdvertisementService {
 		return advImages;
 	}
 
-	public List<Advertisement> checkAddressConflict(AdvertisementDTO advertDto, Advertisement prevAdvertisement) {
-		String fullAddress = advertDto.getHouseNo() + ", " + advertDto.getStreet() + ", " + advertDto.getWard() + ", "
-				+ advertDto.getDistrict() + ", " + advertDto.getProvince();
+	public List<Advertisement> checkAddressConflict(AdvertisementDTO advertDto) {
+		String fullAddress = StringUtils.standardize(advertDto.getHouseNo())
+				+ ", " + StringUtils.standardize(advertDto.getStreet())
+				+ ", " + StringUtils.standardize(advertDto.getWard())
+				+ ", " + StringUtils.standardize(advertDto.getDistrict())
+				+ ", " + StringUtils.standardize(advertDto.getProvince());
+		
+		// For update case only
 		String fullExAddress = null;
-		if (Objects.nonNull(prevAdvertisement)) {
-			fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
-					+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
-					+ prevAdvertisement.getProvince();
+		if (Objects.nonNull(advertDto.getId())) {
+			Advertisement prevAdvertisement = advertisementRepository.findOne(advertDto.getId());
+			if (Objects.nonNull(prevAdvertisement)) {
+				fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
+						+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
+						+ prevAdvertisement.getProvince();
+			}			
 		}
 
 		List<Advertisement> advs = advertisementRepository
 				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
-						advertDto.getHouseNo(), advertDto.getStreet(), advertDto.getWard(), advertDto.getDistrict(),
-						advertDto.getProvince(), new PageRequest(0, 100))
+						StringUtils.standardize(advertDto.getHouseNo()),
+						StringUtils.standardize(advertDto.getStreet()),
+						StringUtils.standardize(advertDto.getWard()),
+						StringUtils.standardize(advertDto.getDistrict()),
+						StringUtils.standardize(advertDto.getProvince()), new PageRequest(0, 100))
 				.getContent();
 
-		if (!advs.isEmpty() && fullAddress.length() > 8 && !advertDto.isIgnoreError()
-				&& (Objects.isNull(fullExAddress) || !fullExAddress.equalsIgnoreCase(fullExAddress))) {
+		if (!advs.isEmpty() && fullAddress.length() > NUM_OF_DEFAULT_ADDRESS_CHARS && !advertDto.isIgnoreError()
+				&& (Objects.isNull(fullExAddress) || !fullAddress.equalsIgnoreCase(fullExAddress))) {
 			return advs;
 		} else {
 			return Collections.emptyList();
