@@ -112,12 +112,13 @@ public class AdvertisementService {
 		throw new BadRequestException("Advertisement is not existed in the system");
 	}
 
-	public String save(AdvertisementDTO advDTO) throws BadRequestException {
+	public List<AdvertisementDTO> save(AdvertisementDTO advDTO) throws BadRequestException {
 		// Address conflict
 		List<Advertisement> addressConflict = checkAddressConflict(advDTO);
 		if (!addressConflict.isEmpty() && !advDTO.isIgnoreError()) {
-			// TODO: list address conflict
-			throw new BadRequestException("advert.address_conflict_confirm");
+			return addressConflict.stream().map(adv -> {
+				return AdvertisementConvertor.convertToDTO(adv);
+			}).collect(Collectors.toList());
 		}
 		Advertisement advert = AdvertisementConvertor.convertToEntity(advDTO);
 		advert.setCreatedDate(new Date());
@@ -128,13 +129,8 @@ public class AdvertisementService {
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
 
-		boolean updateMode = Objects.nonNull(advert.getId());
 		advertisementRepository.save(advert);
-		if (updateMode) {
-			return "advert.update_success";
-		} else {
-			return "advert.add_success";
-		}
+		return Collections.emptyList();
 	}
 
 	public boolean delete(UUID userId) {

@@ -2,6 +2,8 @@ package net.namlongadv.controller;
 
 import java.beans.PropertyEditorSupport;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,7 +61,14 @@ public class AdvController {
 	@PostMapping(consumes = { "multipart/form-data" })
 	public ResponseEntity<GenericResponse> saveAdv(
 			@ModelAttribute(Constants.MODEL_NAME.ADV_DTO) AdvertisementDTO advertDTO) throws BadRequestException {
-		return ResponseEntity.ok(new GenericResponse(advertisementService.save(advertDTO)));
+		String msg = "advert.update_success";
+		List<AdvertisementDTO> conflictedAdvs = advertisementService.save(advertDTO);
+		if(conflictedAdvs.isEmpty() && Objects.isNull(advertDTO.getId())) {
+			msg = "advert.add_success";			
+		} else if(!conflictedAdvs.isEmpty()){
+			msg = "advert.address_conflict_confirm";
+		}
+		return ResponseEntity.ok(new GenericResponse(msg, advertisementService.save(advertDTO)));
 	}
 
 	@GetMapping("/{id}")
