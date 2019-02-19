@@ -14,4 +14,5 @@ import lombok.Setter;
 public class ImageDTO {
 	private UUID id;
 	private String url;
+	private Boolean map;
 }

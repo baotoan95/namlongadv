@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -223,7 +224,7 @@ public class AdvertisementService {
 						Advertisement.builder().id(advertDto.getId()).build(), false));
 			}
 			// Get map file
-			if (Objects.nonNull(advertDto.getMap()) && !advertDto.getMap().isEmpty()) {
+			if (Objects.nonNull(advertDto.getMap()) && (advertDto.getMap() instanceof MultipartFile)) {
 				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
 						fileLimit, true);
 				if (!fileNames.isEmpty()) {
