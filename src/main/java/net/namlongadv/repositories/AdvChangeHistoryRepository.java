@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import net.namlongadv.entities.AdvChangeHistory;
 
 public interface AdvChangeHistoryRepository extends CrudRepository<AdvChangeHistory, UUID> {
-	List<AdvChangeHistory> findByAdvertIdOrderByUpdatedDateDesc(UUID advertId);
+	List<AdvChangeHistory> findByAdvertIdOrderByUpdatedDateAsc(UUID advertId);
 	AdvChangeHistory findTop1ByAdvertIdOrderByUpdatedDateDesc(UUID advertId);
 	@Transactional
 	void deleteByAdvertId(UUID advertId);

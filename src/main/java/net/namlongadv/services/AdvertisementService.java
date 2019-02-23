@@ -24,14 +24,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.namlongadv.aop.UserSession;
-import net.namlongadv.common.Enums;
 import net.namlongadv.common.SearchCriteria;
 import net.namlongadv.constant.Constants;
 import net.namlongadv.convertor.AdvertisementConvertor;
@@ -39,6 +37,7 @@ import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.PageDTO;
 import net.namlongadv.entities.AdvImage;
 import net.namlongadv.entities.Advertisement;
+import net.namlongadv.entities.User;
 import net.namlongadv.exceptions.BadRequestException;
 import net.namlongadv.repositories.AdvertisementRepository;
 import net.namlongadv.repositories.UserRepository;
@@ -124,14 +123,28 @@ public class AdvertisementService {
 		Advertisement advert = AdvertisementConvertor.convertToEntity(advDTO);
 		advert.setCreatedDate(new Date());
 		advert.setCreatedBy(userRepository.findOne(userSession.getUserId()));
-		advert.setCode(generateCode(advert.getProvinceCode()));
 		advert.setAdvImages(uploadAdvImage(advDTO));
 		advert.setUpdatedDate(new Date());
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
+		// Update special fields
+		if(!Objects.isNull(advert.getId())) {
+			Advertisement prevAdv = advertisementRepository.findOne(advert.getId());
+			setAdvCode(advert, prevAdv);
+			// Saving change history
+			User updatedBy = userRepository.findFirstByUsername(userSession.getUserName());
+			advChangeHistoryService.saveHistory(
+					advChangeHistoryService.createIfDifferent(prevAdv, advert, updatedBy, false));
+		}
 
 		advertisementRepository.save(advert);
 		return Collections.emptyList();
+	}
+	
+	private void setAdvCode(Advertisement advert, Advertisement prevAdv) {
+		if(prevAdv == null || !advert.getProvinceCode().equals(prevAdv.getProvinceCode())) {
+			advert.setCode(generateCode(advert.getProvinceCode() != null ? advert.getProvinceCode() : Constants.EMPTY));
+		}
 	}
 
 	public boolean delete(UUID userId) {
@@ -221,17 +234,17 @@ public class AdvertisementService {
 			for (String pathFile : pathFiles) {
 				String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
 				advImages.add(new AdvImage(name, pathFile, "Advertise_board",
-						Advertisement.builder().id(advertDto.getId()).build(), false));
+						Advertisement.builder().id(advertDto.getId()).build(), false, 1, true));
 			}
 			// Get map file
-			if (Objects.nonNull(advertDto.getMap()) && (advertDto.getMap() instanceof MultipartFile)) {
+			if (Objects.nonNull(advertDto.getMap())) {
 				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
 						fileLimit, true);
 				if (!fileNames.isEmpty()) {
 					String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1,
 							fileNames.get(0).length());
 					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board",
-							Advertisement.builder().id(advertDto.getId()).build(), true));
+							Advertisement.builder().id(advertDto.getId()).build(), true, 1, true));
 				}
 			}
 			log.info("Upload successful");
@@ -275,24 +288,24 @@ public class AdvertisementService {
 		}
 	}
 
-	public String generateAddressConflictMessage(List<Advertisement> conflictItems, Enums.ACTION action) {
-		// Prepare error message (address conflict)
-		StringBuilder errorMsg = new StringBuilder("=============<br/>Địa chỉ vừa nhập đã được đặt:<br/>");
-		Advertisement adv = null;
-		for (int i = 0; i < conflictItems.size(); i++) {
-			adv = conflictItems.get(i);
-			errorMsg.append(
-					(i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle() + "</a><br/>");
-		}
-
-		if (action == Enums.ACTION.ADD) {
-			errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
-		} else {
-			errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");
-		}
-
-		return errorMsg.toString();
-	}
+//	public String generateAddressConflictMessage(List<Advertisement> conflictItems, Enums.ACTION action) {
+//		// Prepare error message (address conflict)
+//		StringBuilder errorMsg = new StringBuilder("=============<br/>Địa chỉ vừa nhập đã được đặt:<br/>");
+//		Advertisement adv = null;
+//		for (int i = 0; i < conflictItems.size(); i++) {
+//			adv = conflictItems.get(i);
+//			errorMsg.append(
+//					(i + 1) + ". <a href='" + baseUrl + "/adv/" + adv.getId() + "'>" + adv.getTitle() + "</a><br/>");
+//		}
+//
+//		if (action == Enums.ACTION.ADD) {
+//			errorMsg.append("Nhấn nút <b>Thêm</b> để tiếp tục lưu.<br/>=============");
+//		} else {
+//			errorMsg.append("Nhấn nút <b>Cập Nhật</b> để tiếp tục lưu.<br/>=============");
+//		}
+//
+//		return errorMsg.toString();
+//	}
 
 //	public String update(AdvertisementDTO advertDto) {
 //		// Update if it publish to billboardquangcao.com

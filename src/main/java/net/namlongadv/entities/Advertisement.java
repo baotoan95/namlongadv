@@ -61,7 +61,7 @@ public class Advertisement {
 	@Column(columnDefinition="text")
 	private String amount;
 	@Column(columnDefinition="text")
-	private String map;
+	private String coordinates;
 	@Column(columnDefinition="text")
 	private String describe;
 	@Column(columnDefinition="text")

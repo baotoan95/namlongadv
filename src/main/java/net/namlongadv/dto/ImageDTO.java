@@ -15,4 +15,6 @@ public class ImageDTO {
 	private UUID id;
 	private String url;
 	private Boolean map;
+	private int weight;
+	private boolean selected;
 }

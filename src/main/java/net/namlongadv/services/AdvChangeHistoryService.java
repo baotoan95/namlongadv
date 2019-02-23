@@ -46,7 +46,7 @@ public class AdvChangeHistoryService {
 	
 	public List<AdvChangeHistory> findByAdvId(UUID advertId) {
 		if(Objects.nonNull(advertId)) {
-			List<AdvChangeHistory> history = advChangeHistoryRepository.findByAdvertIdOrderByUpdatedDateDesc(advertId);
+			List<AdvChangeHistory> history = advChangeHistoryRepository.findByAdvertIdOrderByUpdatedDateAsc(advertId);
 			List<AdvChangeHistory> comparedHistory = new ArrayList<>();
 			for(int i = 0; i < history.size() - 1; i++) {
 				comparedHistory.add(decorateDifferent(history.get(i), history.get(i + 1)));
@@ -142,12 +142,12 @@ public class AdvChangeHistoryService {
 			advChangeHistory.setAmount(StringUtils.EMPTY);
 		}
 
-		if (!StringUtils.equals(preChange.getMap(), currChange.getMap())) {
-			advChangeHistory.setMap(decorateDefferentField(currChange.getMap(), true));
+		if (!StringUtils.equals(preChange.getCoordinates(), currChange.getCoordinates())) {
+			advChangeHistory.setCoordinates(decorateDefferentField(currChange.getCoordinates(), true));
 			numOfChanges++;
-			log.info("Different map");
+			log.info("Different coordinates");
 		} else {
-			advChangeHistory.setMap(StringUtils.EMPTY);
+			advChangeHistory.setCoordinates(StringUtils.EMPTY);
 		}
 
 		if (!StringUtils.equals(preChange.getDescribe(), currChange.getDescribe())) {
@@ -378,6 +378,10 @@ public class AdvChangeHistoryService {
 	}
 	
 	public AdvChangeHistory createIfDifferent(Advertisement oldAdv, Advertisement newAdv, User updatedBy, boolean decorate) {
+		if (Objects.isNull(oldAdv)) {
+			return null;
+		}
+		
 		int numOfChanges = 0;
 		AdvChangeHistory advChangeHistory = new AdvChangeHistory();
 		
@@ -451,11 +455,11 @@ public class AdvChangeHistoryService {
 			advChangeHistory.setAmount(newAdv.getAmount());
 		}
 
-		if (!StringUtils.equals(oldAdv.getMap(), newAdv.getMap())) {
-			advChangeHistory.setMap(decorateDefferentField(newAdv.getMap(), decorate));
+		if (!StringUtils.equals(oldAdv.getCoordinates(), newAdv.getCoordinates())) {
+			advChangeHistory.setCoordinates(decorateDefferentField(newAdv.getCoordinates(), decorate));
 			numOfChanges++;
 		} else {
-			advChangeHistory.setMap(newAdv.getMap());
+			advChangeHistory.setCoordinates(newAdv.getCoordinates());
 		}
 
 		if (!StringUtils.equals(oldAdv.getDescribe(), newAdv.getDescribe())) {
@@ -685,7 +689,7 @@ public class AdvChangeHistoryService {
 		advChangeHistory.setWidthSize(adv.getWidthSize());
 		advChangeHistory.setHeightSize(adv.getHeightSize());
 		advChangeHistory.setAmount(adv.getAmount());
-		advChangeHistory.setMap(adv.getMap());
+		advChangeHistory.setCoordinates(adv.getCoordinates());
 		advChangeHistory.setDescribe(adv.getDescribe());
 		advChangeHistory.setViews(adv.getViews());
 		advChangeHistory.setFlow(adv.getFlow());
@@ -751,14 +755,20 @@ public class AdvChangeHistoryService {
 	}
 	
 	public List<AdvChangeHistory> advChangesById(UUID id) {
-		return advChangeHistoryRepository.findByAdvertIdOrderByUpdatedDateDesc(id).stream().map(history -> {
+		return advChangeHistoryRepository.findByAdvertIdOrderByUpdatedDateAsc(id).stream().map(history -> {
 			User createdBy = history.getCreatedBy();
 			if(Objects.nonNull(createdBy)) {
-				history.setCreatedBy(User.builder().id(createdBy.getId()).build());
+				history.setCreatedBy(User.builder()
+						.id(createdBy.getId())
+						.username(createdBy.getUsername())
+						.name(createdBy.getName()).build());
 			}
 			User updatedBy = history.getUpdatedBy();
 			if(Objects.nonNull(updatedBy)) {
-				history.setUpdatedBy(User.builder().id(updatedBy.getId()).build());
+				history.setUpdatedBy(User.builder()
+						.id(updatedBy.getId())
+						.username(updatedBy.getUsername())
+						.name(updatedBy.getName()).build());
 			}
 			return history;
 		}).collect(Collectors.toList());

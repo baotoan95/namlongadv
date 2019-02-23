@@ -183,7 +183,7 @@ public class ExportFileService {
 						// Coordinates
 						cell = row.createCell(8);
 						cell.setCellStyle(cellStyle);
-						cell.setCellValue(adv.getMap());
+						cell.setCellValue(adv.getCoordinates());
 						// Size
 						cell = row.createCell(9);
 						cell.setCellStyle(cellStyle);

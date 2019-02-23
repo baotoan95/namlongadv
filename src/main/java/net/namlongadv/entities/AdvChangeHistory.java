@@ -62,7 +62,7 @@ public class AdvChangeHistory implements Serializable {
 	@Column(columnDefinition="text")
 	private String amount;
 	@Column(columnDefinition="text")
-	private String map;
+	private String coordinates;
 	@Column(columnDefinition="text")
 	private String describe;
 	@Column(columnDefinition="text")

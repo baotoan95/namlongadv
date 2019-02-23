@@ -68,7 +68,7 @@ public class AdvController {
 		} else if(!conflictedAdvs.isEmpty()){
 			msg = "advert.address_conflict_confirm";
 		}
-		return ResponseEntity.ok(new GenericResponse(msg, advertisementService.save(advertDTO)));
+		return ResponseEntity.ok(new GenericResponse(msg, conflictedAdvs));
 	}
 
 	@GetMapping("/{id}")

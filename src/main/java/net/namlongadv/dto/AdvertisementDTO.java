@@ -36,6 +36,7 @@ public class AdvertisementDTO implements Serializable {
 	private String ward;
 	private String district;
 	private String province;
+	private String coordinates;
 	private String widthSize;
 	private String heightSize;
 	private String amount;
