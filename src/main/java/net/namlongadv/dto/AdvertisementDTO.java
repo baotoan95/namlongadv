@@ -73,5 +73,6 @@ public class AdvertisementDTO implements Serializable {
 	private Object map;
 	private MultipartFile mapImage;
 	private boolean ignoreError = false;
+	private String imageMeta; 
 	
 }

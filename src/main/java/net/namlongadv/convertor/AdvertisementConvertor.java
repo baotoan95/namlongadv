@@ -1,10 +1,12 @@
 package net.namlongadv.convertor;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
 import net.namlongadv.dto.AdvertisementDTO;
+import net.namlongadv.dto.ImageDTO;
 import net.namlongadv.entities.Advertisement;
 import net.namlongadv.utils.StringUtils;
 
@@ -15,7 +17,7 @@ public class AdvertisementConvertor {
 		advDTO.setCreatedBy(adv.getCreatedBy().getName());
 		advDTO.setImages(adv.getAdvImages().stream().map(advImg -> {
 			return ImageConvertor.convertToDTO(advImg);
-		}).collect(Collectors.toList()));
+		}).sorted(Comparator.comparing(ImageDTO::getWeight)).collect(Collectors.toList()));
 		return advDTO;
 	}
 

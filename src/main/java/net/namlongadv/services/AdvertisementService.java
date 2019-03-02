@@ -1,6 +1,7 @@
 package net.namlongadv.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import net.namlongadv.common.SearchCriteria;
 import net.namlongadv.constant.Constants;
 import net.namlongadv.convertor.AdvertisementConvertor;
 import net.namlongadv.dto.AdvertisementDTO;
+import net.namlongadv.dto.ImageDTO;
 import net.namlongadv.dto.PageDTO;
 import net.namlongadv.entities.AdvImage;
 import net.namlongadv.entities.Advertisement;
@@ -51,7 +53,7 @@ import net.namlongadv.utils.WindowsExplorerComparator;
 @Slf4j
 public class AdvertisementService {
 	private final int NUM_OF_DEFAULT_ADDRESS_CHARS = 8;
-	
+
 	@Autowired
 	private AdvertisementRepository advertisementRepository;
 	@Autowired
@@ -128,21 +130,24 @@ public class AdvertisementService {
 		advert.setOwnerContactPersonSearching(StringUtils.convertStringIgnoreUtf8(advert.getOwnerContactPerson()));
 		advert.setAdvCompNameSearching(StringUtils.convertStringIgnoreUtf8(advert.getAdvCompName()));
 		// Update special fields
-		if(!Objects.isNull(advert.getId())) {
+		if (!Objects.isNull(advert.getId())) {
 			Advertisement prevAdv = advertisementRepository.findOne(advert.getId());
-			setAdvCode(advert, prevAdv);
-			// Saving change history
-			User updatedBy = userRepository.findFirstByUsername(userSession.getUserName());
-			advChangeHistoryService.saveHistory(
-					advChangeHistoryService.createIfDifferent(prevAdv, advert, updatedBy, false));
+			if(!Objects.isNull(prevAdv)) {
+				advert.setCreatedDate(prevAdv.getCreatedDate());
+				setAdvCode(advert, prevAdv);
+				// Saving change history
+				User updatedBy = userRepository.findFirstByUsername(userSession.getUserName());
+				advChangeHistoryService
+						.saveHistory(advChangeHistoryService.createIfDifferent(prevAdv, advert, updatedBy, false));
+			}
 		}
 
 		advertisementRepository.save(advert);
 		return Collections.emptyList();
 	}
-	
+
 	private void setAdvCode(Advertisement advert, Advertisement prevAdv) {
-		if(prevAdv == null || !advert.getProvinceCode().equals(prevAdv.getProvinceCode())) {
+		if (prevAdv == null || !advert.getProvinceCode().equals(prevAdv.getProvinceCode())) {
 			advert.setCode(generateCode(advert.getProvinceCode() != null ? advert.getProvinceCode() : Constants.EMPTY));
 		}
 	}
@@ -227,39 +232,48 @@ public class AdvertisementService {
 
 	public List<AdvImage> uploadAdvImage(AdvertisementDTO advertDto) {
 		List<AdvImage> advImages = new ArrayList<>();
-		if (advertDto.getImages() != null) {
-			log.info("Preparing to upload files");
-			// Upload
-			List<String> pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getImages(), fileLimit, false);
-			for (String pathFile : pathFiles) {
-				String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
-				advImages.add(new AdvImage(name, pathFile, "Advertise_board",
-						Advertisement.builder().id(advertDto.getId()).build(), false, 1, true));
-			}
-			// Get map file
-			if (Objects.nonNull(advertDto.getMap())) {
-				List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
-						fileLimit, true);
-				if (!fileNames.isEmpty()) {
-					String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1,
-							fileNames.get(0).length());
-					advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board",
-							Advertisement.builder().id(advertDto.getId()).build(), true, 1, true));
+		try {
+			List<ImageDTO> imageMeta = objectMapper.readValue(advertDto.getImageMeta(), new TypeReference<List<ImageDTO>>() {
+			});
+
+			if (advertDto.getImages() != null && !imageMeta.isEmpty()) {
+				log.info("Preparing to upload files");
+				// Upload
+				List<String> pathFiles = new UploadFileUtils().uploadMultipleFile(advertDto.getImages(), fileLimit,
+						false);
+				int counter = 0;
+				for (String pathFile : pathFiles) {
+					ImageDTO meta = imageMeta.get(counter++);
+					String name = pathFile.substring(pathFile.lastIndexOf(File.separator) + 1, pathFile.length());
+					advImages.add(new AdvImage(name, pathFile, "Advertise_board",
+							Advertisement.builder().id(advertDto.getId()).build(), false, meta.getWeight(), meta.isSelected()));
 				}
+				// Get map file
+				if (Objects.nonNull(advertDto.getMap())) {
+					List<String> fileNames = new UploadFileUtils().uploadMultipleFile(Arrays.asList(advertDto.getMap()),
+							fileLimit, true);
+					if (!fileNames.isEmpty()) {
+						String name = fileNames.get(0).substring(fileNames.get(0).lastIndexOf(File.separator) + 1,
+								fileNames.get(0).length());
+						advImages.add(new AdvImage(name, fileNames.get(0), "Advertise_board",
+								Advertisement.builder().id(advertDto.getId()).build(), true, -1, true));
+					}
+				}
+				log.info("Upload successful");
 			}
-			log.info("Upload successful");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return advImages;
 	}
 
 	public List<Advertisement> checkAddressConflict(AdvertisementDTO advertDto) {
-		String fullAddress = StringUtils.standardize(advertDto.getHouseNo())
-				+ ", " + StringUtils.standardize(advertDto.getStreet())
-				+ ", " + StringUtils.standardize(advertDto.getWard())
-				+ ", " + StringUtils.standardize(advertDto.getDistrict())
-				+ ", " + StringUtils.standardize(advertDto.getProvince());
-		
+		String fullAddress = StringUtils.standardize(advertDto.getHouseNo()) + ", "
+				+ StringUtils.standardize(advertDto.getStreet()) + ", " + StringUtils.standardize(advertDto.getWard())
+				+ ", " + StringUtils.standardize(advertDto.getDistrict()) + ", "
+				+ StringUtils.standardize(advertDto.getProvince());
+
 		// For update case only
 		String fullExAddress = null;
 		if (Objects.nonNull(advertDto.getId())) {
@@ -268,15 +282,13 @@ public class AdvertisementService {
 				fullExAddress = prevAdvertisement.getHouseNo() + ", " + prevAdvertisement.getStreet() + ", "
 						+ prevAdvertisement.getWard() + ", " + prevAdvertisement.getDistrict() + ", "
 						+ prevAdvertisement.getProvince();
-			}			
+			}
 		}
 
 		List<Advertisement> advs = advertisementRepository
 				.findByHouseNoIgnoreCaseAndStreetIgnoreCaseAndWardIgnoreCaseAndDistrictIgnoreCaseAndProvinceIgnoreCase(
-						StringUtils.standardize(advertDto.getHouseNo()),
-						StringUtils.standardize(advertDto.getStreet()),
-						StringUtils.standardize(advertDto.getWard()),
-						StringUtils.standardize(advertDto.getDistrict()),
+						StringUtils.standardize(advertDto.getHouseNo()), StringUtils.standardize(advertDto.getStreet()),
+						StringUtils.standardize(advertDto.getWard()), StringUtils.standardize(advertDto.getDistrict()),
 						StringUtils.standardize(advertDto.getProvince()), new PageRequest(0, 100))
 				.getContent();
 
