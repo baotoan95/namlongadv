@@ -1,8 +1,36 @@
 server:
   port: 8080
   context-path: /management
-
+  
 spring:
+  profiles:
+    active:
+    - dev
+  http:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+# logback
+logging:
+  level:
+    net:
+      namlongadv: debug
+
+# Session keys
+namlongadv:
+  session:
+    name:
+      page-index: PAGE_INDEX
+# App properties
+  pagination:
+    num-of-page: 10
+  file:
+    limit: 512000
+  base_url: http://namlongadv.ddns.net:7070/management
+
+---
+spring:
+  profiles: dev
   jpa:
     database: POSTGRESQL
     show-sql: false
@@ -22,11 +50,7 @@ spring:
     port: 587
     username: quangcaotruyenthongnamlong@gmail.com
     password: congtynamlong
-  cache:
-    jcache:
-      config: ehcache.xml
-  properties:
-    mail:
+    properties:
       smtp:
         starttls:
           enable: true
@@ -35,24 +59,44 @@ spring:
         connectiontimeout: 5000
         timeout: 5000
         writetimeout: 5000
+  cache:
+    jcache:
+      config: ehcache.xml
 
-# logback
-logging:
-  level:
-    net:
-      namlongadv: debug
-
-# Session keys
-namlongadv:
-  session:
-    name:
-      page-index: PAGE_INDEX
-# App properties
-  pagination:
-    num-of-page: 10
-  file:
-    limit: 512000
-  base_url: http://namlongadv.ddns.net:7070/management
+---
+spring:
+  profiles: prod
+  jpa:
+    database: POSTGRESQL
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+  datasource:
+    platform: postgresql
+    url: jdbc:postgresql://toanbn-postgres.cvwhiszgj6np.ap-southeast-1.rds.amazonaws.com:5432/toannb
+    username: toannb
+    password: 123456abc
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: quangcaotruyenthongnamlong@gmail.com
+    password: congtynamlong
+    properties:
+      smtp:
+        starttls:
+          enable: true
+          required: true
+        auth: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+  cache:
+    jcache:
+      config: ehcache.xml
 
 
 
