@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 
 import net.namlongadv.dto.AdvertisementDTO;
 import net.namlongadv.dto.ImageDTO;
+import net.namlongadv.dto.PositionDTO;
 import net.namlongadv.entities.Advertisement;
 import net.namlongadv.utils.StringUtils;
 
@@ -39,10 +40,26 @@ public class AdvertisementConvertor {
 		adv.setProvinceSearching(StringUtils.convertStringIgnoreUtf8(adv.getProvince()));
 		adv.setTitleSearching(StringUtils.convertStringIgnoreUtf8(adv.getTitle()));
 
-		String fullAddress = adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", "
-				+ adv.getDistrict() + ", " + adv.getProvince();
+		String fullAddress = adv.getHouseNo() + ", " + adv.getStreet() + ", " + adv.getWard() + ", " + adv.getDistrict()
+				+ ", " + adv.getProvince();
 		adv.setAddressSearching(StringUtils.convertStringIgnoreUtf8(fullAddress));
-		
+
 		return adv;
+	}
+
+	public static PositionDTO convertToPositionDTO(Advertisement adv) {
+		String[] coords = null;
+		try {
+			coords = adv.getCoordinates().split(",");
+			return PositionDTO.builder()
+					.advId(adv.getId())
+					.latitude(Float.parseFloat(coords[0].trim()))
+					.longitude(Float.parseFloat(coords[1].trim()))
+					.avatar(adv.getAdvImages().isEmpty() ? null : adv.getAdvImages().get(0).getUrl())
+					.title(adv.getTitle()).build();
+		} catch (Exception e) {
+			// Not contains coordinates
+		}
+		return null;
 	}
 }

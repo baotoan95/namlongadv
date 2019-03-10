@@ -20,16 +20,17 @@ import net.namlongadv.utils.DateUtils;
 @EnableScheduling
 public class CheckExpiration {
 	@Autowired
-	private AdvertisementRepository advertisementRepository;
-	@Autowired
 	private MailService mailService;
 	@Value("${namlongadv.base_url}")
 	private String baseUrl;
 	
+	@Autowired
+	private AdvertisementRepository advRepository;
+	
 	@Scheduled(cron = "0 0 5 * * ?")
 	public void scheduleFixedRateTask() {
 		Date date = DateUtils.addDays(new Date(), 30);
-		List<Advertisement> advs = advertisementRepository.findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqualOrderByAdvCompEndDateDescOwnerEndDateDesc(date, date);
+		List<Advertisement> advs = advRepository.findByOwnerEndDateLessThanEqualOrAdvCompEndDateLessThanEqualOrderByAdvCompEndDateDescOwnerEndDateDesc(date, date);
 		if(advs != null && !advs.isEmpty()) {
 			try {
 				StringBuilder stringBuilder = new StringBuilder();
