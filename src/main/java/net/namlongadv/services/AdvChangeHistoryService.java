@@ -104,7 +104,7 @@ public class AdvChangeHistoryService {
 		
 		if (!StringUtils.equals(preChange.getCode(), currChange.getCode())) {
 			advChangeHistory.setCode(decorateDefferentField(currChange.getCode(), true));
-			numOfChanges++;
+//			numOfChanges++;
 			log.info("Different code");
 		} else {
 			advChangeHistory.setCode(StringUtils.EMPTY);
@@ -383,7 +383,7 @@ public class AdvChangeHistoryService {
 		
 		if (!StringUtils.equals(oldAdv.getCode(), newAdv.getCode())) {
 			advChangeHistory.setCode(decorateDefferentField(newAdv.getCode(), decorate));
-			numOfChanges++;
+//			numOfChanges++;
 		} else {
 			advChangeHistory.setCode(newAdv.getCode());
 		}
