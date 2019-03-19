@@ -2,7 +2,10 @@ package net.namlongadv.controller;
 
 import java.io.File;
 
+import org.ehcache.CachePersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +20,8 @@ public class HotController {
 	private HotRepository hotRepository;
 	@Autowired
 	private AdvImageRepository advImageRepository;
+	@Autowired
+	private CacheManager cacheManager;
 
 	@GetMapping("modifyDataType")
 	public void modifyDataType() {
@@ -60,5 +65,11 @@ public class HotController {
 			}
 		});
 		return "Done";
+	}
+	
+	@GetMapping("clearCache")
+	public ResponseEntity<Void> clearCache() throws CachePersistenceException {
+		cacheManager.getCacheNames().parallelStream().forEach(name -> cacheManager.getCache(name).clear());
+		return ResponseEntity.ok().build();
 	}
 }

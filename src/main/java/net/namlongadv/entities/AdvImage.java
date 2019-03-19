@@ -29,8 +29,8 @@ public class AdvImage {
 	private String url;
 	private String type;
 	private Boolean map;
-	private int weight;
-	private boolean selected;
+	private int weight = 0;
+	private boolean selected = true;
 	@ManyToOne
 	@JoinColumn(name = "advertisement")
 	private Advertisement advertisement;

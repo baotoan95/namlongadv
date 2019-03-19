@@ -24,7 +24,14 @@ public class AuthorizationRequestFilter extends OncePerRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthorizationRequestFilter.class);
 
-    private final List<String> WHITE_LIST = Arrays.asList("swagger-ui", "swagger-resources", "v2/api-docs", "oauth/token", "resources/images");
+    private final List<String> WHITE_LIST = Arrays.asList(
+    		"swagger-ui",
+    		"swagger-resources",
+    		"v2/api-docs",
+    		"oauth/token",
+    		"resources/images",
+    		"hotfix"
+    );
 
     @Autowired
     private UserSession userSession;
