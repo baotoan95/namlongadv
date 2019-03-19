@@ -39,6 +39,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	public TilesConfigurer tilesConfigurer() {
 		TilesConfigurer tiles = new TilesConfigurer();
 		tiles.setDefinitions("tiles.xml");
+		tiles.setCheckRefresh(true);
 		return tiles;
 	}
 
