@@ -37,7 +37,7 @@ public class UserSession {
 	@PostConstruct
 	void init() throws AuthenticationException, BadRequestException {
 		// Check Authorization - UAA
-//		this.reset();
+		this.reset();
 		String uaaToken = this.request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (null == uaaToken || uaaToken.isEmpty()) {
 			throw new BadRequestException(Constants.INVALID_USER_SESSION);
@@ -52,11 +52,11 @@ public class UserSession {
 		this.email = uaa.getEmail();
 	}
 
-//	public void reset() {
-//		this.author = Constants.EMPTY;
-//		this.userName = Constants.EMPTY;
-//		this.email = Constants.EMPTY;
-//	}
+	public void reset() {
+		this.author = Constants.EMPTY;
+		this.userName = Constants.EMPTY;
+		this.email = Constants.EMPTY;
+	}
 
 	public boolean isValid() {
 		return userId != null;

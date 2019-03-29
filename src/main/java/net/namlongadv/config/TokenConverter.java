@@ -23,10 +23,9 @@ public class TokenConverter extends JwtAccessTokenConverter {
 			NLAdvUserDetails userDetails = (NLAdvUserDetails) authentication.getPrincipal();
 			final Map<String, Object> additionalInfo = new HashMap<>();
 			additionalInfo.put("user_id", userDetails.getUserId());
-			additionalInfo.put("first_name", userDetails.getFirstName());
-			additionalInfo.put("last_name", userDetails.getLastName());
-			additionalInfo.put("phone_number", userDetails.getPhoneNumber());
+			additionalInfo.put("name", userDetails.getName());
 			additionalInfo.put("email", userDetails.getEmail());
+			additionalInfo.put("user_name", userDetails.getUsername());
 			((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
 		}
 		accessToken = super.enhance(accessToken, authentication);

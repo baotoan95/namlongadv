@@ -11,19 +11,19 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.filter.RequestContextFilter;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Order(2)
-public class AuthorizationRequestFilter extends OncePerRequestFilter {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AuthorizationRequestFilter.class);
-
+@Slf4j
+public class AuthorizationRequestFilter extends RequestContextFilter {
     private final List<String> WHITE_LIST = Arrays.asList(
     		"swagger-ui",
     		"swagger-resources",
@@ -46,11 +46,12 @@ public class AuthorizationRequestFilter extends OncePerRequestFilter {
             if (isWhiteList(path) || userSession.isValid()) {
                 filterChain.doFilter((ServletRequest) req, (ServletResponse) resp);
             } else {
-            	LOG.error("ACCESS DENIED: {}", path);
+            	log.error("ACCESS DENIED: {}", path);
                 resp.reset();
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
         } catch (Exception e) {
+        	log.error("ERR ", e);
             resp.reset();
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
@@ -64,5 +65,14 @@ public class AuthorizationRequestFilter extends OncePerRequestFilter {
      */
     private boolean isWhiteList(String path) {
         return WHITE_LIST.stream().anyMatch(w -> path.toLowerCase().contains(w));
+    }
+    
+    /**
+     * Need this to use request scope in web application thread
+     * @return
+     */
+    @Bean
+    public RequestContextListener requestContextListener(){
+        return new RequestContextListener();
     }
 }
